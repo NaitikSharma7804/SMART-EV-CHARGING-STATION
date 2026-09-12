@@ -1,0 +1,287 @@
+<!-- frontend/pages/admin-dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | EV Charge Hub</title>
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Recharts & Dependencies (Pinned to stable versions) -->
+<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+<script src="https://unpkg.com/recharts@2.1.9/umd/Recharts.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- React Root -->
+    <div id="admin-root"></div>
+
+    <script src="../js/api.js"></script>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = window.Recharts;
+
+        function AdminApp() {
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [user, setUser] = useState(null);
+
+            useEffect(() => {
+                // Auth Check for Admin
+                const token = localStorage.getItem('ev_token');
+                const userData = JSON.parse(localStorage.getItem('ev_user') || '{}');
+                
+                if (!token || userData.role !== 'ADMIN') {
+                    window.location.href = 'login.html';
+                } else {
+                    setUser(userData);
+                }
+            }, []);
+
+            const handleLogout = () => {
+                localStorage.removeItem('ev_token');
+                localStorage.removeItem('ev_user');
+                window.location.href = 'login.html';
+            };
+
+            if (!user) return <div>Loading...</div>;
+
+            return (
+                <div className="admin-layout">
+                    {/* Sidebar */}
+                    <aside className="admin-sidebar">
+                        <div className="logo">
+                            ⚡ EV Admin
+                        </div>
+                        <nav className="admin-nav">
+                            <button className={activeTab === 'dashboard' ? 'active' : ''} onClick={() => setActiveTab('dashboard')}>
+                                📊 Dashboard
+                            </button>
+                            <button className={activeTab === 'users' ? 'active' : ''} onClick={() => setActiveTab('users')}>
+                                👥 Manage Users
+                            </button>
+                            <button className={activeTab === 'bookings' ? 'active' : ''} onClick={() => setActiveTab('bookings')}>
+                                🗓️ Bookings
+                            </button>
+                        </nav>
+                        <div style={{ padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                            <button onClick={handleLogout} className="btn btn-outline" style={{ width: '100%', color: 'white', borderColor: 'white' }}>
+                                Logout
+                            </button>
+                        </div>
+                    </aside>
+
+                    {/* Main Content Area */}
+                    <main className="admin-main">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
+                            <h1>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
+                            <p>Admin: {user.name}</p>
+                        </div>
+
+                        {activeTab === 'dashboard' && <DashboardView />}
+                        {activeTab === 'users' && <UsersView />}
+                        {activeTab === 'bookings' && <BookingsView />}
+                    </main>
+                </div>
+            );
+        }
+
+        // --- DASHBOARD COMPONENT (Analytics & Recharts) ---
+        function DashboardView() {
+            const [stats, setStats] = useState(null);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                async function fetchStats() {
+                    try {
+                        const res = await apiCall('/admin/dashboard');
+                        setStats(res.data);
+                    } catch (error) {
+                        alert('Failed to load dashboard data');
+                    } finally {
+                        setLoading(false);
+                    }
+                }
+                fetchStats();
+            }, []);
+
+            if (loading) return <div>Loading analytics...</div>;
+            if (!stats) return null;
+
+            // Format chart data date
+            const chartData = stats.chartData.dailyBookings.map(d => ({
+                ...d,
+                date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            }));
+
+            return (
+                <div>
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <h4>Total Users</h4>
+                            <h2>{stats.totalUsers}</h2>
+                        </div>
+                        <div className="stat-card">
+                            <h4>Total Stations</h4>
+                            <h2>{stats.totalStations}</h2>
+                        </div>
+                        <div className="stat-card">
+                            <h4>Active Sessions</h4>
+                            <h2 style={{ color: '#10b981' }}>{stats.activeSessions}</h2>
+                        </div>
+                        <div className="stat-card">
+                            <h4>Total Revenue</h4>
+                            <h2>₹{stats.totalRevenue}</h2>
+                        </div>
+                    </div>
+
+                    <div className="chart-container">
+                        <h3 style={{ marginBottom: '1.5rem' }}>Daily Bookings Trend</h3>
+                        <ResponsiveContainer width="100%" height="80%">
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <XAxis dataKey="date" stroke="#64748b" />
+                                <YAxis stroke="#64748b" />
+                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }} />
+                                <Line type="monotone" dataKey="count" stroke="#10b981" strokeWidth={3} activeDot={{ r: 8 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- USERS COMPONENT ---
+        function UsersView() {
+            const [users, setUsers] = useState([]);
+
+            const fetchUsers = async () => {
+                try {
+                    const res = await apiCall('/admin/users');
+                    setUsers(res.data);
+                } catch (e) {
+                    alert('Failed to fetch users');
+                }
+            };
+
+            useEffect(() => { fetchUsers(); }, []);
+
+            const toggleStatus = async (id, currentStatus) => {
+                const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
+                if (!confirm(`Are you sure you want to ${newStatus} this user?`)) return;
+                
+                try {
+                    await apiCall(`/admin/users/${id}/status`, 'PUT', { status: newStatus });
+                    fetchUsers(); // Refresh
+                } catch (e) {
+                    alert('Failed to update status');
+                }
+            };
+
+            return (
+                <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map(u => (
+                                <tr key={u.id}>
+                                    <td style={{ fontWeight: 500 }}>{u.name}</td>
+                                    <td>{u.email}</td>
+                                    <td>{u.mobile}</td>
+                                    <td>
+                                        <span className={`badge ${u.status === 'active' ? 'success' : 'danger'}`}>
+                                            {u.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button 
+                                            onClick={() => toggleStatus(u.id, u.status)}
+                                            className="btn btn-outline" 
+                                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem', borderColor: u.status === 'active' ? '#ef4444' : '#10b981', color: u.status === 'active' ? '#ef4444' : '#10b981' }}
+                                        >
+                                            {u.status === 'active' ? 'Block' : 'Unblock'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
+        // --- BOOKINGS COMPONENT ---
+        function BookingsView() {
+            const [bookings, setBookings] = useState([]);
+
+            useEffect(() => {
+                async function fetchBookings() {
+                    try {
+                        const res = await apiCall('/admin/bookings');
+                        setBookings(res.data);
+                    } catch (e) {
+                        alert('Failed to fetch bookings');
+                    }
+                }
+                fetchBookings();
+            }, []);
+
+            return (
+                <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Station</th>
+                                <th>Date/Time</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {bookings.map(b => (
+                                <tr key={b.id}>
+                                    <td>#{b.id}</td>
+                                    <td>{b.user_name}</td>
+                                    <td>{b.station_name}</td>
+                                    <td>
+                                        {new Date(b.booking_date).toLocaleDateString()} <br/>
+                                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                                            {b.start_time.slice(0,5)} - {b.end_time.slice(0,5)}
+                                        </span>
+                                    </td>
+                                    <td style={{ fontWeight: 600 }}>₹{b.amount}</td>
+                                    <td><span className="badge">{b.status}</span></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
+        // Mount React
+        const root = ReactDOM.createRoot(document.getElementById('admin-root'));
+        root.render(<AdminApp />);
+    </script>
+</body>
+</html>

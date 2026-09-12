@@ -1,0 +1,11 @@
+# Node modules (We ignore these because they are huge and can be reinstalled anytime using npm install)
+node_modules/
+backend/node_modules/
+
+# Environment variables (THIS IS THE MOST IMPORTANT ONE!)
+.env
+backend/.env
+
+# Mac/Windows System files
+.DS_Store
+Thumbs.db

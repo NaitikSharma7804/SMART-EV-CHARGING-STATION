@@ -1,0 +1,110 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charge Hub | Charge Smarter. Travel Better.</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <i data-lucide="zap"></i> EV Charge Hub
+        </a>
+        <ul class="nav-links">
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#nearby">Nearby Places</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="pages/login.html" class="btn btn-outline">Login</a>
+            <a href="pages/register.html" class="btn btn-primary">Register</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Charge Smarter.<br>Travel Better.</h1>
+            <p>Find EV charging stations, reserve your slot, pay securely, and discover everything you need while your vehicle charges.</p>
+            <div style="display: flex; gap: 1rem;">
+                <a href="pages/search.html" class="btn btn-primary">
+                    <i data-lucide="map-pin"></i> Find Station
+                </a>
+                <a href="#how-it-works" class="btn btn-outline">Learn More</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <!-- Using a high-quality free Unsplash EV image as a placeholder -->
+            <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80" alt="EV Charging Station">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <h2 style="text-align: center;">Why Choose EV Charge Hub?</h2>
+        <p class="section-subtitle">A complete ecosystem for modern EV drivers.</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i data-lucide="clock" class="feature-icon" width="48" height="48"></i>
+                <h3>Real-Time Availability</h3>
+                <p>No more waiting in line. See exactly which chargers are free right now.</p>
+            </div>
+            <div class="feature-card">
+                <i data-lucide="calendar-check" class="feature-icon" width="48" height="48"></i>
+                <h3>Easy Slot Booking</h3>
+                <p>Reserve your time slot in advance. Guaranteed charging when you arrive.</p>
+            </div>
+            <div class="feature-card">
+                <i data-lucide="credit-card" class="feature-icon" width="48" height="48"></i>
+                <h3>Secure Payments</h3>
+                <p>Pay easily via UPI, Cards, or Wallets using our secure Razorpay gateway.</p>
+            </div>
+            <div class="feature-card">
+                <i data-lucide="coffee" class="feature-icon" width="48" height="48"></i>
+                <h3>While You Charge</h3>
+                <p>Discover nearby cafes, restaurants, hotels, and restrooms automatically.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section (Demo data for counters) -->
+    <section class="section" style="background-color: white;">
+        <div class="features-grid" style="text-align: center;">
+            <div>
+                <h2 style="color: var(--primary); font-size: 3rem;">500+</h2>
+                <p>Charging Stations</p>
+            </div>
+            <div>
+                <h2 style="color: var(--primary); font-size: 3rem;">12k+</h2>
+                <p>Active Users</p>
+            </div>
+            <div>
+                <h2 style="color: var(--primary); font-size: 3rem;">1M+</h2>
+                <p>Successful Bookings</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--text-main); color: white; padding: 3rem 5%; text-align: center;">
+        <div style="margin-bottom: 2rem;">
+            <h3 style="color: white; margin-bottom: 1rem;"><i data-lucide="zap"></i> EV Charge Hub</h3>
+            <p style="color: var(--text-muted);">Empowering the future of electric mobility.</p>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.875rem;">&copy; 2026 EV Charge Hub. All rights reserved.</p>
+    </footer>
+
+    <!-- Initialize Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

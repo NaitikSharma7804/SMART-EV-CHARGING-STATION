@@ -1,0 +1,363 @@
+<!-- frontend/pages/booking.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Slot | EV Charge Hub</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- 1. Add Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            background-color: var(--background, #f8fafc);
+            overflow-y: auto !important;
+            min-height: 100vh;
+        }
+        .booking-container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 2rem;
+        }
+        @media (max-width: 850px) {
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .charger-card {
+            border: 2px solid var(--border, #e2e8f0);
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+            text-align: center;
+        }
+        .charger-card.selected {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+        .charger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+        .summary-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border, #e2e8f0);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 5rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar" style="border-bottom: 1px solid var(--border, #e2e8f0); background: #ffffff;">
+        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;">
+            <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; text-decoration: none; color: #10b981; font-size: 1.25rem;">
+                <i data-lucide="zap"></i> EV Charge Hub
+            </a>
+            <nav style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="dashboard.html" style="text-decoration: none; color: #64748b;">Dashboard</a>
+                <a href="search.html" style="text-decoration: none; color: #10b981; font-weight: 600;">Find Chargers</a>
+                <a href="bookings.html" style="text-decoration: none; color: #64748b;">My Bookings</a>
+            </nav>
+        </div>
+    </header>
+
+    <div style="max-width: 1100px; margin: 2rem auto 0 auto; padding: 0 1.5rem;">
+        <h1 id="stationName" style="font-size: 1.75rem; margin-bottom: 0.25rem;">Loading Station...</h1>
+        <p id="stationAddress" style="color: #64748b; margin: 0; display: flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Locating...
+        </p>
+    </div>
+
+    <!-- Booking Content -->
+    <div class="booking-container">
+        
+        <!-- Left Column: Form -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- 1. Select Charger -->
+            <div style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0);">
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem;">1. Select Charger (Live Status)</h3>
+                <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
+                    <span style="color: #10b981; font-weight: 600;">● Available</span>
+                </div>
+
+                <div class="charger-grid" id="chargerList">
+                    <div class="charger-card selected" onclick="selectCharger('CH-01', 15.00, this)">
+                        <h4 style="margin: 0 0 0.25rem 0;">CH-01</h4>
+                        <div style="font-size: 0.8rem; color: #64748b;">50 kW Fast • Type 2 / CCS</div>
+                        <div style="font-weight: 700; color: #10b981; margin-top: 0.5rem;">₹15.00/hr</div>
+                    </div>
+                    <div class="charger-card" onclick="selectCharger('CH-02', 15.00, this)">
+                        <h4 style="margin: 0 0 0.25rem 0;">CH-02</h4>
+                        <div style="font-size: 0.8rem; color: #64748b;">50 kW Fast • Type 2 / CCS</div>
+                        <div style="font-weight: 700; color: #10b981; margin-top: 0.5rem;">₹15.00/hr</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Select Time & Vehicle -->
+            <div style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0);">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">2. Select Time & Vehicle</h3>
+                
+                <form id="bookingForm">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="vehicleSelect" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Select Vehicle</label>
+                        <select id="vehicleSelect" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                            <option value="" disabled selected>Loading your vehicles...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="bookingDate" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Date</label>
+                        <input type="date" id="bookingDate" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="startTime" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Start Time</label>
+                            <input type="time" id="startTime" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">End Time</label>
+                            <input type="time" id="endTime" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Booking Summary -->
+        <div>
+            <div class="summary-card">
+                <h3 style="margin-top: 0; margin-bottom: 1.25rem;">Booking Summary</h3>
+                
+                <div class="summary-row">
+                    <span>Charger</span>
+                    <strong id="sumCharger">CH-01 (₹15/hr)</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Rate</span>
+                    <span id="sumRate">₹15 / hour</span>
+                </div>
+                <div class="summary-row">
+                    <span>Duration</span>
+                    <span id="sumDuration">1 hour</span>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1.25rem 0;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <span style="font-size: 1.1rem; font-weight: 600;">Total Amount</span>
+                    <span id="sumTotal" style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">₹15.00</span>
+                </div>
+
+                <button id="payBtn" type="button" class="btn btn-primary btn-block" style="width: 100%; padding: 0.85rem; font-size: 1rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="lock" style="width: 18px; height: 18px;"></i> Pay & Book Slot
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        lucide.createIcons();
+
+        let currentRate = 15.00;
+        let selectedChargerCode = 'CH-01';
+
+        // 1. Load Vehicles from LocalStorage
+        function populateVehicles() {
+            const vehicleSelect = document.getElementById('vehicleSelect');
+            const vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
+
+            if (vehicles.length === 0) {
+                vehicleSelect.innerHTML = '<option value="" disabled selected>No vehicles found. Please add one from Dashboard.</option>';
+                vehicleSelect.disabled = true;
+            } else {
+                vehicleSelect.disabled = false;
+                vehicleSelect.innerHTML = `
+                    <option value="" disabled selected>Choose your vehicle...</option>
+                    ${vehicles.map(v => `
+                        <option value="${v.regNumber}">${v.make} ${v.model} (${v.regNumber}) - ${v.connector}</option>
+                    `).join('')}
+                `;
+                vehicleSelect.selectedIndex = 1;
+            }
+        }
+
+        // 2. Select Charger Option
+        window.selectCharger = function(chargerCode, rate, element) {
+            document.querySelectorAll('.charger-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedChargerCode = chargerCode;
+            currentRate = rate;
+            document.getElementById('sumCharger').textContent = `${chargerCode} (₹${rate}/hr)`;
+            document.getElementById('sumRate').textContent = `₹${rate} / hour`;
+            calculateTotal();
+        };
+
+        // 3. Time & Price Calculations
+        function calculateTotal() {
+            const start = document.getElementById('startTime').value;
+            const end = document.getElementById('endTime').value;
+
+            if (start && end) {
+                const [startH, startM] = start.split(':').map(Number);
+                const [endH, endM] = end.split(':').map(Number);
+
+                let diff = (endH + endM / 60) - (startH + startM / 60);
+                if (diff < 0) diff += 24;
+
+                if (diff > 0) {
+                    const total = (diff * currentRate).toFixed(2);
+                    document.getElementById('sumDuration').textContent = `${diff.toFixed(1)} hours`;
+                    document.getElementById('sumTotal').textContent = `₹${total}`;
+                    return;
+                }
+            }
+            document.getElementById('sumDuration').textContent = '1 hour';
+            document.getElementById('sumTotal').textContent = `₹${currentRate.toFixed(2)}`;
+        }
+
+        document.getElementById('startTime').addEventListener('change', calculateTotal);
+        document.getElementById('endTime').addEventListener('change', calculateTotal);
+
+        // 4. Fetch Station Data
+        async function loadStationDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const stationId = params.get('station_id');
+
+            if (!stationId) {
+                document.getElementById('stationName').textContent = 'EV Charging Station';
+                document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin"></i> Location details unavailable`;
+                lucide.createIcons();
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/stations/${stationId}`);
+                const data = await response.json();
+                if (data && data.station) {
+                    document.getElementById('stationName').textContent = data.station.name;
+                    document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> ${data.station.address}`;
+                } else {
+                    document.getElementById('stationName').textContent = 'Shashtri Nagar Station';
+                    document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Pune, Maharashtra`;
+                }
+            } catch (err) {
+                document.getElementById('stationName').textContent = 'Shashtri Nagar Station';
+                document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Pune, Maharashtra`;
+            }
+            lucide.createIcons();
+        }
+
+        // 5. Razorpay Integration
+        document.getElementById('payBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const vehicle = document.getElementById('vehicleSelect').value;
+            const date = document.getElementById('bookingDate').value;
+            const start = document.getElementById('startTime').value;
+            const end = document.getElementById('endTime').value;
+
+            if (!vehicle) {
+                alert('Please select a vehicle first!');
+                return;
+            }
+            if (!date || !start || !end) {
+                alert('Please pick a date, start time, and end time.');
+                return;
+            }
+
+            // Get Amount in Paise for Razorpay (e.g. ₹15.00 -> 1500 paise)
+            const totalText = document.getElementById('sumTotal').textContent;
+            const amountInRupees = parseFloat(totalText.replace('₹', ''));
+            const amountInPaise = Math.round(amountInRupees * 100);
+
+            // Configure Razorpay Options
+            var options = {
+                "key": "rzp_test_TQzTzvT1kAt13E", // We use test mode configuration
+                "amount": amountInPaise, 
+                "currency": "INR",
+                "name": "EV Charge Hub",
+                "description": "Slot Booking - " + document.getElementById('stationName').textContent,
+                "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Lightning_Bolt.svg",
+                "handler": function (response) {
+                    // This function runs ONLY when payment is successful!
+                    
+                    const newBooking = {
+                        id: 'BKG-' + Math.floor(100000 + Math.random() * 900000),
+                        stationName: document.getElementById('stationName').textContent,
+                        vehicle: vehicle,
+                        date: date,
+                        startTime: start,
+                        endTime: end,
+                        amount: totalText,
+                        status: 'Upcoming',
+                        paymentId: response.razorpay_payment_id // Save their receipt!
+                    };
+
+                    let storedBookings = JSON.parse(localStorage.getItem('ev_bookings') || '[]');
+                    storedBookings.unshift(newBooking);
+                    localStorage.setItem('ev_bookings', JSON.stringify(storedBookings));
+
+                    alert("Payment Successful! Your slot is booked.");
+                    window.location.href = 'bookings.html';
+                },
+                "prefill": {
+                    "name": "Naitik Sharma",
+                    "email": "naitik@example.com",
+                    "contact": "9999999999"
+                },
+                "theme": {
+                    "color": "#10b981"
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            
+            // Handle Payment Failure
+            rzp1.on('payment.failed', function (response){
+                alert("Payment Failed: " + response.error.description);
+            });
+            
+            // Open the Modal
+            rzp1.open();
+        });
+
+        // Set Default Date to Today and Time to Next Hour
+        document.addEventListener('DOMContentLoaded', () => {
+            populateVehicles();
+            loadStationDetails();
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').value = today;
+            document.getElementById('startTime').value = "10:00";
+            document.getElementById('endTime').value = "11:00";
+            calculateTotal();
+        });
+    </script>
+</body>
+</html>

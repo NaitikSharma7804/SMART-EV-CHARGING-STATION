@@ -1,0 +1,301 @@
+<!-- frontend/pages/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | EV Charge Hub</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Force scroll enablement across the whole document */
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background-color: var(--background, #f8fafc);
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .vehicle-item {
+            background: #f8fafc;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vehicle-tag {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.12);
+            color: #059669;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+        }
+
+        .btn-delete-veh {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .btn-delete-veh:hover {
+            background: #fee2e2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar" style="border-bottom: 1px solid var(--border, #e2e8f0); background: #ffffff; position: sticky; top: 0; z-index: 100;">
+        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;">
+            <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; text-decoration: none; color: #10b981; font-size: 1.25rem;">
+                <i data-lucide="zap"></i> EV Charge Hub
+            </a>
+            <nav style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="dashboard.html" style="text-decoration: none; color: #10b981; font-weight: 600;">Dashboard</a>
+                <a href="search.html" style="text-decoration: none; color: #64748b;">Find Chargers</a>
+                <a href="bookings.html" style="text-decoration: none; color: #64748b;">My Bookings</a>
+                <button id="logoutBtn" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> Logout
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;">
+        
+        <!-- Welcome Hero -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Welcome back, <span id="userName">User</span>!</h1>
+                <p style="color: var(--text-muted, #64748b); margin: 0;">Here is your EV charging overview.</p>
+            </div>
+            <a href="search.html" class="btn btn-primary" style="display: flex; align-items: center; gap: 0.5rem;">
+                <i data-lucide="map-pin"></i> Book a Slot
+            </a>
+        </div>
+
+        <!-- Dashboard Grid Layout -->
+        <div class="dashboard-layout">
+            
+            <!-- Left Column -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Quick Actions Card -->
+                <div class="card" style="background: var(--surface, #ffffff); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
+                        <i data-lucide="zap"></i> Quick Actions
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <a href="search.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
+                            <i data-lucide="search" style="margin-bottom: 0.5rem; color: #10b981;"></i>
+                            <div style="font-weight: 500; font-size: 0.9rem;">Find Station</div>
+                        </a>
+                        <a href="vehicles.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
+                            <i data-lucide="car" style="margin-bottom: 0.5rem; color: #10b981;"></i>
+                            <div style="font-weight: 500; font-size: 0.9rem;">Add Vehicle</div>
+                        </a>
+                        <a href="nearby-explore.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
+    <i data-lucide="coffee" style="margin-bottom: 0.5rem; color: #10b981;"></i>
+    <div style="font-weight: 500; font-size: 0.9rem;">Nearby Places</div>
+</a>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings Card -->
+                <div class="card" style="background: var(--surface, #ffffff); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
+                            <i data-lucide="calendar"></i> Recent Bookings
+                        </h3>
+                        <a href="bookings.html" style="font-size: 0.85rem; color: #10b981; text-decoration: none; font-weight: 500;">View All</a>
+                    </div>
+                    
+                    <!-- Dynamic Container for Recent Bookings -->
+                    <div id="recentBookingsContainer">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Dynamic My Vehicles Card -->
+                <div class="card" style="background: var(--surface, #ffffff); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
+                            <i data-lucide="car"></i> My Vehicles
+                        </h3>
+                        <a href="vehicles.html" class="btn btn-outline btn-sm">+ Add EV</a>
+                    </div>
+                    
+                    <div id="vehiclesContainer">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Account Status Card -->
+                <div class="card" style="background: #1e293b; color: #fff; padding: 1.5rem; border-radius: 12px;">
+                    <h3 style="margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; color: #fff;">
+                        <i data-lucide="shield-check"></i> Account Status
+                    </h3>
+                    <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.75rem;">Verification Status</p>
+                    <span style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
+                        <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i> Verified
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // 1. Initialize Icons
+        lucide.createIcons();
+
+        // 2. Load User Profile Name
+        const storedUser = localStorage.getItem('ev_user');
+        if (storedUser) {
+            try {
+                const userObj = JSON.parse(storedUser);
+                if (userObj.name) {
+                    document.getElementById('userName').textContent = userObj.name.split(' ')[0];
+                }
+            } catch (e) {}
+        }
+
+        // 3. Load & Render Vehicles Function
+        function renderVehicles() {
+            const container = document.getElementById('vehiclesContainer');
+            const vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
+
+            if (vehicles.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 1.5rem 1rem; color: #64748b;">
+                        <i data-lucide="car" style="width: 42px; height: 42px; opacity: 0.3; margin-bottom: 0.5rem; display: inline-block;"></i>
+                        <p style="margin: 0.25rem 0 0.75rem 0; font-size: 0.9rem;">No vehicles added yet.</p>
+                        <a href="vehicles.html" class="btn btn-secondary btn-sm">Add EV</a>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = vehicles.map((veh, idx) => `
+                    <div class="vehicle-item">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b;">${veh.make} ${veh.model}</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">
+                                ${veh.regNumber}
+                            </div>
+                            <span class="vehicle-tag">${veh.connector || 'CCS2'}</span>
+                        </div>
+                        <button class="btn-delete-veh" onclick="deleteVehicle(${idx})" title="Remove vehicle">
+                            <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // 4. Load & Render Recent Bookings Function
+        function renderRecentBookings() {
+            const container = document.getElementById('recentBookingsContainer');
+            const bookings = JSON.parse(localStorage.getItem('ev_bookings') || '[]');
+
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem 1rem; color: #64748b;">
+                        <p style="margin-bottom: 1rem;">You have no recent charging sessions.</p>
+                        <a href="search.html" class="btn btn-primary btn-sm">Find a Charger</a>
+                    </div>
+                `;
+            } else {
+                // Show only the 3 most recent bookings
+                const recent = bookings.slice(0, 3);
+                
+                container.innerHTML = recent.map(b => {
+                    let statusColor = '#3b82f6'; // blue for Upcoming/Pending
+                    if (b.status && b.status.toLowerCase() === 'completed') statusColor = '#10b981'; // green
+                    if (b.status && b.status.toLowerCase() === 'cancelled') statusColor = '#ef4444'; // red
+
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8fafc; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; margin-bottom: 0.75rem;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b; margin-bottom: 0.25rem;">${b.stationName || 'EV Station'}</div>
+                                <div style="font-size: 0.8rem; color: #64748b; display: flex; align-items: center; gap: 0.35rem;">
+                                    <i data-lucide="calendar" style="width: 12px; height: 12px;"></i> ${b.date} • ${b.startTime}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 700; color: #1e293b; font-size: 1.05rem;">${b.amount}</div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: ${statusColor}; margin-top: 2px;">${b.status}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add link if there are more than 3 bookings
+                if (bookings.length > 3) {
+                    container.innerHTML += `
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <a href="bookings.html" style="font-size: 0.85rem; color: #64748b; text-decoration: none; font-weight: 500;">See all ${bookings.length} bookings →</a>
+                        </div>
+                    `;
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // 5. Delete Vehicle Helper
+        window.deleteVehicle = function(index) {
+            let vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
+            vehicles.splice(index, 1);
+            localStorage.setItem('ev_vehicles', JSON.stringify(vehicles));
+            renderVehicles();
+        };
+
+        // 6. Logout Handler
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('ev_token');
+            localStorage.removeItem('ev_user');
+            window.location.href = 'login.html';
+        });
+
+        // 7. Initialize on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderVehicles();
+            renderRecentBookings();
+        });
+    </script>
+</body>
+</html>

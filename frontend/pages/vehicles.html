@@ -1,0 +1,178 @@
+<!-- frontend/pages/vehicles.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vehicles | EV Charge Hub</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .container { max-width: 800px; margin: 3rem auto; padding: 0 1rem; }
+        .vehicle-card { background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .back-link { text-decoration: none; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+    </style>
+</head>
+<body style="background-color: var(--background);">
+
+    <div class="container">
+        <div class="header-flex">
+            <h2><i data-lucide="car" style="vertical-align: middle; margin-right: 8px;"></i> My EV Garage</h2>
+            <a href="dashboard.html" class="back-link">
+                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="vehicle-card">
+            <h3 style="margin-bottom: 1.5rem;">Add a New Vehicle</h3>
+            <form id="addVehicleForm">
+                
+                <!-- NEW: Dynamic Brand Dropdown -->
+                <div class="form-group">
+                    <label for="make">Vehicle Make (Company)</label>
+                    <select id="make" class="form-control" required>
+                        <option value="" disabled selected>Select EV Brand...</option>
+                    </select>
+                </div>
+                
+                <!-- NEW: Dynamic Model Dropdown -->
+                <div class="form-group">
+                    <label for="model">Vehicle Model</label>
+                    <select id="model" class="form-control" required disabled>
+                        <option value="" disabled selected>Select Brand First...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="regNumber">Registration Number</label>
+                    <input type="text" id="regNumber" class="form-control" required placeholder="MH 12 AB 1234">
+                </div>
+                
+                <!-- Auto-populated Connector -->
+                <div class="form-group">
+                    <label for="connector">Default Connector Type</label>
+                    <select id="connector" class="form-control" required>
+                        <option value="" disabled selected>Auto-selected based on model...</option>
+                        <option value="Type 2 (AC)">Type 2 (AC)</option>
+                        <option value="CCS2 (DC Fast)">CCS2 (DC Fast)</option>
+                        <option value="CHAdeMO">CHAdeMO</option>
+                        <option value="Proprietary / Custom">Proprietary / Custom</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Save Vehicle</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+
+        // 1. EV Data Dictionary (O(1) Lookup)
+        const evDatabase = {
+            "Tata Motors": [
+                { name: "Nexon EV", connector: "CCS2 (DC Fast)" },
+                { name: "Punch EV", connector: "CCS2 (DC Fast)" },
+                { name: "Tiago EV", connector: "CCS2 (DC Fast)" },
+                { name: "Curvv EV", connector: "CCS2 (DC Fast)" },
+                { name: "Sierra EV", connector: "CCS2 (DC Fast)" }
+            ],
+            "Mahindra": [
+                { name: "XUV400", connector: "CCS2 (DC Fast)" },
+                { name: "BE 6", connector: "CCS2 (DC Fast)" },
+                { name: "XEV 9e", connector: "CCS2 (DC Fast)" }
+            ],
+            "MG Motor": [
+                { name: "ZS EV", connector: "CCS2 (DC Fast)" },
+                { name: "Comet EV", connector: "Type 2 (AC)" },
+                { name: "Windsor EV", connector: "CCS2 (DC Fast)" }
+            ],
+            "Hyundai": [
+                { name: "Ioniq 5", connector: "CCS2 (DC Fast)" },
+                { name: "Kona Electric", connector: "CCS2 (DC Fast)" }
+            ],
+            "BYD": [
+                { name: "Atto 3", connector: "CCS2 (DC Fast)" },
+                { name: "Seal", connector: "CCS2 (DC Fast)" }
+            ],
+            "Ola Electric": [
+                { name: "S1 Pro", connector: "Proprietary / Custom" },
+                { name: "Roadster", connector: "Type 2 (AC)" }
+            ],
+            "Ather Energy": [
+                { name: "450X", connector: "Proprietary / Custom" },
+                { name: "Rizta", connector: "Proprietary / Custom" }
+            ],
+            "TVS": [
+                { name: "iQube", connector: "Type 2 (AC)" },
+                { name: "X", connector: "Type 2 (AC)" }
+            ],
+            "Bajaj": [
+                { name: "Chetak", connector: "Type 2 (AC)" }
+            ]
+        };
+
+        const makeSelect = document.getElementById('make');
+        const modelSelect = document.getElementById('model');
+        const connectorSelect = document.getElementById('connector');
+        const regNumberInput = document.getElementById('regNumber');
+
+        // Populate Make Dropdown
+        Object.keys(evDatabase).forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand;
+            option.textContent = brand;
+            makeSelect.appendChild(option);
+        });
+
+        // Handle Brand Change
+        makeSelect.addEventListener('change', function() {
+            const selectedBrand = this.value;
+            const models = evDatabase[selectedBrand];
+            
+            modelSelect.innerHTML = '<option value="" disabled selected>Select EV Model...</option>';
+            modelSelect.disabled = false;
+            connectorSelect.value = "";
+
+            models.forEach(car => {
+                const option = document.createElement('option');
+                option.value = car.name;
+                option.dataset.connector = car.connector;
+                option.textContent = car.name;
+                modelSelect.appendChild(option);
+            });
+        });
+
+        // Handle Model Change
+        modelSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const matchingConnector = selectedOption.dataset.connector;
+            if (matchingConnector) {
+                connectorSelect.value = matchingConnector;
+            }
+        });
+
+        // Handle Form Submission & Save
+        document.getElementById('addVehicleForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const newVehicle = {
+                make: makeSelect.value,
+                model: modelSelect.value,
+                regNumber: regNumberInput.value.trim().toUpperCase(),
+                connector: connectorSelect.value
+            };
+
+            // Save to LocalStorage
+            let storedVehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
+            storedVehicles.push(newVehicle);
+            localStorage.setItem('ev_vehicles', JSON.stringify(storedVehicles));
+
+            alert('Vehicle saved to garage!');
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

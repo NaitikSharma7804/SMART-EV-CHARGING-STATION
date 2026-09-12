@@ -1,0 +1,154 @@
+<!-- frontend/pages/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | EV Charge Hub</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="auth-page">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <a href="../index.html" class="logo" style="justify-content: center; margin-bottom: 1rem;">
+                <i data-lucide="zap"></i> EV Charge Hub
+            </a>
+            <h2 id="formTitle">Create Account</h2>
+            <p id="formSubtitle" style="color: var(--text-muted);">Join the smart EV charging network</p>
+        </div>
+
+        <div id="registerAlert" class="alert"></div>
+
+        <!-- Registration Form -->
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" class="form-control" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" class="form-control" required placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile Number</label>
+                <input type="tel" id="mobile" class="form-control" required placeholder="9876543210" pattern="[0-9]{10}">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" required placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-control" required placeholder="Confirm password">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block" id="registerBtn">Create Account</button>
+            
+            <div class="auth-links">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </form>
+
+        <!-- OTP Verification Form (Hidden Initially) -->
+        <form id="otpForm" style="display: none;">
+            <div class="form-group">
+                <label for="otp">Enter 6-digit OTP sent to your email/mobile</label>
+                <input type="text" id="otp" class="form-control" required placeholder="123456" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.25rem;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="verifyBtn">Verify & Login</button>
+            <div class="auth-links">
+                <a href="#" onclick="location.reload();">Use a different email</a>
+            </div>
+        </form>
+
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        lucide.createIcons();
+
+        let registeredEmail = '';
+
+        // Handle Registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const mobile = document.getElementById('mobile').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            const btn = document.getElementById('registerBtn');
+            const alertBox = document.getElementById('registerAlert');
+
+            if (password !== confirmPassword) {
+                alertBox.textContent = "Passwords do not match!";
+                alertBox.className = 'alert error';
+                return;
+            }
+
+            btn.textContent = 'Creating account...';
+            btn.disabled = true;
+            alertBox.className = 'alert';
+
+            try {
+                const data = await apiCall('/auth/register', 'POST', { 
+                    name, email, mobile, password, confirmPassword 
+                });
+                
+                // Keep email for OTP step
+                registeredEmail = email;
+
+                // Show OTP form, hide Register form
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('otpForm').style.display = 'block';
+                document.getElementById('formTitle').textContent = 'Verify Account';
+                document.getElementById('formSubtitle').textContent = `OTP sent to ${email}`;
+                
+                alertBox.textContent = data.message;
+                alertBox.className = 'alert success';
+                
+                // Dev helpful log
+                if (data.demoOtp) console.log(`[DEMO MODE] Your OTP is: ${data.demoOtp}`);
+
+            } catch (error) {
+                alertBox.textContent = error.message;
+                alertBox.className = 'alert error';
+                btn.textContent = 'Create Account';
+                btn.disabled = false;
+            }
+        });
+
+        // Handle OTP Verification
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            const btn = document.getElementById('verifyBtn');
+            const alertBox = document.getElementById('registerAlert');
+
+            btn.textContent = 'Verifying...';
+            btn.disabled = true;
+            alertBox.className = 'alert';
+
+            try {
+                await apiCall('/auth/verify-otp', 'POST', { identifier: registeredEmail, otp });
+                
+                alertBox.textContent = 'Account verified successfully! Redirecting to login...';
+                alertBox.className = 'alert success';
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+
+            } catch (error) {
+                alertBox.textContent = error.message;
+                alertBox.className = 'alert error';
+                btn.textContent = 'Verify & Login';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
