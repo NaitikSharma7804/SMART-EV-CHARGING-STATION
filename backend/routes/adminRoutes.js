@@ -1,9 +1,10 @@
 // backend/routes/adminRoutes.js
-const express = require('express');
+import express from 'express';
+import * as adminController from '../controllers/adminController.js';
+import { authenticate, authorize } from '../middleware/authMiddleware.js';
+import { syncRealStations } from '../services/ocmService.js';
+
 const router = express.Router();
-const adminController = require('../controllers/adminController');
-const { authenticate, authorize } = require('../middleware/authMiddleware');
-const { syncRealStations } = require('../services/ocmService');
 
 // Protect all routes: Must be logged in AND have 'ADMIN' role
 router.use(authenticate, authorize(['ADMIN']));
@@ -33,4 +34,4 @@ router.post('/sync-stations', async (req, res) => {
 // Bookings
 router.get('/bookings', adminController.getAllBookings);
 
-module.exports = router;
+export default router;

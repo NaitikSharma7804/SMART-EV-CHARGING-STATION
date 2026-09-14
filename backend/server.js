@@ -1,26 +1,30 @@
 // backend/server.js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const http = require('http');
-const { Server } = require('socket.io');
+import 'dotenv/config';
+
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import http from 'http';
+import { Server } from 'socket.io';
 
 const app = express();
 const server = http.createServer(app);
 
-// 1. Initialize Socket.IO FIRST before trying to use it
+// 1. Initialize Socket.IO
 const io = new Server(server, {
-    cors: { origin: '*' }
+    cors: {
+        origin: '*'
+    }
 });
 
-// 2. Set 'io' in app and listen for events
+// 2. Set Socket.IO instance in app
 app.set('io', io);
 
+// Socket.IO connection events
 io.on('connection', (socket) => {
     console.log(`🔌 New client connected: ${socket.id}`);
 
-    // Frontend can join a specific "station room" to only listen to updates for that station
+    // Frontend can join a specific station room
     socket.on('joinStationRoom', (stationId) => {
         socket.join(`station_${stationId}`);
         console.log(`Client ${socket.id} joined room: station_${stationId}`);
@@ -32,15 +36,15 @@ io.on('connection', (socket) => {
 });
 
 // 3. Import Routes
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const vehicleRoutes = require('./routes/vehicleRoutes');
-const stationRoutes = require('./routes/stationRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
-const placesRoutes = require('./routes/placesRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
-const reviewRoutes = require('./routes/reviewRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import vehicleRoutes from './routes/vehicleRoutes.js';
+import stationRoutes from './routes/stationRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
+import placesRoutes from './routes/placesRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 
 // 4. Security & Utility Middleware
@@ -51,7 +55,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // 5. Health Check Route
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: 'success', message: 'EV Charge Hub API is running' });
+    res.status(200).json({
+        status: 'success',
+        message: 'EV Charge Hub API is running'
+    });
 });
 
 // 6. Mount Routes

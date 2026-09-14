@@ -1,8 +1,8 @@
 // backend/middleware/authMiddleware.js
-const jwt = require('jsonwebtoken');
-const pool = require('../config/db');
+import jwt from 'jsonwebtoken';
+import pool from '../config/db.js';
 
-exports.authenticate = async (req, res, next) => {
+export const authenticate = async (req, res, next) => {
     try {
         let token;
         
@@ -42,7 +42,7 @@ exports.authenticate = async (req, res, next) => {
     }
 };
 
-exports.authorize = (roles = []) => {
+export const authorize = (roles = []) => {
     return (req, res, next) => {
         // Now req.user.role correctly reads 'ADMIN' directly from our new column
         if (!req.user || !roles.includes(req.user.role)) {

@@ -1,8 +1,8 @@
 // backend/services/ocmService.js
-const axios = require('axios');
-const db = require('../config/db');
+import axios from 'axios';
+import db from '../config/db.js';
 
-async function syncRealStations(lat = 18.5204, lng = 73.8567, distance = 25) {
+export async function syncRealStations(lat = 18.5204, lng = 73.8567, distance = 25) {
     try {
         const apiKey = process.env.OCM_API_KEY;
         const url = `https://api.openchargemap.io/v3/poi/?output=json&latitude=${lat}&longitude=${lng}&distance=${distance}&maxresults=10&key=${apiKey}`;
@@ -51,5 +51,3 @@ async function syncRealStations(lat = 18.5204, lng = 73.8567, distance = 25) {
         throw new Error('Failed to fetch external stations.');
     }
 }
-
-module.exports = { syncRealStations };
