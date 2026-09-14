@@ -1,8 +1,8 @@
 // backend/controllers/reviewController.js
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
 // 1. Add a Review
-exports.addReview = async (req, res) => {
+export const addReview = async (req, res) => {
     try {
         const userId = req.user.id;
         const { station_id, booking_id, rating, comment } = req.body;
@@ -62,7 +62,7 @@ exports.addReview = async (req, res) => {
 };
 
 // 2. Get Station Reviews (Public route)
-exports.getStationReviews = async (req, res) => {
+export const getStationReviews = async (req, res) => {
     try {
         const stationId = req.params.stationId;
 
@@ -77,6 +77,7 @@ exports.getStationReviews = async (req, res) => {
 
         return res.status(200).json({ success: true, count: reviews.length, data: reviews });
     } catch (error) {
+        console.error('Get Station Reviews Error:', error);
         return res.status(500).json({ success: false, message: 'Failed to fetch reviews.' });
     }
 };

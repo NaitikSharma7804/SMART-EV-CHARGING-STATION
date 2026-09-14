@@ -1,11 +1,13 @@
-const express = require('express');
+// backend/routes/notificationRoutes.js
+import express from 'express';
+import * as notificationController from '../controllers/notificationController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const notificationController = require('../controllers/notificationController');
-const { authenticate } = require('../middleware/authMiddleware');
 
 router.use(authenticate);
 
 router.get('/', notificationController.getMyNotifications);
 router.put('/:id/read', notificationController.markAsRead);
 
-module.exports = router;
+export default router;

@@ -1,11 +1,12 @@
 // backend/routes/stationRoutes.js
-const express = require('express');
-const router = express.Router();
-const stationController = require('../controllers/stationController');
+import express from 'express';
+import * as stationController from '../controllers/stationController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
 
-// Public Routes for finding stations
-router.get('/nearby', stationController.getNearbyStations);
+const router = express.Router();
+
 router.get('/', stationController.getAllStations);
+router.get('/nearby', stationController.getNearbyStations);
 router.get('/:id', stationController.getStationById);
 
-module.exports = router;
+export default router;

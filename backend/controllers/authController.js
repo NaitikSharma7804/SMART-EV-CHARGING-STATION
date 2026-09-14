@@ -1,11 +1,11 @@
 // backend/controllers/authController.js
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
-const pool = require('../config/db');
-const { generateToken } = require('../utils/jwt');
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import pool from '../config/db.js';
+import { generateToken } from '../utils/jwt.js';
 
 // 1. User Registration
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
     try {
         const { name, email, mobile, password, confirmPassword } = req.body;
 
@@ -60,7 +60,7 @@ exports.register = async (req, res) => {
 };
 
 // 2. Verify OTP
-exports.verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res) => {
     try {
         const { identifier, otp } = req.body;
 
@@ -106,7 +106,7 @@ exports.verifyOtp = async (req, res) => {
 };
 
 // 3. User Login
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -161,7 +161,7 @@ exports.login = async (req, res) => {
 };
 
 // 4. Google OAuth Fallback / Handler
-exports.googleAuth = async (req, res) => {
+export const googleAuth = async (req, res) => {
     try {
         const { googleToken, email, name, googleId } = req.body;
 
@@ -208,7 +208,7 @@ exports.googleAuth = async (req, res) => {
 };
 
 // 5. Forgot Password
-exports.forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
         const [users] = await pool.query('SELECT id FROM users WHERE email = ?', [email.toLowerCase().trim()]);
@@ -237,7 +237,7 @@ exports.forgotPassword = async (req, res) => {
 };
 
 // 6. Reset Password
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
     try {
         const { token, newPassword } = req.body;
 

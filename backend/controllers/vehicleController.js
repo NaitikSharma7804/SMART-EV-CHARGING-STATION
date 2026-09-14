@@ -1,8 +1,8 @@
 // backend/controllers/vehicleController.js
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
 // 1. Get all vehicles for the logged-in user
-exports.getVehicles = async (req, res) => {
+export const getVehicles = async (req, res) => {
     try {
         const userId = req.user.id;
         const [vehicles] = await pool.query(
@@ -18,7 +18,7 @@ exports.getVehicles = async (req, res) => {
 };
 
 // 2. Add a new vehicle
-exports.addVehicle = async (req, res) => {
+export const addVehicle = async (req, res) => {
     try {
         const userId = req.user.id;
         const { vehicle_number, brand, model, battery_capacity, connector_type, is_default } = req.body;
@@ -62,7 +62,7 @@ exports.addVehicle = async (req, res) => {
 };
 
 // 3. Update a vehicle
-exports.updateVehicle = async (req, res) => {
+export const updateVehicle = async (req, res) => {
     try {
         const vehicleId = req.params.id;
         const userId = req.user.id;
@@ -87,7 +87,7 @@ exports.updateVehicle = async (req, res) => {
 };
 
 // 4. Delete a vehicle
-exports.deleteVehicle = async (req, res) => {
+export const deleteVehicle = async (req, res) => {
     try {
         const vehicleId = req.params.id;
         const userId = req.user.id;
@@ -106,7 +106,7 @@ exports.deleteVehicle = async (req, res) => {
 };
 
 // 5. Set vehicle as default
-exports.setDefaultVehicle = async (req, res) => {
+export const setDefaultVehicle = async (req, res) => {
     try {
         const vehicleId = req.params.id;
         const userId = req.user.id;

@@ -1,8 +1,8 @@
 // backend/controllers/adminController.js
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
 // 1. Get Dashboard Analytics
-exports.getDashboardStats = async (req, res) => {
+export const getDashboardStats = async (req, res) => {
     try {
         const [userCount] = await pool.query("SELECT COUNT(*) as total FROM users WHERE role_id = (SELECT id FROM roles WHERE name = 'EV_USER')");
         const [stationCount] = await pool.query("SELECT COUNT(*) as total FROM charging_stations");
@@ -39,7 +39,7 @@ exports.getDashboardStats = async (req, res) => {
 };
 
 // 2. Manage Users (List & Update Status)
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const [users] = await pool.query(
             `SELECT id, name, email, mobile, is_verified, status, created_at 
@@ -53,7 +53,7 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-exports.updateUserStatus = async (req, res) => {
+export const updateUserStatus = async (req, res) => {
     try {
         const userId = req.params.id;
         const { status } = req.body; // 'active' or 'blocked'
@@ -70,7 +70,7 @@ exports.updateUserStatus = async (req, res) => {
 };
 
 // 3. View All Bookings
-exports.getAllBookings = async (req, res) => {
+export const getAllBookings = async (req, res) => {
     try {
         const [bookings] = await pool.query(
             `SELECT b.id, b.booking_date, b.start_time, b.end_time, b.amount, b.status, 
@@ -87,7 +87,7 @@ exports.getAllBookings = async (req, res) => {
 };
 
 // 4. Add a New Charging Station
-exports.addStation = async (req, res) => {
+export const addStation = async (req, res) => {
     try {
         const { name, address, latitude, longitude, contact, operating_hours } = req.body;
 

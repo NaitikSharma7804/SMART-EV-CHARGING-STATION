@@ -1,7 +1,9 @@
-const express = require('express');
+// backend/routes/authRoutes.js
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import * as authController from '../controllers/authController.js';
+
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
-const authController = require('../controllers/authController');
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -16,4 +18,4 @@ router.post('/google', authController.googleAuth);
 router.post('/forgot-password', authLimiter, authController.forgotPassword);
 router.post('/reset-password', authLimiter, authController.resetPassword);
 
-module.exports = router;
+export default router;

@@ -1,12 +1,11 @@
-const express = require('express');
+// backend/routes/reviewRoutes.js
+import express from 'express';
+import * as reviewController from '../controllers/reviewController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const reviewController = require('../controllers/reviewController');
-const { authenticate } = require('../middleware/authMiddleware');
 
-// Public route to view reviews
 router.get('/station/:stationId', reviewController.getStationReviews);
-
-// Protected route to add a review
 router.post('/', authenticate, reviewController.addReview);
 
-module.exports = router;
+export default router;

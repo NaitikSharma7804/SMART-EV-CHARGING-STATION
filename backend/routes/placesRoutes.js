@@ -1,9 +1,10 @@
 // backend/routes/placesRoutes.js
-const express = require('express');
+import express from 'express';
+import * as placesController from '../controllers/placesController.js';
+
 const router = express.Router();
-const placesController = require('../controllers/placesController');
 
-// Public route to discover amenities while charging
-router.get('/nearby', placesController.getNearbyPlacesForStation);
+router.get('/search', placesController.searchPlaces);
+router.get('/autocomplete', placesController.autocompletePlaces);
 
-module.exports = router;
+export default router;

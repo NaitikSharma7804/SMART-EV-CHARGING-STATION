@@ -1,5 +1,5 @@
 // backend/services/placesService.js
-const https = require('https');
+import https from 'https';
 
 // Helper to calculate distance between two lat/lng coordinates (in km)
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -83,8 +83,16 @@ const categoryTypeMap = {
     essentials: 'atm|hospital|pharmacy|parking'
 };
 
+export const searchPlaces = async (query, lat, lng) => {
+    return [];
+};
+
+export const autocompletePlaces = async (input, lat, lng) => {
+    return [];
+};
+
 // Fetch from Google Places API or fallback
-exports.fetchNearbyPlaces = async (lat, lng, radius = 5000, category = 'all') => {
+export const fetchNearbyPlaces = async (lat, lng, radius = 5000, category = 'all') => {
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
 
     // If no key provided, return mock demo data immediately

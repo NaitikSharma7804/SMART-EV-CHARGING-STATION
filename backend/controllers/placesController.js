@@ -1,8 +1,40 @@
 // backend/controllers/placesController.js
-const placesService = require('../services/placesService');
-const pool = require('../config/db');
+import * as placesService from '../services/placesService.js';
+import pool from '../config/db.js';
 
-exports.getNearbyPlacesForStation = async (req, res) => {
+export const searchPlaces = async (req, res) => {
+    try {
+        const { query, lat, lng } = req.query;
+
+        if (!query) {
+            return res.status(400).json({ success: false, message: 'Search query is required.' });
+        }
+
+        const results = await placesService.searchPlaces(query, lat, lng);
+        return res.status(200).json({ success: true, data: results });
+    } catch (error) {
+        console.error('Search Places Error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to search places.' });
+    }
+};
+
+export const autocompletePlaces = async (req, res) => {
+    try {
+        const { input, lat, lng } = req.query;
+
+        if (!input) {
+            return res.status(400).json({ success: false, message: 'Input text is required for autocomplete.' });
+        }
+
+        const results = await placesService.autocompletePlaces(input, lat, lng);
+        return res.status(200).json({ success: true, data: results });
+    } catch (error) {
+        console.error('Autocomplete Places Error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to fetch place suggestions.' });
+    }
+};
+
+export const getNearbyPlacesForStation = async (req, res) => {
     try {
         const { station_id, lat, lng, radius = 5000, category = 'all' } = req.query;
 

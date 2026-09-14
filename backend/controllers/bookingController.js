@@ -1,7 +1,7 @@
 // backend/controllers/bookingController.js
-const pool = require('../config/db');
-const Razorpay = require('razorpay');
-const crypto = require('crypto');
+import pool from '../config/db.js';
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
@@ -10,7 +10,7 @@ const razorpay = new Razorpay({
 });
 
 // 1. Create a Booking (and Razorpay Order)
-exports.createBooking = async (req, res) => {
+export const createBooking = async (req, res) => {
     const { vehicle_id, station_id, charger_id, booking_date, start_time, end_time, amount } = req.body;
     const userId = req.user.id;
 
@@ -103,9 +103,8 @@ exports.createBooking = async (req, res) => {
 };
 
 // 2. Verify Razorpay Payment (From Frontend)
-exports.verifyPayment = async (req, res) => {
+export const verifyPayment = async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    const userId = req.user.id;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
         return res.status(400).json({ success: false, message: 'Payment details missing.' });
@@ -141,9 +140,6 @@ exports.verifyPayment = async (req, res) => {
 
             await connection.query("UPDATE bookings SET status = 'Confirmed' WHERE id = ?", [bookingId]);
 
-            // [Optional] Update Charger status to RESERVED if booking is happening right now
-            // We will handle dynamic live statuses via Socket.IO later.
-
             await connection.commit();
 
             return res.status(200).json({ 
@@ -157,7 +153,6 @@ exports.verifyPayment = async (req, res) => {
         } finally {
             connection.release();
         }
-        
 
     } catch (error) {
         console.error('Payment Verification Error:', error);
@@ -165,9 +160,8 @@ exports.verifyPayment = async (req, res) => {
     }
 };
 
-
 // 3. Get User Bookings
-exports.getMyBookings = async (req, res) => {
+export const getMyBookings = async (req, res) => {
     try {
         const userId = req.user.id;
         const [bookings] = await pool.query(

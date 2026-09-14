@@ -1,14 +1,15 @@
 // backend/routes/bookingRoutes.js
-const express = require('express');
+import express from 'express';
+import * as bookingController from '../controllers/bookingController.js';
+import { authenticate } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
-const bookingController = require('../controllers/bookingController');
-const { authenticate } = require('../middleware/authMiddleware');
 
 // Protect all booking routes
 router.use(authenticate);
 
 router.post('/', bookingController.createBooking);
 router.post('/verify-payment', bookingController.verifyPayment);
-router.get('/my-bookings', bookingController.getMyBookings);
+router.get('/', bookingController.getMyBookings);
 
-module.exports = router;
+export default router;

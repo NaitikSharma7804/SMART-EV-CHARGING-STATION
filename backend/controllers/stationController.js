@@ -1,8 +1,8 @@
 // backend/controllers/stationController.js
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
 // 1. Get All Stations (Optional filtering by status)
-exports.getAllStations = async (req, res) => {
+export const getAllStations = async (req, res) => {
     try {
         const [stations] = await pool.query(
             "SELECT * FROM charging_stations WHERE status = 'active' ORDER BY rating DESC"
@@ -15,7 +15,7 @@ exports.getAllStations = async (req, res) => {
 };
 
 // 2. Get Station Details (Includes Chargers and Facilities)
-exports.getStationById = async (req, res) => {
+export const getStationById = async (req, res) => {
     try {
         const stationId = req.params.id;
 
@@ -43,7 +43,7 @@ exports.getStationById = async (req, res) => {
 };
 
 // 3. Find Nearby Stations using the Haversine Formula
-exports.getNearbyStations = async (req, res) => {
+export const getNearbyStations = async (req, res) => {
     try {
         const { lat, lng, radius = 10 } = req.query; // Radius in Kilometers
 
