@@ -124,9 +124,9 @@
                             <div style="font-weight: 500; font-size: 0.9rem;">Add Vehicle</div>
                         </a>
                         <a href="nearby-explore.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
-    <i data-lucide="coffee" style="margin-bottom: 0.5rem; color: #10b981;"></i>
-    <div style="font-weight: 500; font-size: 0.9rem;">Nearby Places</div>
-</a>
+                            <i data-lucide="coffee" style="margin-bottom: 0.5rem; color: #10b981;"></i>
+                            <div style="font-weight: 500; font-size: 0.9rem;">Nearby Places</div>
+                        </a>
                     </div>
                 </div>
 
@@ -179,6 +179,31 @@
 
         </div>
     </main>
+
+    <!-- Floating AI Chatbot Widget -->
+    <div id="ai-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-family: inherit;">
+        <!-- Chat Toggle Button -->
+        <button id="chat-toggle-btn" style="background: #10b981; color: white; border: none; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 24px;">
+            💬
+        </button>
+
+        <!-- Chat Box Container (Initially Hidden) -->
+        <div id="chat-box" style="display: none; position: absolute; bottom: 70px; right: 0; width: 350px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb;">
+            <div style="background: #10b981; color: white; padding: 1rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+                <span>EV Support Assistant</span>
+                <button id="chat-close-btn" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer;">&times;</button>
+            </div>
+            <div id="chat-messages" style="flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; background: #f9fafb;">
+                <div style="background: #e5e7eb; color: #1f2937; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-start; max-width: 80%; font-size: 14px;">
+                    Hi! How can I help you with your EV charging today?
+                </div>
+            </div>
+            <div style="display: flex; border-top: 1px solid #e5e7eb; padding: 0.75rem; background: white;">
+                <input type="text" id="user-input" placeholder="Type a message..." style="flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; outline: none; font-size: 14px;" />
+                <button id="send-btn" style="margin-left: 0.5rem; background: #10b981; color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 4px; cursor: pointer;">Send</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // 1. Initialize Icons
@@ -240,13 +265,12 @@
                     </div>
                 `;
             } else {
-                // Show only the 3 most recent bookings
                 const recent = bookings.slice(0, 3);
                 
                 container.innerHTML = recent.map(b => {
-                    let statusColor = '#3b82f6'; // blue for Upcoming/Pending
-                    if (b.status && b.status.toLowerCase() === 'completed') statusColor = '#10b981'; // green
-                    if (b.status && b.status.toLowerCase() === 'cancelled') statusColor = '#ef4444'; // red
+                    let statusColor = '#3b82f6';
+                    if (b.status && b.status.toLowerCase() === 'completed') statusColor = '#10b981';
+                    if (b.status && b.status.toLowerCase() === 'cancelled') statusColor = '#ef4444';
 
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8fafc; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; margin-bottom: 0.75rem;">
@@ -264,7 +288,6 @@
                     `;
                 }).join('');
                 
-                // Add link if there are more than 3 bookings
                 if (bookings.length > 3) {
                     container.innerHTML += `
                         <div style="text-align: center; margin-top: 1rem;">
@@ -291,7 +314,62 @@
             window.location.href = 'login.html';
         });
 
-        // 7. Initialize on Load
+        // 7. Floating Chatbot Logic
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatBox = document.getElementById('chat-box');
+        const chatCloseBtn = document.getElementById('chat-close-btn');
+        const sendBtn = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        chatToggleBtn.addEventListener('click', () => {
+            chatBox.style.display = chatBox.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        chatCloseBtn.addEventListener('click', () => {
+            chatBox.style.display = 'none';
+        });
+
+        async function handleSendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.style.cssText = "background: #10b981; color: white; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-end; max-width: 80%; font-size: 14px;";
+            userMsg.textContent = message;
+            chatMessages.appendChild(userMsg);
+            
+            userInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+
+                const aiMsg = document.createElement('div');
+                aiMsg.style.cssText = "background: #e5e7eb; color: #1f2937; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-start; max-width: 80%; font-size: 14px;";
+                aiMsg.textContent = data.reply || data.error || "Sorry, something went wrong.";
+                chatMessages.appendChild(aiMsg);
+            } catch (err) {
+                const errorMsg = document.createElement('div');
+                errorMsg.style.cssText = "background: #fee2e2; color: #b91c1c; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-start; max-width: 80%; font-size: 14px;";
+                errorMsg.textContent = "Failed to connect to backend chatbot server.";
+                chatMessages.appendChild(errorMsg);
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', handleSendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
+
+        // 8. Initialize on Load
         document.addEventListener('DOMContentLoaded', () => {
             renderVehicles();
             renderRecentBookings();

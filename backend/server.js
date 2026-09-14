@@ -41,6 +41,7 @@ const placesRoutes = require('./routes/placesRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+import chatRoutes from './routes/chatRoutes.js';
 
 // 4. Security & Utility Middleware
 app.use(helmet());
@@ -63,6 +64,7 @@ app.use('/api/places', placesRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/chat', chatRoutes);
 
 // 7. Start Server
 const PORT = process.env.PORT || 5000;

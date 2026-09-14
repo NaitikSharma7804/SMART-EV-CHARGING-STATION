@@ -93,6 +93,24 @@
         </div>
     </section>
 
+    <!-- AI Chatbot Section -->
+    <section class="section" style="background-color: #f9fafb; padding: 4rem 5%;">
+        <h2 style="text-align: center; margin-bottom: 0.5rem;">Need Help? Ask AI Support</h2>
+        <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">Get instant answers regarding charging issues, station locations, or bookings.</p>
+        
+        <div id="chat-widget" class="chat-container" style="max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 400px; overflow: hidden;">
+            <div id="chat-messages" class="chat-messages" style="flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="background: #f3f4f6; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-start; max-width: 80%;">
+                    Hello! How can I help you with EV Charge Hub today?
+                </div>
+            </div>
+            <div class="chat-input-area" style="display: flex; border-top: 1px solid #e5e7eb; padding: 0.75rem; background: #fff;">
+                <input type="text" id="user-input" placeholder="Ask about charging issues..." style="flex: 1; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 4px; outline: none;" />
+                <button id="send-btn" style="margin-left: 0.5rem; background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Send</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer style="background-color: var(--text-main); color: white; padding: 3rem 5%; text-align: center;">
         <div style="margin-bottom: 2rem;">
@@ -102,9 +120,55 @@
         <p style="color: var(--text-muted); font-size: 0.875rem;">&copy; 2026 EV Charge Hub. All rights reserved.</p>
     </footer>
 
-    <!-- Initialize Icons -->
+    <!-- Initialize Icons and Chat Functionality -->
     <script>
         lucide.createIcons();
+
+        const sendBtn = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        async function handleSendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Append User Message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.style.cssText = "background: var(--primary); color: white; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-end; max-width: 80%;";
+            userMsgDiv.textContent = message;
+            chatMessages.appendChild(userMsgDiv);
+            
+            userInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await response.json();
+
+                // Append AI Response
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.style.cssText = "background: #f3f4f6; color: #1f2937; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-start; max-width: 80%;";
+                aiMsgDiv.textContent = data.reply || data.error || "Sorry, I couldn't process that.";
+                chatMessages.appendChild(aiMsgDiv);
+            } catch (error) {
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = "background: #fee2e2; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-start; max-width: 80%;";
+                errorDiv.textContent = "Error connecting to AI chat service.";
+                chatMessages.appendChild(errorDiv);
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', handleSendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
     </script>
 </body>
 </html>
