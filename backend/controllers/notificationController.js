@@ -19,7 +19,7 @@ export const getMyNotifications = async (req, res) => {
     }
 };
 
-// 2. Mark notification as read
+// 2. Mark notification as reading
 export const markAsRead = async (req, res) => {
     try {
         const userId = req.user.id;
