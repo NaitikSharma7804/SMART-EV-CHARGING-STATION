@@ -209,8 +209,10 @@
         // 1. Initialize Icons
         lucide.createIcons();
 
-        // 2. Load User Profile Name
+        // 2. Load User Profile Name & Token
+        const token = localStorage.getItem('ev_token');
         const storedUser = localStorage.getItem('ev_user');
+        
         if (storedUser) {
             try {
                 const userObj = JSON.parse(storedUser);
@@ -220,7 +222,7 @@
             } catch (e) {}
         }
 
-        // 3. Load & Render Vehicles Function
+        // 3. Load & Render Vehicles Function (Local)
         function renderVehicles() {
             const container = document.getElementById('vehiclesContainer');
             const vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
@@ -252,37 +254,58 @@
             lucide.createIcons();
         }
 
-        // 4. Load & Render Recent Bookings Function
-        function renderRecentBookings() {
+        // 4. Load & Render Recent Bookings (Fetches from Backend API with Dynamic Date Check)
+        async function renderRecentBookings() {
             const container = document.getElementById('recentBookingsContainer');
-            const bookings = JSON.parse(localStorage.getItem('ev_bookings') || '[]');
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/bookings/my-bookings', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const result = await response.json();
 
-            if (bookings.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 2rem 1rem; color: #64748b;">
-                        <p style="margin-bottom: 1rem;">You have no recent charging sessions.</p>
-                        <a href="search.html" class="btn btn-primary btn-sm">Find a Charger</a>
-                    </div>
-                `;
-            } else {
+                if (!result.success || !result.data || result.data.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem 1rem; color: #64748b;">
+                            <p style="margin-bottom: 1rem;">You have no recent charging sessions.</p>
+                            <a href="search.html" class="btn btn-primary btn-sm">Find a Charger</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const bookings = result.data;
                 const recent = bookings.slice(0, 3);
-                
+                const now = new Date();
+
                 container.innerHTML = recent.map(b => {
+                    // Dynamic date/time comparison fallback
+                    const bookingDateStr = b.booking_date ? b.booking_date.split('T')[0] : '2026-09-16';
+                    const bookingTimeStr = b.start_time || '00:00:00';
+                    const bookingDateTime = new Date(`${bookingDateStr}T${bookingTimeStr}`);
+
+                    let displayStatus = b.status || 'Upcoming';
+                    if (['Pending', 'Confirmed', 'Upcoming'].includes(displayStatus) && bookingDateTime < now) {
+                        displayStatus = 'Completed';
+                    }
+
                     let statusColor = '#3b82f6';
-                    if (b.status && b.status.toLowerCase() === 'completed') statusColor = '#10b981';
-                    if (b.status && b.status.toLowerCase() === 'cancelled') statusColor = '#ef4444';
+                    if (displayStatus.toLowerCase() === 'completed') statusColor = '#10b981';
+                    if (displayStatus.toLowerCase() === 'cancelled') statusColor = '#ef4444';
 
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8fafc; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; margin-bottom: 0.75rem;">
                             <div>
-                                <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b; margin-bottom: 0.25rem;">${b.stationName || 'EV Station'}</div>
+                                <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b; margin-bottom: 0.25rem;">${b.station_name || 'EV Station'}</div>
                                 <div style="font-size: 0.8rem; color: #64748b; display: flex; align-items: center; gap: 0.35rem;">
-                                    <i data-lucide="calendar" style="width: 12px; height: 12px;"></i> ${b.date} • ${b.startTime}
+                                    <i data-lucide="calendar" style="width: 12px; height: 12px;"></i> ${bookingDateStr} • ${bookingTimeStr}
                                 </div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-weight: 700; color: #1e293b; font-size: 1.05rem;">${b.amount}</div>
-                                <div style="font-size: 0.75rem; font-weight: 600; color: ${statusColor}; margin-top: 2px;">${b.status}</div>
+                                <div style="font-weight: 700; color: #1e293b; font-size: 1.05rem;">₹${b.amount || '0.00'}</div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: ${statusColor}; margin-top: 2px;">${displayStatus}</div>
                             </div>
                         </div>
                     `;
@@ -295,7 +318,15 @@
                         </div>
                     `;
                 }
+            } catch (err) {
+                console.error('Failed to fetch backend bookings:', err);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 1.5rem; color: #ef4444; font-size: 0.85rem;">
+                        Failed to load bookings from server.
+                    </div>
+                `;
             }
+
             lucide.createIcons();
         }
 

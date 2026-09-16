@@ -160,7 +160,7 @@ export const verifyPayment = async (req, res) => {
     }
 };
 
-// 3. Get User Bookings
+// 3. Get User Bookings (with Dynamic Status Evaluation)
 export const getMyBookings = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -175,7 +175,25 @@ export const getMyBookings = async (req, res) => {
             [userId]
         );
 
-        return res.status(200).json({ success: true, count: bookings.length, data: bookings });
+        const now = new Date();
+
+        // Dynamically evaluate and map past bookings as 'Completed'
+        const updatedBookings = bookings.map(booking => {
+            const bookingDateTime = new Date(`${booking.booking_date}T${booking.start_time || '00:00:00'}`);
+            
+            let currentStatus = booking.status;
+            // If it's Confirmed, Pending, or Upcoming, but the scheduled time has elapsed, display it as Completed
+            if (['Pending', 'Confirmed', 'Upcoming'].includes(currentStatus) && bookingDateTime < now) {
+                currentStatus = 'Completed';
+            }
+
+            return {
+                ...booking,
+                status: currentStatus
+            };
+        });
+
+        return res.status(200).json({ success: true, count: updatedBookings.length, data: updatedBookings });
     } catch (error) {
         console.error('Get Bookings Error:', error);
         return res.status(500).json({ success: false, message: 'Failed to fetch bookings.' });

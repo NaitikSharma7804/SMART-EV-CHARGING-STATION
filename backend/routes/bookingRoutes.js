@@ -10,6 +10,8 @@ router.use(authenticate);
 
 router.post('/', bookingController.createBooking);
 router.post('/verify-payment', bookingController.verifyPayment);
-router.get('/', bookingController.getMyBookings);
+
+// Change this from '/' to '/my-bookings'
+router.get('/my-bookings', bookingController.getMyBookings);
 
 export default router;
