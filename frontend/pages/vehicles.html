@@ -1,178 +1,3472 @@
-<!-- frontend/pages/vehicles.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>My Vehicles | EV Charge Hub</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+
     <style>
-        .container { max-width: 800px; margin: 3rem auto; padding: 0 1rem; }
-        .vehicle-card { background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .back-link { text-decoration: none; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                #f5f8f6;
+
+            color:
+                #101814;
+
+            min-height:
+                100vh;
+
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+
+            height:
+                72px;
+
+            background:
+                #ffffff;
+
+            border-bottom:
+                1px solid #e5ebe7;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            padding:
+                0 6%;
+
+            position:
+                sticky;
+
+            top:
+                0;
+
+            z-index:
+                1000;
+
+        }
+
+
+        .brand {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                11px;
+
+            font-size:
+                21px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .brand-icon {
+
+            width:
+                38px;
+
+            height:
+                38px;
+
+            border-radius:
+                11px;
+
+            background:
+                #dcfce7;
+
+            color:
+                #15803d;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .nav-links {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+        }
+
+
+        .nav-links a {
+
+            padding:
+                10px 15px;
+
+            border-radius:
+                9px;
+
+            color:
+                #64706a;
+
+            font-size:
+                14px;
+
+            font-weight:
+                600;
+
+            transition:
+                .2s;
+
+        }
+
+
+        .nav-links a:hover,
+        .nav-links a.active {
+
+            color:
+                #15803d;
+
+            background:
+                #ecfdf3;
+
+        }
+
+
+        .logout-btn {
+
+            border:
+                0;
+
+            background:
+                transparent;
+
+            cursor:
+                pointer;
+
+        }
+
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .page {
+
+            max-width:
+                1180px;
+
+            margin:
+                0 auto;
+
+            padding:
+                40px 24px 70px;
+
+        }
+
+
+        .page-header {
+
+            margin-bottom:
+                25px;
+
+        }
+
+
+        .back-link {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                7px;
+
+            color:
+                #15803d;
+
+            font-size:
+                14px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                15px;
+
+        }
+
+
+        .page-header h1 {
+
+            font-size:
+                34px;
+
+            letter-spacing:
+                -1px;
+
+            margin-bottom:
+                7px;
+
+        }
+
+
+        .page-header p {
+
+            color:
+                #6b756f;
+
+            font-size:
+                15px;
+
+        }
+
+
+        /* =====================================================
+           ALERT
+        ===================================================== */
+
+        .alert {
+
+            display:
+                none;
+
+            padding:
+                13px 15px;
+
+            border-radius:
+                11px;
+
+            margin-bottom:
+                20px;
+
+            font-size:
+                13px;
+
+            gap:
+                9px;
+
+            align-items:
+                flex-start;
+
+        }
+
+
+        .alert.show {
+            display:
+                flex;
+        }
+
+
+        .alert.success {
+
+            background:
+                #ecfdf3;
+
+            border:
+                1px solid #bbf7d0;
+
+            color:
+                #166534;
+
+        }
+
+
+        .alert.error {
+
+            background:
+                #fef2f2;
+
+            border:
+                1px solid #fecaca;
+
+            color:
+                #b91c1c;
+
+        }
+
+
+        /* =====================================================
+           MAIN GRID
+        ===================================================== */
+
+        .vehicles-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                .9fr 1.1fr;
+
+            gap:
+                24px;
+
+            align-items:
+                start;
+
+        }
+
+
+        .card {
+
+            background:
+                #ffffff;
+
+            border:
+                1px solid #e6ebe8;
+
+            border-radius:
+                20px;
+
+            box-shadow:
+                0 8px 28px rgba(16,24,20,.045);
+
+        }
+
+
+        /* =====================================================
+           LEFT INFORMATION CARD
+        ===================================================== */
+
+        .info-card {
+
+            padding:
+                30px;
+
+        }
+
+
+        .big-icon {
+
+            width:
+                52px;
+
+            height:
+                52px;
+
+            border-radius:
+                15px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            margin-bottom:
+                18px;
+
+        }
+
+
+        .info-card h2 {
+
+            font-size:
+                24px;
+
+            margin-bottom:
+                8px;
+
+        }
+
+
+        .info-card > p {
+
+            color:
+                #68736d;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.7;
+
+            margin-bottom:
+                25px;
+
+        }
+
+
+        .feature {
+
+            display:
+                flex;
+
+            gap:
+                12px;
+
+            margin-bottom:
+                20px;
+
+        }
+
+
+        .feature-icon {
+
+            width:
+                32px;
+
+            height:
+                32px;
+
+            flex-shrink:
+                0;
+
+            border-radius:
+                10px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .feature strong {
+
+            display:
+                block;
+
+            font-size:
+                13px;
+
+            margin-bottom:
+                4px;
+
+        }
+
+
+        .feature span {
+
+            color:
+                #758079;
+
+            font-size:
+                12px;
+
+            line-height:
+                1.6;
+
+        }
+
+
+        /* =====================================================
+           FORM CARD
+        ===================================================== */
+
+        .form-card {
+
+            padding:
+                28px;
+
+        }
+
+
+        .form-header {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                15px;
+
+            margin-bottom:
+                24px;
+
+        }
+
+
+        .form-header h2 {
+
+            font-size:
+                21px;
+
+            margin-bottom:
+                4px;
+
+        }
+
+
+        .form-header p {
+
+            color:
+                #758079;
+
+            font-size:
+                13px;
+
+        }
+
+
+        .smart-badge {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            padding:
+                7px 10px;
+
+            border-radius:
+                999px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            white-space:
+                nowrap;
+
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-group {
+
+            margin-bottom:
+                18px;
+
+        }
+
+
+        .form-group label {
+
+            display:
+                block;
+
+            margin-bottom:
+                8px;
+
+            font-size:
+                13px;
+
+            font-weight:
+                700;
+
+        }
+
+
+        .input,
+        .select {
+
+            width:
+                100%;
+
+            padding:
+                13px 14px;
+
+            border:
+                1px solid #dfe6e2;
+
+            border-radius:
+                11px;
+
+            background:
+                #ffffff;
+
+            outline:
+                none;
+
+            color:
+                #17221c;
+
+            transition:
+                .2s;
+
+        }
+
+
+        .input:focus,
+        .select:focus {
+
+            border-color:
+                #22c55e;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(34,197,94,.10);
+
+        }
+
+
+        .input:disabled,
+        .select:disabled {
+
+            background:
+                #f3f6f4;
+
+            cursor:
+                not-allowed;
+
+        }
+
+
+        .input-wrap {
+
+            position:
+                relative;
+
+        }
+
+
+        .input-icon {
+
+            position:
+                absolute;
+
+            left:
+                13px;
+
+            top:
+                50%;
+
+            transform:
+                translateY(-50%);
+
+            color:
+                #78847d;
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .input-wrap .input {
+
+            padding-left:
+                40px;
+
+        }
+
+
+        .hint {
+
+            margin-top:
+                7px;
+
+            color:
+                #7b857f;
+
+            font-size:
+                11px;
+
+        }
+
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
+        .save-btn {
+
+            width:
+                100%;
+
+            border:
+                0;
+
+            border-radius:
+                12px;
+
+            padding:
+                14px;
+
+            background:
+                #15803d;
+
+            color:
+                #ffffff;
+
+            font-size:
+                14px;
+
+            font-weight:
+                800;
+
+            cursor:
+                pointer;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                8px;
+
+            transition:
+                .2s;
+
+            margin-top:
+                5px;
+
+        }
+
+
+        .save-btn:hover {
+
+            background:
+                #166534;
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .save-btn:disabled {
+
+            background:
+                #9aa9a1;
+
+            cursor:
+                not-allowed;
+
+            transform:
+                none;
+
+        }
+
+
+        /* =====================================================
+           SAVED VEHICLES
+        ===================================================== */
+
+        .saved-card {
+
+            margin-top:
+                24px;
+
+            padding:
+                24px;
+
+        }
+
+
+        .saved-header {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            padding-bottom:
+                15px;
+
+            border-bottom:
+                1px solid #edf1ef;
+
+            margin-bottom:
+                15px;
+
+        }
+
+
+        .saved-header h2 {
+
+            font-size:
+                18px;
+
+        }
+
+
+        .vehicle-count {
+
+            min-width:
+                27px;
+
+            height:
+                27px;
+
+            padding:
+                0 8px;
+
+            border-radius:
+                999px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            font-size:
+                12px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .vehicle-list {
+
+            display:
+                grid;
+
+            gap:
+                10px;
+
+        }
+
+
+        .vehicle-item {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                15px;
+
+            padding:
+                15px;
+
+            border:
+                1px solid #e5ebe7;
+
+            border-radius:
+                13px;
+
+            background:
+                #fbfdfc;
+
+        }
+
+
+        .vehicle-main {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                12px;
+
+            min-width:
+                0;
+
+        }
+
+
+        .vehicle-icon {
+
+            width:
+                42px;
+
+            height:
+                42px;
+
+            flex-shrink:
+                0;
+
+            border-radius:
+                12px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .vehicle-name {
+
+            font-size:
+                14px;
+
+            font-weight:
+                800;
+
+            margin-bottom:
+                3px;
+
+        }
+
+
+        .vehicle-number {
+
+            font-size:
+                11px;
+
+            color:
+                #728078;
+
+            margin-bottom:
+                6px;
+
+        }
+
+
+        .vehicle-tag {
+
+            display:
+                inline-flex;
+
+            padding:
+                4px 7px;
+
+            border-radius:
+                6px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            font-size:
+                9px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .delete-btn {
+
+            width:
+                34px;
+
+            height:
+                34px;
+
+            flex-shrink:
+                0;
+
+            border:
+                0;
+
+            border-radius:
+                9px;
+
+            background:
+                #fef2f2;
+
+            color:
+                #dc2626;
+
+            cursor:
+                pointer;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .delete-btn:hover {
+
+            background:
+                #fee2e2;
+
+        }
+
+
+        /* =====================================================
+           EMPTY
+        ===================================================== */
+
+        .empty {
+
+            text-align:
+                center;
+
+            padding:
+                30px 15px;
+
+            color:
+                #78827c;
+
+        }
+
+
+        .empty-icon {
+
+            width:
+                48px;
+
+            height:
+                48px;
+
+            margin:
+                0 auto 10px;
+
+            border-radius:
+                14px;
+
+            background:
+                #ecfdf3;
+
+            color:
+                #15803d;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .empty strong {
+
+            display:
+                block;
+
+            color:
+                #202a24;
+
+            font-size:
+                14px;
+
+            margin-bottom:
+                5px;
+
+        }
+
+
+        .empty span {
+
+            font-size:
+                12px;
+
+        }
+
+
+        /* =====================================================
+           SPINNER
+        ===================================================== */
+
+        .spinner {
+
+            width:
+                17px;
+
+            height:
+                17px;
+
+            border:
+                2px solid #d1fae5;
+
+            border-top-color:
+                #ffffff;
+
+            border-radius:
+                50%;
+
+            animation:
+                spin .7s linear infinite;
+
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform:
+                    rotate(360deg);
+            }
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 850px) {
+
+            .vehicles-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+            .nav-links a {
+
+                display:
+                    none;
+
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .page {
+
+                padding:
+                    28px 15px 50px;
+
+            }
+
+            .page-header h1 {
+
+                font-size:
+                    27px;
+
+            }
+
+            .info-card,
+            .form-card,
+            .saved-card {
+
+                padding:
+                    20px;
+
+            }
+
+            .form-header {
+
+                align-items:
+                    flex-start;
+
+            }
+
+        }
+
     </style>
+
 </head>
-<body style="background-color: var(--background);">
 
-    <div class="container">
-        <div class="header-flex">
-            <h2><i data-lucide="car" style="vertical-align: middle; margin-right: 8px;"></i> My EV Garage</h2>
-            <a href="dashboard.html" class="back-link">
-                <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Back to Dashboard
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
+
+    <nav class="navbar">
+
+        <a
+            href="dashboard.html"
+            class="brand"
+        >
+
+            <span class="brand-icon">
+
+                <i
+                    data-lucide="zap"
+                ></i>
+
+            </span>
+
+            EV Charge Hub
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="dashboard.html">
+                Dashboard
             </a>
+
+            <a href="search.html">
+                Find Chargers
+            </a>
+
+            <a href="bookings.html">
+                My Bookings
+            </a>
+
+            <a
+                href="vehicles.html"
+                class="active"
+            >
+                Vehicles
+            </a>
+
+            <a
+                href="#"
+                class="logout-btn"
+                onclick="logout(); return false;"
+            >
+                Logout
+            </a>
+
         </div>
 
-        <div class="vehicle-card">
-            <h3 style="margin-bottom: 1.5rem;">Add a New Vehicle</h3>
-            <form id="addVehicleForm">
-                
-                <!-- NEW: Dynamic Brand Dropdown -->
-                <div class="form-group">
-                    <label for="make">Vehicle Make (Company)</label>
-                    <select id="make" class="form-control" required>
-                        <option value="" disabled selected>Select EV Brand...</option>
-                    </select>
-                </div>
-                
-                <!-- NEW: Dynamic Model Dropdown -->
-                <div class="form-group">
-                    <label for="model">Vehicle Model</label>
-                    <select id="model" class="form-control" required disabled>
-                        <option value="" disabled selected>Select Brand First...</option>
-                    </select>
-                </div>
+    </nav>
 
-                <div class="form-group">
-                    <label for="regNumber">Registration Number</label>
-                    <input type="text" id="regNumber" class="form-control" required placeholder="MH 12 AB 1234">
-                </div>
-                
-                <!-- Auto-populated Connector -->
-                <div class="form-group">
-                    <label for="connector">Default Connector Type</label>
-                    <select id="connector" class="form-control" required>
-                        <option value="" disabled selected>Auto-selected based on model...</option>
-                        <option value="Type 2 (AC)">Type 2 (AC)</option>
-                        <option value="CCS2 (DC Fast)">CCS2 (DC Fast)</option>
-                        <option value="CHAdeMO">CHAdeMO</option>
-                        <option value="Proprietary / Custom">Proprietary / Custom</option>
-                    </select>
-                </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Save Vehicle</button>
-            </form>
+
+    <!-- =====================================================
+         PAGE
+    ===================================================== -->
+
+    <main class="page">
+
+
+        <div class="page-header">
+
+            <a
+                href="dashboard.html"
+                class="back-link"
+            >
+
+                <i
+                    data-lucide="arrow-left"
+                    size="16"
+                ></i>
+
+                Back to Dashboard
+
+            </a>
+
+
+            <h1>
+                My Vehicles
+            </h1>
+
+
+            <p>
+                Add and manage your electric vehicles for faster charging bookings.
+            </p>
+
         </div>
-    </div>
+
+
+
+        <!-- =====================================================
+             ALERTS
+        ===================================================== -->
+
+        <div
+            id="successAlert"
+            class="alert success"
+        >
+
+            <i
+                data-lucide="circle-check"
+                size="17"
+            ></i>
+
+            <span id="successMessage"></span>
+
+        </div>
+
+
+        <div
+            id="errorAlert"
+            class="alert error"
+        >
+
+            <i
+                data-lucide="circle-alert"
+                size="17"
+            ></i>
+
+            <span id="errorMessage"></span>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             MAIN GRID
+        ===================================================== -->
+
+        <div class="vehicles-grid">
+
+
+            <!-- =================================================
+                 LEFT INFORMATION
+            ================================================= -->
+
+            <section class="card info-card">
+
+                <div class="big-icon">
+
+                    <i
+                        data-lucide="car"
+                        size="25"
+                    ></i>
+
+                </div>
+
+
+                <h2>
+                    One garage. Every trip.
+                </h2>
+
+
+                <p>
+                    Keep your electric vehicle details organized so you can quickly identify the right charging setup when booking a station.
+                </p>
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+
+                        <i
+                            data-lucide="check"
+                            size="16"
+                        ></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Smart model selection
+                        </strong>
+
+                        <span>
+                            Choose a brand and instantly see supported EV models.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+
+                        <i
+                            data-lucide="plug-zap"
+                            size="16"
+                        ></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Automatic connector
+                        </strong>
+
+                        <span>
+                            Connector type is automatically selected from the EV model.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+
+                        <i
+                            data-lucide="shield-check"
+                            size="16"
+                        ></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Quick access
+                        </strong>
+
+                        <span>
+                            Your saved vehicle is available from your EV dashboard and booking flow.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="dashboard.html"
+                    class="back-link"
+                    style="margin-top:30px;margin-bottom:0;"
+                >
+
+                    <i
+                        data-lucide="arrow-left"
+                        size="15"
+                    ></i>
+
+                    Back to Dashboard
+
+                </a>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ADD VEHICLE
+            ================================================= -->
+
+            <section class="card form-card">
+
+
+                <div class="form-header">
+
+                    <div>
+
+                        <h2>
+                            Add a New Vehicle
+                        </h2>
+
+                        <p>
+                            Enter your EV details below.
+                        </p>
+
+                    </div>
+
+
+                    <div class="smart-badge">
+
+                        <i
+                            data-lucide="sparkles"
+                            size="13"
+                        ></i>
+
+                        Smart Setup
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- VEHICLE MAKE -->
+
+                <div class="form-group">
+
+                    <label for="vehicleMake">
+
+                        Vehicle Make (Company)
+
+                    </label>
+
+
+                    <select
+                        id="vehicleMake"
+                        class="select"
+                    >
+
+                        <option value="">
+                            Select company
+                        </option>
+
+                        <option value="Tata Motors">
+                            Tata Motors
+                        </option>
+
+                        <option value="Mahindra">
+                            Mahindra
+                        </option>
+
+                        <option value="MG">
+                            MG
+                        </option>
+
+                        <option value="Hyundai">
+                            Hyundai
+                        </option>
+
+                        <option value="Kia">
+                            Kia
+                        </option>
+
+                        <option value="BYD">
+                            BYD
+                        </option>
+
+                        <option value="Ather Energy">
+                            Ather Energy
+                        </option>
+
+                        <option value="Ola Electric">
+                            Ola Electric
+                        </option>
+
+                        <option value="TVS">
+                            TVS
+                        </option>
+
+                        <option value="Citroen">
+                            Citroen
+                        </option>
+
+                        <option value="BMW">
+                            BMW
+                        </option>
+
+                        <option value="Mercedes-Benz">
+                            Mercedes-Benz
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- VEHICLE MODEL -->
+
+                <div class="form-group">
+
+                    <label for="vehicleModel">
+
+                        Vehicle Model
+
+                    </label>
+
+
+                    <select
+                        id="vehicleModel"
+                        class="select"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select company first
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- REGISTRATION -->
+
+                <div class="form-group">
+
+                    <label for="registrationNumber">
+
+                        Registration Number
+
+                    </label>
+
+
+                    <div class="input-wrap">
+
+                        <i
+                            data-lucide="hash"
+                            class="input-icon"
+                            size="17"
+                        ></i>
+
+
+                        <input
+                            type="text"
+                            id="registrationNumber"
+                            class="input"
+                            placeholder="MH 12 AB 7635"
+                            maxlength="20"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+
+                    <div class="hint">
+
+                        Enter your vehicle registration number.
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CONNECTOR -->
+
+                <div class="form-group">
+
+                    <label for="connectorType">
+
+                        Default Connector Type
+
+                    </label>
+
+
+                    <select
+                        id="connectorType"
+                        class="select"
+                    >
+
+                        <option value="">
+                            Select connector
+                        </option>
+
+                        <option value="CCS2">
+                            CCS2
+                        </option>
+
+                        <option value="Type 2">
+                            Type 2
+                        </option>
+
+                        <option value="CHAdeMO">
+                            CHAdeMO
+                        </option>
+
+                        <option value="GB/T">
+                            GB/T
+                        </option>
+
+                        <option value="Proprietary">
+                            Proprietary / Custom
+                        </option>
+
+                    </select>
+
+
+                    <div class="hint">
+
+                        Connector is automatically populated when you select a model.
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BATTERY -->
+
+                <div class="form-group">
+
+                    <label for="batteryCapacity">
+
+                        Battery Capacity (Optional)
+
+                    </label>
+
+
+                    <div class="input-wrap">
+
+                        <i
+                            data-lucide="battery"
+                            class="input-icon"
+                            size="17"
+                        ></i>
+
+
+                        <input
+                            type="number"
+                            id="batteryCapacity"
+                            class="input"
+                            placeholder="e.g. 40.5"
+                            min="1"
+                            max="300"
+                            step="0.1"
+                        >
+
+                    </div>
+
+
+                    <div class="hint">
+
+                        Battery capacity in kWh.
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SAVE -->
+
+                <button
+                    id="saveButton"
+                    class="save-btn"
+                    type="button"
+                    onclick="saveVehicle()"
+                >
+
+                    <i
+                        data-lucide="plus"
+                        size="17"
+                    ></i>
+
+                    Save Vehicle
+
+                </button>
+
+
+            </section>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             SAVED VEHICLES
+        ===================================================== -->
+
+        <section class="card saved-card">
+
+
+            <div class="saved-header">
+
+                <div>
+
+                    <h2>
+                        Your Registered Vehicles
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="vehicleCount"
+                    class="vehicle-count"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div
+                id="vehiclesContainer"
+                class="vehicle-list"
+            >
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+
+                        <i
+                            data-lucide="loader"
+                        ></i>
+
+                    </div>
+
+                    <strong>
+                        Loading vehicles...
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
 
     <script>
-        // Initialize icons
-        lucide.createIcons();
 
-        // 1. EV Data Dictionary (O(1) Lookup)
-        const evDatabase = {
-            "Tata Motors": [
-                { name: "Nexon EV", connector: "CCS2 (DC Fast)" },
-                { name: "Punch EV", connector: "CCS2 (DC Fast)" },
-                { name: "Tiago EV", connector: "CCS2 (DC Fast)" },
-                { name: "Curvv EV", connector: "CCS2 (DC Fast)" },
-                { name: "Sierra EV", connector: "CCS2 (DC Fast)" }
-            ],
-            "Mahindra": [
-                { name: "XUV400", connector: "CCS2 (DC Fast)" },
-                { name: "BE 6", connector: "CCS2 (DC Fast)" },
-                { name: "XEV 9e", connector: "CCS2 (DC Fast)" }
-            ],
-            "MG Motor": [
-                { name: "ZS EV", connector: "CCS2 (DC Fast)" },
-                { name: "Comet EV", connector: "Type 2 (AC)" },
-                { name: "Windsor EV", connector: "CCS2 (DC Fast)" }
-            ],
-            "Hyundai": [
-                { name: "Ioniq 5", connector: "CCS2 (DC Fast)" },
-                { name: "Kona Electric", connector: "CCS2 (DC Fast)" }
-            ],
-            "BYD": [
-                { name: "Atto 3", connector: "CCS2 (DC Fast)" },
-                { name: "Seal", connector: "CCS2 (DC Fast)" }
-            ],
-            "Ola Electric": [
-                { name: "S1 Pro", connector: "Proprietary / Custom" },
-                { name: "Roadster", connector: "Type 2 (AC)" }
-            ],
-            "Ather Energy": [
-                { name: "450X", connector: "Proprietary / Custom" },
-                { name: "Rizta", connector: "Proprietary / Custom" }
-            ],
-            "TVS": [
-                { name: "iQube", connector: "Type 2 (AC)" },
-                { name: "X", connector: "Type 2 (AC)" }
-            ],
-            "Bajaj": [
-                { name: "Chetak", connector: "Type 2 (AC)" }
-            ]
-        };
 
-        const makeSelect = document.getElementById('make');
-        const modelSelect = document.getElementById('model');
-        const connectorSelect = document.getElementById('connector');
-        const regNumberInput = document.getElementById('regNumber');
+        /* =====================================================
+           CONFIGURATION
+        ===================================================== */
 
-        // Populate Make Dropdown
-        Object.keys(evDatabase).forEach(brand => {
-            const option = document.createElement('option');
-            option.value = brand;
-            option.textContent = brand;
-            makeSelect.appendChild(option);
-        });
+        const API_BASE_URL =
+            "http://localhost:5000/api";
 
-        // Handle Brand Change
-        makeSelect.addEventListener('change', function() {
-            const selectedBrand = this.value;
-            const models = evDatabase[selectedBrand];
-            
-            modelSelect.innerHTML = '<option value="" disabled selected>Select EV Model...</option>';
-            modelSelect.disabled = false;
-            connectorSelect.value = "";
 
-            models.forEach(car => {
-                const option = document.createElement('option');
-                option.value = car.name;
-                option.dataset.connector = car.connector;
-                option.textContent = car.name;
-                modelSelect.appendChild(option);
-            });
-        });
+        /* =====================================================
+           AUTH
+        ===================================================== */
 
-        // Handle Model Change
-        modelSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const matchingConnector = selectedOption.dataset.connector;
-            if (matchingConnector) {
-                connectorSelect.value = matchingConnector;
-            }
-        });
+        const token =
+            localStorage.getItem(
+                "ev_token"
+            );
 
-        // Handle Form Submission & Save
-        document.getElementById('addVehicleForm').addEventListener('submit', (e) => {
-            e.preventDefault();
 
-            const newVehicle = {
-                make: makeSelect.value,
-                model: modelSelect.value,
-                regNumber: regNumberInput.value.trim().toUpperCase(),
-                connector: connectorSelect.value
+        if (!token) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "ev_token"
+            );
+
+            localStorage.removeItem(
+                "ev_user"
+            );
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        /* =====================================================
+           AUTH HEADERS
+        ===================================================== */
+
+        function getHeaders() {
+
+            return {
+
+                "Content-Type":
+                    "application/json",
+
+                "Authorization":
+                    `Bearer ${token}`
+
             };
 
-            // Save to LocalStorage
-            let storedVehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
-            storedVehicles.push(newVehicle);
-            localStorage.setItem('ev_vehicles', JSON.stringify(storedVehicles));
+        }
 
-            alert('Vehicle saved to garage!');
-            window.location.href = 'dashboard.html';
-        });
+
+        /* =====================================================
+           ALERTS
+        ===================================================== */
+
+        function showSuccess(
+            message
+        ) {
+
+            const success =
+                document.getElementById(
+                    "successAlert"
+                );
+
+
+            const error =
+                document.getElementById(
+                    "errorAlert"
+                );
+
+
+            document.getElementById(
+                "successMessage"
+            ).textContent =
+                message;
+
+
+            success.classList.add(
+                "show"
+            );
+
+
+            error.classList.remove(
+                "show"
+            );
+
+
+            lucide.createIcons();
+
+        }
+
+
+        function showError(
+            message
+        ) {
+
+            const success =
+                document.getElementById(
+                    "successAlert"
+                );
+
+
+            const error =
+                document.getElementById(
+                    "errorAlert"
+                );
+
+
+            document.getElementById(
+                "errorMessage"
+            ).textContent =
+                message;
+
+
+            error.classList.add(
+                "show"
+            );
+
+
+            success.classList.remove(
+                "show"
+            );
+
+
+            lucide.createIcons();
+
+        }
+
+
+        function hideAlerts() {
+
+            document.getElementById(
+                "successAlert"
+            ).classList.remove(
+                "show"
+            );
+
+
+            document.getElementById(
+                "errorAlert"
+            ).classList.remove(
+                "show"
+            );
+
+        }
+
+
+        /* =====================================================
+           VEHICLE MODEL DATA
+        ===================================================== */
+
+        const vehicleModels = {
+
+            "Tata Motors": {
+
+                "Nexon EV": {
+                    connector: "CCS2",
+                    battery: 40.5
+                },
+
+                "Punch EV": {
+                    connector: "CCS2",
+                    battery: 35
+                },
+
+                "Tiago EV": {
+                    connector: "CCS2",
+                    battery: 24
+                },
+
+                "Curvv EV": {
+                    connector: "CCS2",
+                    battery: 55
+                }
+
+            },
+
+
+            "Mahindra": {
+
+                "XUV400 EV": {
+                    connector: "CCS2",
+                    battery: 39.4
+                },
+
+                "BE 6": {
+                    connector: "CCS2",
+                    battery: 59
+                },
+
+                "XEV 9e": {
+                    connector: "CCS2",
+                    battery: 79
+                }
+
+            },
+
+
+            "MG": {
+
+                "Comet EV": {
+                    connector: "Type 2",
+                    battery: 17.3
+                },
+
+                "ZS EV": {
+                    connector: "CCS2",
+                    battery: 50.3
+                },
+
+                "Windsor EV": {
+                    connector: "CCS2",
+                    battery: 38
+                }
+
+            },
+
+
+            "Hyundai": {
+
+                "Kona Electric": {
+                    connector: "CCS2",
+                    battery: 39.2
+                },
+
+                "Ioniq 5": {
+                    connector: "CCS2",
+                    battery: 72.6
+                },
+
+                "Creta Electric": {
+                    connector: "CCS2",
+                    battery: 51.4
+                }
+
+            },
+
+
+            "Kia": {
+
+                "EV6": {
+                    connector: "CCS2",
+                    battery: 77.4
+                },
+
+                "EV9": {
+                    connector: "CCS2",
+                    battery: 99.8
+                }
+
+            },
+
+
+            "BYD": {
+
+                "Atto 3": {
+                    connector: "CCS2",
+                    battery: 60.48
+                },
+
+                "Seal": {
+                    connector: "CCS2",
+                    battery: 82.56
+                },
+
+                "e6": {
+                    connector: "CCS2",
+                    battery: 71.7
+                }
+
+            },
+
+
+            "Ather Energy": {
+
+                "450X": {
+                    connector: "Proprietary",
+                    battery: 3.7
+                },
+
+                "450S": {
+                    connector: "Proprietary",
+                    battery: 2.9
+                },
+
+                "Rizta": {
+                    connector: "Proprietary",
+                    battery: 3.7
+                }
+
+            },
+
+
+            "Ola Electric": {
+
+                "S1 Pro": {
+                    connector: "Proprietary",
+                    battery: 4
+                },
+
+                "S1 Air": {
+                    connector: "Proprietary",
+                    battery: 3
+                },
+
+                "S1X": {
+                    connector: "Proprietary",
+                    battery: 4
+                }
+
+            },
+
+
+            "TVS": {
+
+                "iQube": {
+                    connector: "Proprietary",
+                    battery: 5.3
+                }
+
+            },
+
+
+            "Citroen": {
+
+                "eC3": {
+                    connector: "CCS2",
+                    battery: 29.2
+                }
+
+            },
+
+
+            "BMW": {
+
+                "iX1": {
+                    connector: "CCS2",
+                    battery: 66.4
+                },
+
+                "i4": {
+                    connector: "CCS2",
+                    battery: 83.9
+                }
+
+            },
+
+
+            "Mercedes-Benz": {
+
+                "EQA": {
+                    connector: "CCS2",
+                    battery: 66.5
+                },
+
+                "EQB": {
+                    connector: "CCS2",
+                    battery: 66.5
+                }
+
+            },
+
+
+            "Other": {
+
+                "Custom EV": {
+                    connector: "CCS2",
+                    battery: null
+                }
+
+            }
+
+        };
+
+
+        /* =====================================================
+           MAKE CHANGE
+        ===================================================== */
+
+        document.getElementById(
+            "vehicleMake"
+        ).addEventListener(
+            "change",
+            function() {
+
+                const make =
+                    this.value;
+
+
+                const modelSelect =
+                    document.getElementById(
+                        "vehicleModel"
+                    );
+
+
+                const connectorSelect =
+                    document.getElementById(
+                        "connectorType"
+                    );
+
+
+                const batteryInput =
+                    document.getElementById(
+                        "batteryCapacity"
+                    );
+
+
+                modelSelect.innerHTML = "";
+
+
+                connectorSelect.value =
+                    "";
+
+
+                batteryInput.value =
+                    "";
+
+
+                if (!make) {
+
+                    modelSelect.disabled =
+                        true;
+
+
+                    modelSelect.innerHTML = `
+                        <option value="">
+                            Select company first
+                        </option>
+                    `;
+
+                    return;
+
+                }
+
+
+                modelSelect.disabled =
+                    false;
+
+
+                const models =
+                    vehicleModels[make] ||
+                    {};
+
+
+                modelSelect.innerHTML = `
+                    <option value="">
+                        Select model
+                    </option>
+                `;
+
+
+                Object.keys(
+                    models
+                ).forEach(
+                    model => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            model;
+
+
+                        option.textContent =
+                            model;
+
+
+                        modelSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           MODEL CHANGE
+        ===================================================== */
+
+        document.getElementById(
+            "vehicleModel"
+        ).addEventListener(
+            "change",
+            function() {
+
+                const make =
+                    document.getElementById(
+                        "vehicleMake"
+                    ).value;
+
+
+                const model =
+                    this.value;
+
+
+                if (
+                    !make ||
+                    !model
+                ) {
+
+                    return;
+
+                }
+
+
+                const data =
+                    vehicleModels[
+                        make
+                    ]?.[
+                        model
+                    ];
+
+
+                if (!data) {
+
+                    return;
+
+                }
+
+
+                const connectorSelect =
+                    document.getElementById(
+                        "connectorType"
+                    );
+
+
+                const batteryInput =
+                    document.getElementById(
+                        "batteryCapacity"
+                    );
+
+
+                if (
+                    data.connector
+                ) {
+
+                    connectorSelect.value =
+                        data.connector;
+
+                }
+
+
+                if (
+                    data.battery !== null &&
+                    data.battery !== undefined
+                ) {
+
+                    batteryInput.value =
+                        data.battery;
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           REGISTRATION FORMAT
+        ===================================================== */
+
+        document.getElementById(
+            "registrationNumber"
+        ).addEventListener(
+            "input",
+            function() {
+
+                this.value =
+                    this.value
+                        .toUpperCase()
+                        .replace(
+                            /[^A-Z0-9 ]/g,
+                            ""
+                        );
+
+            }
+        );
+
+
+        /* =====================================================
+           LOAD VEHICLES FROM DATABASE
+        ===================================================== */
+
+        async function loadVehicles() {
+
+            const container =
+                document.getElementById(
+                    "vehiclesContainer"
+                );
+
+
+            try {
+
+                console.log(
+                    "[Vehicles] Loading vehicles from backend..."
+                );
+
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/vehicles`,
+                        {
+
+                            method:
+                                "GET",
+
+                            headers:
+                                getHeaders()
+
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                console.log(
+                    "[Vehicles] API response:",
+                    result
+                );
+
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "ev_token"
+                    );
+
+                    localStorage.removeItem(
+                        "ev_user"
+                    );
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        result.message ||
+                        "Failed to load vehicles."
+                    );
+
+                }
+
+
+                let vehicles =
+                    result.data ||
+                    result.vehicles ||
+                    result;
+
+
+                if (
+                    !Array.isArray(
+                        vehicles
+                    )
+                ) {
+
+                    vehicles = [];
+
+                }
+
+
+                renderVehicles(
+                    vehicles
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "[Vehicles] Load error:",
+                    error
+                );
+
+
+                container.innerHTML = `
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+
+                            <i
+                                data-lucide="triangle-alert"
+                            ></i>
+
+                        </div>
+
+                        <strong>
+                            Unable to load vehicles
+                        </strong>
+
+                        <span>
+                            ${escapeHtml(
+                                error.message ||
+                                "Please check the backend server."
+                            )}
+                        </span>
+
+                    </div>
+
+                `;
+
+
+                document.getElementById(
+                    "vehicleCount"
+                ).textContent =
+                    "0";
+
+
+                lucide.createIcons();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RENDER VEHICLES
+        ===================================================== */
+
+        function renderVehicles(
+            vehicles
+        ) {
+
+            const container =
+                document.getElementById(
+                    "vehiclesContainer"
+                );
+
+
+            const count =
+                document.getElementById(
+                    "vehicleCount"
+                );
+
+
+            count.textContent =
+                vehicles.length;
+
+
+            if (
+                vehicles.length === 0
+            ) {
+
+                container.innerHTML = `
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+
+                            <i
+                                data-lucide="car"
+                            ></i>
+
+                        </div>
+
+                        <strong>
+                            No vehicles added yet.
+                        </strong>
+
+                        <span>
+                            Add your first EV using the form above.
+                        </span>
+
+                    </div>
+
+                `;
+
+
+                lucide.createIcons();
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                vehicles
+                    .map(
+                        vehicle => {
+
+                            const id =
+                                vehicle.id ??
+                                vehicle.vehicle_id;
+
+
+                            const name =
+                                vehicle.vehicle_name ||
+                                vehicle.make ||
+                                vehicle.brand ||
+                                "Electric Vehicle";
+
+
+                            const model =
+                                vehicle.vehicle_model ||
+                                vehicle.model ||
+                                "";
+
+
+                            const number =
+                                vehicle.vehicle_number ||
+                                vehicle.regNumber ||
+                                vehicle.registration_number ||
+                                "No registration number";
+
+
+                            const connector =
+                                vehicle.connector_type ||
+                                vehicle.connector ||
+                                "CCS2";
+
+
+                            const battery =
+                                vehicle.battery_capacity;
+
+
+                            return `
+
+                                <div
+                                    class="vehicle-item"
+                                    data-id="${escapeHtml(
+                                        id
+                                    )}"
+                                >
+
+                                    <div class="vehicle-main">
+
+                                        <div class="vehicle-icon">
+
+                                            <i
+                                                data-lucide="car"
+                                                size="19"
+                                            ></i>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="vehicle-name">
+
+                                                ${escapeHtml(
+                                                    name
+                                                )}
+
+                                                ${
+                                                    model
+                                                        ? escapeHtml(
+                                                            " " +
+                                                            model
+                                                        )
+                                                        : ""
+                                                }
+
+                                            </div>
+
+
+                                            <div class="vehicle-number">
+
+                                                ${escapeHtml(
+                                                    number
+                                                )}
+
+                                            </div>
+
+
+                                            <span
+                                                class="vehicle-tag"
+                                            >
+
+                                                ${escapeHtml(
+                                                    connector
+                                                )}
+
+                                                ${
+                                                    battery
+                                                        ? ` • ${escapeHtml(
+                                                            battery
+                                                        )} kWh`
+                                                        : ""
+                                                }
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    ${
+                                        id
+                                            ? `
+                                                <button
+                                                    type="button"
+                                                    class="delete-btn"
+                                                    title="Delete vehicle"
+                                                    onclick="deleteVehicle(${Number(id)})"
+                                                >
+
+                                                    <i
+                                                        data-lucide="trash-2"
+                                                        size="16"
+                                                    ></i>
+
+                                                </button>
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+
+            lucide.createIcons();
+
+        }
+
+
+        /* =====================================================
+           SAVE VEHICLE
+        ===================================================== */
+
+        async function saveVehicle() {
+
+            hideAlerts();
+
+
+            const make =
+                document.getElementById(
+                    "vehicleMake"
+                ).value.trim();
+
+
+            const model =
+                document.getElementById(
+                    "vehicleModel"
+                ).value.trim();
+
+
+            const regNumber =
+                document.getElementById(
+                    "registrationNumber"
+                ).value.trim();
+
+
+            const connector =
+                document.getElementById(
+                    "connectorType"
+                ).value.trim();
+
+
+            const batteryValue =
+                document.getElementById(
+                    "batteryCapacity"
+                ).value.trim();
+
+
+            /* =================================================
+               VALIDATION
+            ================================================= */
+
+            if (!make) {
+
+                showError(
+                    "Please select your vehicle company."
+                );
+
+                return;
+
+            }
+
+
+            if (!model) {
+
+                showError(
+                    "Please select your vehicle model."
+                );
+
+                return;
+
+            }
+
+
+            if (!regNumber) {
+
+                showError(
+                    "Please enter your vehicle registration number."
+                );
+
+                return;
+
+            }
+
+
+            if (!connector) {
+
+                showError(
+                    "Please select a connector type."
+                );
+
+                return;
+
+            }
+
+
+            let batteryCapacity =
+                null;
+
+
+            if (batteryValue !== "") {
+
+                batteryCapacity =
+                    Number(
+                        batteryValue
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        batteryCapacity
+                    ) ||
+                    batteryCapacity <= 0
+                ) {
+
+                    showError(
+                        "Please enter a valid battery capacity."
+                    );
+
+                    return;
+
+                }
+
+            }
+
+
+            /* =================================================
+               BUTTON LOADING
+            ================================================= */
+
+            const button =
+                document.getElementById(
+                    "saveButton"
+                );
+
+
+            const originalHTML =
+                button.innerHTML;
+
+
+            button.disabled =
+                true;
+
+
+            button.innerHTML = `
+
+                <span class="spinner"></span>
+
+                Saving Vehicle...
+
+            `;
+
+
+            lucide.createIcons();
+
+
+            try {
+
+                /* =================================================
+                   DATABASE PAYLOAD
+                =================================================
+
+                   Backend accepts both:
+
+                   make
+                   regNumber
+                   model
+                   connector
+
+                   and converts them to:
+
+                   vehicle_name
+                   vehicle_number
+                   vehicle_model
+                   connector_type
+                ================================================= */
+
+                const payload = {
+
+                    make:
+                        make,
+
+                    model:
+                        model,
+
+                    regNumber:
+                        regNumber,
+
+                    connector:
+                        connector,
+
+                    battery_capacity:
+                        batteryCapacity
+
+                };
+
+
+                console.log(
+                    "[Vehicles] Sending vehicle to backend:",
+                    payload
+                );
+
+
+                /* =================================================
+                   POST TO MYSQL BACKEND
+                ================================================= */
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/vehicles`,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers:
+                                getHeaders(),
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+
+                        }
+                    );
+
+
+                let result = {};
+
+
+                try {
+
+                    result =
+                        await response.json();
+
+                } catch (
+                    jsonError
+                ) {
+
+                    result = {};
+
+                }
+
+
+                console.log(
+                    "[Vehicles] Save response:",
+                    result
+                );
+
+
+                /* =================================================
+                   AUTH ERROR
+                ================================================= */
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "ev_token"
+                    );
+
+                    localStorage.removeItem(
+                        "ev_user"
+                    );
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   BACKEND ERROR
+                ================================================= */
+
+                if (
+                    !response.ok ||
+                    result.success === false
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        result.error ||
+                        `Vehicle could not be saved (${response.status}).`
+                    );
+
+                }
+
+
+                /* =================================================
+                   IMPORTANT:
+                   ONLY NOW CLAIM SUCCESS
+                ================================================= */
+
+                const savedVehicle =
+                    result.data ||
+                    result.vehicle ||
+                    result;
+
+
+                const savedVehicleId =
+                    result.id ??
+                    result.vehicleId ??
+                    result.vehicle_id ??
+                    savedVehicle?.id ??
+                    savedVehicle?.vehicle_id;
+
+
+                console.log(
+                    "[Vehicles] REAL DATABASE VEHICLE ID:",
+                    savedVehicleId
+                );
+
+
+                /*
+                 * The backend must return success.
+                 *
+                 * If it did, reload from MySQL.
+                 */
+
+                showSuccess(
+                    "Vehicle saved to your garage successfully!"
+                );
+
+
+                /* =================================================
+                   RESET FORM
+                ================================================= */
+
+                document.getElementById(
+                    "vehicleMake"
+                ).value = "";
+
+
+                document.getElementById(
+                    "vehicleModel"
+                ).innerHTML = `
+
+                    <option value="">
+                        Select company first
+                    </option>
+
+                `;
+
+
+                document.getElementById(
+                    "vehicleModel"
+                ).disabled =
+                    true;
+
+
+                document.getElementById(
+                    "registrationNumber"
+                ).value = "";
+
+
+                document.getElementById(
+                    "connectorType"
+                ).value = "";
+
+
+                document.getElementById(
+                    "batteryCapacity"
+                ).value = "";
+
+
+                /* =================================================
+                   RELOAD DATABASE VEHICLES
+                ================================================= */
+
+                await loadVehicles();
+
+
+                /*
+                 * Restore button
+                 */
+
+                button.disabled =
+                    false;
+
+
+                button.innerHTML =
+                    originalHTML;
+
+
+                lucide.createIcons();
+
+
+            } catch (error) {
+
+                console.error(
+                    "[Vehicles] Save error:",
+                    error
+                );
+
+
+                showError(
+                    error.message ||
+                    "Unable to save vehicle."
+                );
+
+
+                button.disabled =
+                    false;
+
+
+                button.innerHTML =
+                    originalHTML;
+
+
+                lucide.createIcons();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           DELETE VEHICLE
+        ===================================================== */
+
+        async function deleteVehicle(
+            vehicleId
+        ) {
+
+            if (
+                !vehicleId
+            ) {
+
+                showError(
+                    "Invalid vehicle ID."
+                );
+
+                return;
+
+            }
+
+
+            const confirmed =
+                window.confirm(
+                    "Are you sure you want to remove this vehicle?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            hideAlerts();
+
+
+            try {
+
+                console.log(
+                    "[Vehicles] Deleting vehicle:",
+                    vehicleId
+                );
+
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/vehicles/${encodeURIComponent(vehicleId)}`,
+                        {
+
+                            method:
+                                "DELETE",
+
+                            headers:
+                                getHeaders()
+
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                console.log(
+                    "[Vehicles] Delete response:",
+                    result
+                );
+
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "ev_token"
+                    );
+
+                    localStorage.removeItem(
+                        "ev_user"
+                    );
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                if (
+                    !response.ok ||
+                    result.success === false
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Vehicle could not be deleted."
+                    );
+
+                }
+
+
+                showSuccess(
+                    "Vehicle removed successfully."
+                );
+
+
+                await loadVehicles();
+
+
+            } catch (error) {
+
+                console.error(
+                    "[Vehicles] Delete error:",
+                    error
+                );
+
+
+                showError(
+                    error.message ||
+                    "Unable to remove vehicle."
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =====================================================
+           INITIALIZE
+        ===================================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                lucide.createIcons();
+
+                loadVehicles();
+
+            }
+        );
+
     </script>
+
 </body>
+
 </html>

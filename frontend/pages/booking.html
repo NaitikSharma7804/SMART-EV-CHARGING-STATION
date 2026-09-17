@@ -1,363 +1,3772 @@
-<!-- frontend/pages/booking.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Slot | EV Charge Hub</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- 1. Add Razorpay SDK -->
+
+    <title>Book Charging Slot | EV Charge Hub</title>
+
+    <!-- Lucide -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Razorpay -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: var(--background, #f8fafc);
-            overflow-y: auto !important;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #f5f8f6;
+            color: #101814;
             min-height: 100vh;
         }
-        .booking-container {
-            max-width: 1100px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 1.8fr 1.2fr;
-            gap: 2rem;
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
-        @media (max-width: 850px) {
-            .booking-container {
-                grid-template-columns: 1fr;
-            }
+
+        button,
+        input,
+        select {
+            font: inherit;
         }
-        .charger-card {
-            border: 2px solid var(--border, #e2e8f0);
-            border-radius: 10px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #fff;
-            text-align: center;
-        }
-        .charger-card.selected {
-            border-color: #10b981;
-            background-color: #ecfdf5;
-        }
-        .charger-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-top: 0.75rem;
-        }
-        .summary-card {
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border, #e2e8f0);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            height: 72px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5ebe7;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 6%;
+
             position: sticky;
-            top: 5rem;
+            top: 0;
+            z-index: 1000;
         }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-size: 21px;
+            font-weight: 800;
+            color: #101814;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 11px;
+
+            background: #dcfce7;
+            color: #15803d;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            padding: 10px 15px;
+            border-radius: 9px;
+
+            color: #64706a;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: .2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #15803d;
+            background: #ecfdf3;
+        }
+
+        .logout-btn {
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .page {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 42px 24px 70px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            color: #15803d;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            margin-bottom: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 34px;
+            line-height: 1.15;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .page-header p {
+            color: #6b756f;
+            font-size: 15px;
+        }
+
+        /* =====================================================
+           GRID
+        ===================================================== */
+
+        .booking-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.45fr)
+                minmax(330px, .75fr);
+
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: #ffffff;
+
+            border: 1px solid #e6ebe8;
+            border-radius: 20px;
+
+            box-shadow:
+                0 8px 28px rgba(16, 24, 20, .045);
+        }
+
+        .card-header {
+            padding: 22px 24px;
+            border-bottom: 1px solid #edf1ef;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .card-header p {
+            color: #758079;
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* =====================================================
+           STATION
+        ===================================================== */
+
+        .station-card {
+            overflow: hidden;
+        }
+
+        .station-banner {
+            min-height: 170px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #071512,
+                    #12352a
+                );
+
+            padding: 28px;
+
+            color: white;
+            position: relative;
+        }
+
+        .station-banner::after {
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(34, 197, 94, .08);
+
+            right: -40px;
+            top: -50px;
+        }
+
+        .station-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            background: rgba(255,255,255,.09);
+            color: #bbf7d0;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .6px;
+
+            margin-bottom: 15px;
+        }
+
+        .station-banner h2 {
+            font-size: 25px;
+
+            position: relative;
+            z-index: 2;
+
+            margin-bottom: 8px;
+        }
+
+        .station-address {
+            color: #c8d6cf;
+
+            font-size: 13px;
+
+            position: relative;
+            z-index: 2;
+
+            max-width: 650px;
+        }
+
+        .station-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: #f7faf8;
+            border: 1px solid #e8eeea;
+
+            padding: 14px;
+
+            border-radius: 13px;
+        }
+
+        .info-box span {
+            display: block;
+
+            font-size: 11px;
+            color: #7a857e;
+
+            margin-bottom: 5px;
+        }
+
+        .info-box strong {
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            color: #303b35;
+        }
+
+        .input,
+        .select {
+            width: 100%;
+
+            border: 1px solid #dfe6e2;
+
+            background: #ffffff;
+
+            border-radius: 11px;
+
+            padding: 13px 14px;
+
+            color: #17221c;
+
+            outline: none;
+
+            transition: .2s;
+        }
+
+        .input:focus,
+        .select:focus {
+            border-color: #22c55e;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(34,197,94,.10);
+        }
+
+        .input:disabled,
+        .select:disabled {
+            background: #f4f7f5;
+            cursor: not-allowed;
+        }
+
+        .two-columns {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 14px;
+        }
+
+        /* =====================================================
+           VEHICLE HELP
+        ===================================================== */
+
+        .vehicle-help {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-top: 8px;
+
+            padding: 11px 12px;
+
+            border-radius: 10px;
+
+            background: #f7faf8;
+            border: 1px solid #e6ebe8;
+
+            font-size: 12px;
+            color: #6d7871;
+        }
+
+        .vehicle-help a {
+            color: #15803d;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* =====================================================
+           CHARGERS
+        ===================================================== */
+
+        .charger-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .charger-option {
+            position: relative;
+        }
+
+        .charger-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .charger-option label {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding: 15px;
+
+            border: 1px solid #dfe7e2;
+
+            border-radius: 13px;
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+        .charger-option label:hover {
+            border-color: #86efac;
+            background: #f7fff9;
+        }
+
+        .charger-option input:checked + label {
+            border-color: #22c55e;
+
+            background: #ecfdf3;
+
+            box-shadow:
+                0 0 0 2px
+                rgba(34,197,94,.08);
+        }
+
+        .charger-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .charger-icon {
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            background: #dcfce7;
+            color: #15803d;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .charger-name {
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .charger-meta {
+            color: #748078;
+
+            font-size: 11px;
+
+            margin-top: 3px;
+        }
+
+        .charger-price {
+            font-weight: 800;
+            color: #15803d;
+            white-space: nowrap;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            margin-top: 5px;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            color: #15803d;
+        }
+
+        /* =====================================================
+           SUMMARY
+        ===================================================== */
+
+        .summary-card {
+            position: sticky;
+            top: 94px;
+        }
+
+        .summary-body {
+            padding: 24px;
+        }
+
         .summary-row {
             display: flex;
+
+            align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.75rem;
-            color: #475569;
-            font-size: 0.95rem;
+
+            gap: 20px;
+
+            padding: 11px 0;
+
+            font-size: 14px;
         }
+
+        .summary-row span:first-child {
+            color: #707b74;
+        }
+
+        .summary-row strong {
+            color: #1b261f;
+            text-align: right;
+        }
+
+        .summary-divider {
+            border-top: 1px dashed #dfe7e2;
+            margin: 10px 0;
+        }
+
+        .total-row {
+            padding-top: 15px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total-row span {
+            font-weight: 800;
+        }
+
+        .total-row strong {
+            font-size: 25px;
+            color: #15803d;
+        }
+
+        .book-btn {
+            width: 100%;
+
+            border: 0;
+
+            background: #15803d;
+            color: white;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            margin-top: 20px;
+
+            font-size: 15px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition: .2s;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+        }
+
+        .book-btn:hover {
+            background: #166534;
+            transform: translateY(-1px);
+        }
+
+        .book-btn:disabled {
+            background: #a7b5ad;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            margin-top: 13px;
+
+            color: #7a857f;
+
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           ALERTS
+        ===================================================== */
+
+        .alert {
+            padding: 13px 15px;
+
+            border-radius: 11px;
+
+            margin-bottom: 18px;
+
+            font-size: 13px;
+
+            display: none;
+        }
+
+        .alert.show {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 9px;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert.success {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* =====================================================
+           LOADING
+        ===================================================== */
+
+        .loading {
+            padding: 35px;
+
+            text-align: center;
+
+            color: #7a857f;
+
+            font-size: 14px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+
+            border: 2px solid #d1fae5;
+            border-top-color: #15803d;
+
+            border-radius: 50%;
+
+            animation:
+                spin .7s linear infinite;
+
+            display: inline-block;
+
+            vertical-align: middle;
+
+            margin-right: 7px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =====================================================
+           EMPTY
+        ===================================================== */
+
+        .empty {
+            text-align: center;
+
+            padding: 35px 20px;
+
+            color: #78827c;
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+
+            border-radius: 14px;
+
+            background: #ecfdf3;
+            color: #15803d;
+
+            margin: 0 auto 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty strong {
+            display: block;
+            color: #202a24;
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 850px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .nav-links a {
+                display: none;
+            }
+
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .page {
+                padding:
+                    28px 15px 50px;
+            }
+
+            .page-header h1 {
+                font-size: 27px;
+            }
+
+            .station-info {
+                grid-template-columns: 1fr;
+            }
+
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .card-body,
+            .summary-body {
+                padding: 18px;
+            }
+
+            .station-banner {
+                padding: 22px;
+            }
+
+            .station-banner h2 {
+                font-size: 21px;
+            }
+
+            .charger-option label {
+                padding: 13px;
+            }
+
+            .charger-price {
+                font-size: 13px;
+            }
+        }
+
     </style>
+
 </head>
+
 <body>
 
-    <!-- Navigation Header -->
-    <header class="navbar" style="border-bottom: 1px solid var(--border, #e2e8f0); background: #ffffff;">
-        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;">
-            <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; text-decoration: none; color: #10b981; font-size: 1.25rem;">
-                <i data-lucide="zap"></i> EV Charge Hub
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
+
+    <nav class="navbar">
+
+        <a href="dashboard.html" class="brand">
+
+            <span class="brand-icon">
+                <i data-lucide="zap"></i>
+            </span>
+
+            EV Charge Hub
+
+        </a>
+
+        <div class="nav-links">
+
+            <a href="dashboard.html">
+                Dashboard
             </a>
-            <nav style="display: flex; align-items: center; gap: 1.5rem;">
-                <a href="dashboard.html" style="text-decoration: none; color: #64748b;">Dashboard</a>
-                <a href="search.html" style="text-decoration: none; color: #10b981; font-weight: 600;">Find Chargers</a>
-                <a href="bookings.html" style="text-decoration: none; color: #64748b;">My Bookings</a>
-            </nav>
+
+            <a href="search.html" class="active">
+                Find Chargers
+            </a>
+
+            <a href="bookings.html">
+                My Bookings
+            </a>
+
+            <a
+                href="#"
+                class="logout-btn"
+                onclick="logout(); return false;"
+            >
+                Logout
+            </a>
+
         </div>
-    </header>
 
-    <div style="max-width: 1100px; margin: 2rem auto 0 auto; padding: 0 1.5rem;">
-        <h1 id="stationName" style="font-size: 1.75rem; margin-bottom: 0.25rem;">Loading Station...</h1>
-        <p id="stationAddress" style="color: #64748b; margin: 0; display: flex; align-items: center; gap: 0.35rem;">
-            <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Locating...
-        </p>
-    </div>
+    </nav>
 
-    <!-- Booking Content -->
-    <div class="booking-container">
-        
-        <!-- Left Column: Form -->
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
-            
-            <!-- 1. Select Charger -->
-            <div style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0);">
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem;">1. Select Charger (Live Status)</h3>
-                <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
-                    <span style="color: #10b981; font-weight: 600;">● Available</span>
-                </div>
 
-                <div class="charger-grid" id="chargerList">
-                    <div class="charger-card selected" onclick="selectCharger('CH-01', 15.00, this)">
-                        <h4 style="margin: 0 0 0.25rem 0;">CH-01</h4>
-                        <div style="font-size: 0.8rem; color: #64748b;">50 kW Fast • Type 2 / CCS</div>
-                        <div style="font-weight: 700; color: #10b981; margin-top: 0.5rem;">₹15.00/hr</div>
-                    </div>
-                    <div class="charger-card" onclick="selectCharger('CH-02', 15.00, this)">
-                        <h4 style="margin: 0 0 0.25rem 0;">CH-02</h4>
-                        <div style="font-size: 0.8rem; color: #64748b;">50 kW Fast • Type 2 / CCS</div>
-                        <div style="font-weight: 700; color: #10b981; margin-top: 0.5rem;">₹15.00/hr</div>
-                    </div>
-                </div>
-            </div>
+    <!-- =====================================================
+         PAGE
+    ===================================================== -->
 
-            <!-- 2. Select Time & Vehicle -->
-            <div style="background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0);">
-                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">2. Select Time & Vehicle</h3>
-                
-                <form id="bookingForm">
-                    <div class="form-group" style="margin-bottom: 1.25rem;">
-                        <label for="vehicleSelect" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Select Vehicle</label>
-                        <select id="vehicleSelect" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
-                            <option value="" disabled selected>Loading your vehicles...</option>
-                        </select>
-                    </div>
+    <main class="page">
 
-                    <div class="form-group" style="margin-bottom: 1.25rem;">
-                        <label for="bookingDate" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Date</label>
-                        <input type="date" id="bookingDate" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
-                    </div>
+        <div class="page-header">
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label for="startTime" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Start Time</label>
-                            <input type="time" id="startTime" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+            <a href="search.html" class="back-link">
+
+                <i
+                    data-lucide="arrow-left"
+                    size="16"
+                ></i>
+
+                Back to chargers
+
+            </a>
+
+            <h1>
+                Book a Charging Session
+            </h1>
+
+            <p>
+                Select your vehicle, charger and preferred charging time.
+            </p>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="errorAlert"
+            class="alert error"
+        >
+
+            <i
+                data-lucide="circle-alert"
+                size="17"
+            ></i>
+
+            <span id="errorMessage"></span>
+
+        </div>
+
+
+        <!-- SUCCESS -->
+
+        <div
+            id="successAlert"
+            class="alert success"
+        >
+
+            <i
+                data-lucide="circle-check"
+                size="17"
+            ></i>
+
+            <span id="successMessage"></span>
+
+        </div>
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loadingState"
+            class="loading"
+        >
+
+            <span class="spinner"></span>
+
+            Loading charging station...
+
+        </div>
+
+
+        <!-- =================================================
+             BOOKING CONTENT
+        ================================================== -->
+
+        <div
+            id="bookingContent"
+            class="booking-grid"
+            style="display:none;"
+        >
+
+            <!-- =================================================
+                 LEFT
+            ================================================= -->
+
+            <section>
+
+                <!-- STATION CARD -->
+
+                <div class="card station-card">
+
+                    <div class="station-banner">
+
+                        <div class="station-label">
+
+                            <i
+                                data-lucide="map-pin"
+                                size="13"
+                            ></i>
+
+                            Charging Station
+
                         </div>
-                        <div class="form-group">
-                            <label for="endTime" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">End Time</label>
-                            <input type="time" id="endTime" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" required>
+
+                        <h2 id="stationName">
+                            Charging Station
+                        </h2>
+
+                        <div
+                            class="station-address"
+                            id="stationAddress"
+                        >
+                            Loading...
                         </div>
+
                     </div>
-                </form>
-            </div>
+
+                    <div class="card-body">
+
+                        <div class="station-info">
+
+                            <div class="info-box">
+
+                                <span>
+                                    Operator
+                                </span>
+
+                                <strong id="stationOperator">
+                                    —
+                                </strong>
+
+                            </div>
+
+                            <div class="info-box">
+
+                                <span>
+                                    Rating
+                                </span>
+
+                                <strong id="stationRating">
+                                    —
+                                </strong>
+
+                            </div>
+
+                            <div class="info-box">
+
+                                <span>
+                                    Availability
+                                </span>
+
+                                <strong id="stationStatus">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SESSION DETAILS
+                ================================================== -->
+
+                <div
+                    class="card"
+                    style="margin-top:24px;"
+                >
+
+                    <div class="card-header">
+
+                        <h2>
+                            Session Details
+                        </h2>
+
+                        <p>
+                            Choose how and when you want to charge.
+                        </p>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- VEHICLE -->
+
+                        <div class="form-group">
+
+                            <label for="vehicleSelect">
+                                Select Vehicle
+                            </label>
+
+                            <select
+                                id="vehicleSelect"
+                                class="select"
+                            >
+
+                                <option value="">
+                                    Select your vehicle
+                                </option>
+
+                            </select>
+
+                            <div
+                                id="vehicleHelp"
+                                class="vehicle-help"
+                                style="display:none;"
+                            >
+
+                                <span>
+                                    No vehicle registered yet.
+                                </span>
+
+                                <a href="vehicles.html">
+                                    Add Vehicle
+                                </a>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CHARGER -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Select Charger
+                            </label>
+
+                            <div
+                                id="chargerList"
+                                class="charger-list"
+                            >
+
+                                <div class="loading">
+                                    Loading chargers...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="form-group">
+
+                            <label for="bookingDate">
+                                Charging Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="bookingDate"
+                                class="input"
+                            >
+
+                        </div>
+
+
+                        <!-- TIME -->
+
+                        <div class="two-columns">
+
+                            <div class="form-group">
+
+                                <label for="startTime">
+                                    Start Time
+                                </label>
+
+                                <input
+                                    type="time"
+                                    id="startTime"
+                                    class="input"
+                                >
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label for="endTime">
+                                    End Time
+                                </label>
+
+                                <input
+                                    type="time"
+                                    id="endTime"
+                                    class="input"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 RIGHT SUMMARY
+            ================================================== -->
+
+            <aside class="card summary-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Booking Summary
+                    </h2>
+
+                    <p>
+                        Review your charging session.
+                    </p>
+
+                </div>
+
+                <div class="summary-body">
+
+                    <div class="summary-row">
+
+                        <span>
+                            Station
+                        </span>
+
+                        <strong id="summaryStation">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Vehicle
+                        </span>
+
+                        <strong id="summaryVehicle">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Charger
+                        </span>
+
+                        <strong id="summaryCharger">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Date
+                        </span>
+
+                        <strong id="summaryDate">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Time
+                        </span>
+
+                        <strong id="summaryTime">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong id="summaryDuration">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Rate
+                        </span>
+
+                        <strong id="summaryRate">
+                            ₹0/hr
+                        </strong>
+
+                    </div>
+
+                    <div class="total-row">
+
+                        <span>
+                            Total Amount
+                        </span>
+
+                        <strong id="totalAmount">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+                    <button
+                        id="bookButton"
+                        class="book-btn"
+                        onclick="createBooking()"
+                    >
+
+                        <i
+                            data-lucide="calendar-check"
+                            size="18"
+                        ></i>
+
+                        Confirm Booking
+
+                    </button>
+
+                    <div class="secure-note">
+
+                        <i
+                            data-lucide="shield-check"
+                            size="14"
+                        ></i>
+
+                        Secure booking & payment
+
+                    </div>
+
+                </div>
+
+            </aside>
 
         </div>
 
-        <!-- Right Column: Booking Summary -->
-        <div>
-            <div class="summary-card">
-                <h3 style="margin-top: 0; margin-bottom: 1.25rem;">Booking Summary</h3>
-                
-                <div class="summary-row">
-                    <span>Charger</span>
-                    <strong id="sumCharger">CH-01 (₹15/hr)</strong>
-                </div>
-                <div class="summary-row">
-                    <span>Rate</span>
-                    <span id="sumRate">₹15 / hour</span>
-                </div>
-                <div class="summary-row">
-                    <span>Duration</span>
-                    <span id="sumDuration">1 hour</span>
-                </div>
+    </main>
 
-                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1.25rem 0;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <span style="font-size: 1.1rem; font-weight: 600;">Total Amount</span>
-                    <span id="sumTotal" style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">₹15.00</span>
-                </div>
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
 
-                <button id="payBtn" type="button" class="btn btn-primary btn-block" style="width: 100%; padding: 0.85rem; font-size: 1rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-                    <i data-lucide="lock" style="width: 18px; height: 18px;"></i> Pay & Book Slot
-                </button>
-            </div>
-        </div>
-
-    </div>
-
-    <script src="../js/api.js"></script>
     <script>
-        lucide.createIcons();
 
-        let currentRate = 15.00;
-        let selectedChargerCode = 'CH-01';
+        /* =====================================================
+           CONFIG
+        ===================================================== */
 
-        // 1. Load Vehicles from LocalStorage
-        function populateVehicles() {
-            const vehicleSelect = document.getElementById('vehicleSelect');
-            const vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
+        const API_BASE_URL =
+            "http://localhost:5000/api";
 
-            if (vehicles.length === 0) {
-                vehicleSelect.innerHTML = '<option value="" disabled selected>No vehicles found. Please add one from Dashboard.</option>';
-                vehicleSelect.disabled = true;
-            } else {
-                vehicleSelect.disabled = false;
-                vehicleSelect.innerHTML = `
-                    <option value="" disabled selected>Choose your vehicle...</option>
-                    ${vehicles.map(v => `
-                        <option value="${v.regNumber}">${v.make} ${v.model} (${v.regNumber}) - ${v.connector}</option>
-                    `).join('')}
-                `;
-                vehicleSelect.selectedIndex = 1;
-            }
+
+        /* =====================================================
+           AUTH
+        ===================================================== */
+
+        const token =
+            localStorage.getItem("ev_token");
+
+        let user = null;
+
+        try {
+
+            user = JSON.parse(
+                localStorage.getItem("ev_user") ||
+                "null"
+            );
+
+        } catch (error) {
+
+            user = null;
+
         }
 
-        // 2. Select Charger Option
-        window.selectCharger = function(chargerCode, rate, element) {
-            document.querySelectorAll('.charger-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedChargerCode = chargerCode;
-            currentRate = rate;
-            document.getElementById('sumCharger').textContent = `${chargerCode} (₹${rate}/hr)`;
-            document.getElementById('sumRate').textContent = `₹${rate} / hour`;
-            calculateTotal();
-        };
 
-        // 3. Time & Price Calculations
-        function calculateTotal() {
-            const start = document.getElementById('startTime').value;
-            const end = document.getElementById('endTime').value;
+        if (!token || !user) {
 
-            if (start && end) {
-                const [startH, startM] = start.split(':').map(Number);
-                const [endH, endM] = end.split(':').map(Number);
+            window.location.href =
+                "login.html";
 
-                let diff = (endH + endM / 60) - (startH + startM / 60);
-                if (diff < 0) diff += 24;
-
-                if (diff > 0) {
-                    const total = (diff * currentRate).toFixed(2);
-                    document.getElementById('sumDuration').textContent = `${diff.toFixed(1)} hours`;
-                    document.getElementById('sumTotal').textContent = `₹${total}`;
-                    return;
-                }
-            }
-            document.getElementById('sumDuration').textContent = '1 hour';
-            document.getElementById('sumTotal').textContent = `₹${currentRate.toFixed(2)}`;
         }
 
-        document.getElementById('startTime').addEventListener('change', calculateTotal);
-        document.getElementById('endTime').addEventListener('change', calculateTotal);
 
-        // 4. Fetch Station Data
-        async function loadStationDetails() {
-            const params = new URLSearchParams(window.location.search);
-            const stationId = params.get('station_id');
+        /* =====================================================
+           AUTH HEADERS
+        ===================================================== */
 
-            if (!stationId) {
-                document.getElementById('stationName').textContent = 'EV Charging Station';
-                document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin"></i> Location details unavailable`;
-                lucide.createIcons();
-                return;
-            }
+        function authHeaders() {
+
+            return {
+
+                "Content-Type":
+                    "application/json",
+
+                "Authorization":
+                    `Bearer ${token}`
+
+            };
+
+        }
+
+
+        /* =====================================================
+           API REQUEST
+        ===================================================== */
+
+        async function apiRequest(
+            endpoint,
+            options = {}
+        ) {
+
+            const response =
+                await fetch(
+                    API_BASE_URL + endpoint,
+                    {
+
+                        ...options,
+
+                        headers: {
+
+                            ...authHeaders(),
+
+                            ...(options.headers || {})
+
+                        }
+
+                    }
+                );
+
+
+            let data = {};
 
             try {
-                const response = await fetch(`http://localhost:5000/api/stations/${stationId}`);
-                const data = await response.json();
-                if (data && data.station) {
-                    document.getElementById('stationName').textContent = data.station.name;
-                    document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> ${data.station.address}`;
-                } else {
-                    document.getElementById('stationName').textContent = 'Shashtri Nagar Station';
-                    document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Pune, Maharashtra`;
-                }
-            } catch (err) {
-                document.getElementById('stationName').textContent = 'Shashtri Nagar Station';
-                document.getElementById('stationAddress').innerHTML = `<i data-lucide="map-pin" style="width: 16px; height: 16px;"></i> Pune, Maharashtra`;
+
+                data =
+                    await response.json();
+
+            } catch (error) {
+
+                data = {};
+
             }
-            lucide.createIcons();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    data.error ||
+                    `Request failed (${response.status})`
+                );
+
+            }
+
+
+            return data;
+
         }
 
-        // 5. Razorpay Integration
-        document.getElementById('payBtn').addEventListener('click', (e) => {
-            e.preventDefault();
 
-            const vehicle = document.getElementById('vehicleSelect').value;
-            const date = document.getElementById('bookingDate').value;
-            const start = document.getElementById('startTime').value;
-            const end = document.getElementById('endTime').value;
+        /* =====================================================
+           ALERTS
+        ===================================================== */
 
-            if (!vehicle) {
-                alert('Please select a vehicle first!');
-                return;
-            }
-            if (!date || !start || !end) {
-                alert('Please pick a date, start time, and end time.');
-                return;
-            }
+        function showError(message) {
 
-            // Get Amount in Paise for Razorpay (e.g. ₹15.00 -> 1500 paise)
-            const totalText = document.getElementById('sumTotal').textContent;
-            const amountInRupees = parseFloat(totalText.replace('₹', ''));
-            const amountInPaise = Math.round(amountInRupees * 100);
+            const box =
+                document.getElementById(
+                    "errorAlert"
+                );
 
-            // Configure Razorpay Options
-            var options = {
-                "key": "rzp_test_TQzTzvT1kAt13E", // We use test mode configuration
-                "amount": amountInPaise, 
-                "currency": "INR",
-                "name": "EV Charge Hub",
-                "description": "Slot Booking - " + document.getElementById('stationName').textContent,
-                "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Lightning_Bolt.svg",
-                "handler": function (response) {
-                    // This function runs ONLY when payment is successful!
-                    
-                    const newBooking = {
-                        id: 'BKG-' + Math.floor(100000 + Math.random() * 900000),
-                        stationName: document.getElementById('stationName').textContent,
-                        vehicle: vehicle,
-                        date: date,
-                        startTime: start,
-                        endTime: end,
-                        amount: totalText,
-                        status: 'Upcoming',
-                        paymentId: response.razorpay_payment_id // Save their receipt!
-                    };
+            document.getElementById(
+                "errorMessage"
+            ).textContent = message;
 
-                    let storedBookings = JSON.parse(localStorage.getItem('ev_bookings') || '[]');
-                    storedBookings.unshift(newBooking);
-                    localStorage.setItem('ev_bookings', JSON.stringify(storedBookings));
+            box.classList.add("show");
 
-                    alert("Payment Successful! Your slot is booked.");
-                    window.location.href = 'bookings.html';
-                },
-                "prefill": {
-                    "name": "Naitik Sharma",
-                    "email": "naitik@example.com",
-                    "contact": "9999999999"
-                },
-                "theme": {
-                    "color": "#10b981"
+            document.getElementById(
+                "successAlert"
+            ).classList.remove("show");
+
+            lucide.createIcons();
+
+        }
+
+
+        function showSuccess(message) {
+
+            const box =
+                document.getElementById(
+                    "successAlert"
+                );
+
+            document.getElementById(
+                "successMessage"
+            ).textContent = message;
+
+            box.classList.add("show");
+
+            document.getElementById(
+                "errorAlert"
+            ).classList.remove("show");
+
+            lucide.createIcons();
+
+        }
+
+
+        function hideAlerts() {
+
+            document.getElementById(
+                "errorAlert"
+            ).classList.remove("show");
+
+            document.getElementById(
+                "successAlert"
+            ).classList.remove("show");
+
+        }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "ev_token"
+            );
+
+            localStorage.removeItem(
+                "ev_user"
+            );
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        /* =====================================================
+           URL PARAMETERS
+        ===================================================== */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const stationId =
+            params.get("station_id");
+
+
+        if (!stationId) {
+
+            document.getElementById(
+                "loadingState"
+            ).style.display = "none";
+
+            showError(
+                "No charging station was selected."
+            );
+
+        }
+
+
+        /* =====================================================
+           STATE
+        ===================================================== */
+
+        let station = null;
+
+        let vehicles = [];
+
+        let chargers = [];
+
+        let selectedCharger = null;
+
+
+        /* =====================================================
+           DATE
+        ===================================================== */
+
+        function getLocalDate() {
+
+            const date =
+                new Date();
+
+            const year =
+                date.getFullYear();
+
+            const month =
+                String(
+                    date.getMonth() + 1
+                ).padStart(2, "0");
+
+            const day =
+                String(
+                    date.getDate()
+                ).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+
+        }
+
+
+        const bookingDateInput =
+            document.getElementById(
+                "bookingDate"
+            );
+
+
+        bookingDateInput.min =
+            getLocalDate();
+
+        bookingDateInput.value =
+            getLocalDate();
+
+
+        /* =====================================================
+           LOAD STATION
+        ===================================================== */
+
+        async function loadStation() {
+
+            try {
+
+                hideAlerts();
+
+                console.log(
+                    "Loading station:",
+                    stationId
+                );
+
+
+                const result =
+                    await apiRequest(
+                        `/stations/${encodeURIComponent(stationId)}`
+                    );
+
+
+                console.log(
+                    "Station API response:",
+                    result
+                );
+
+
+                station =
+                    result.data ||
+                    result.station ||
+                    result;
+
+
+                if (!station) {
+
+                    throw new Error(
+                        "Charging station not found."
+                    );
+
                 }
+
+
+                renderStation();
+
+
+                /* =================================================
+                   GET CHARGERS
+                ================================================= */
+
+                chargers =
+                    station.chargers ||
+                    station.data?.chargers ||
+                    station.slots ||
+                    station.data?.slots ||
+                    [];
+
+
+                if (!Array.isArray(chargers)) {
+
+                    chargers = [];
+
+                }
+
+
+                console.log(
+                    "Chargers received:",
+                    chargers
+                );
+
+
+                renderChargers();
+
+
+                /* =================================================
+                   SHOW CONTENT
+                ================================================= */
+
+                document.getElementById(
+                    "loadingState"
+                ).style.display = "none";
+
+
+                document.getElementById(
+                    "bookingContent"
+                ).style.display = "grid";
+
+
+                /* =================================================
+                   LOAD VEHICLES
+                ================================================= */
+
+                await loadVehicles();
+
+
+                updateSummary();
+
+
+                lucide.createIcons();
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load station:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "loadingState"
+                ).style.display = "none";
+
+
+                document.getElementById(
+                    "bookingContent"
+                ).style.display = "none";
+
+
+                showError(
+                    error.message ||
+                    "Unable to load charging station."
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RENDER STATION
+        ===================================================== */
+
+        function renderStation() {
+
+            const name =
+                station.name ||
+                station.station_name ||
+                "Charging Station";
+
+
+            const address =
+                station.address ||
+                station.location ||
+                (
+                    station.city
+                        ? `${station.city}, ${station.state || ""}`
+                        : "Address unavailable"
+                );
+
+
+            document.getElementById(
+                "stationName"
+            ).textContent = name;
+
+
+            document.getElementById(
+                "stationAddress"
+            ).textContent = address;
+
+
+            document.getElementById(
+                "stationOperator"
+            ).textContent =
+                station.operator_name ||
+                station.operator ||
+                "EV Charge Hub";
+
+
+            const rating =
+                Number(station.rating);
+
+
+            document.getElementById(
+                "stationRating"
+            ).textContent =
+                Number.isFinite(rating) &&
+                rating > 0
+                    ? `${rating.toFixed(1)} ★`
+                    : "Not rated";
+
+
+            document.getElementById(
+                "stationStatus"
+            ).textContent =
+                station.status ||
+                "Active";
+
+
+            document.getElementById(
+                "summaryStation"
+            ).textContent =
+                name;
+
+        }
+
+
+        /* =====================================================
+           LOAD VEHICLES
+        ===================================================== */
+
+        async function loadVehicles() {
+
+            const select =
+                document.getElementById(
+                    "vehicleSelect"
+                );
+
+
+            const help =
+                document.getElementById(
+                    "vehicleHelp"
+                );
+
+
+            try {
+
+                console.log(
+                    "Loading vehicles..."
+                );
+
+
+                const result =
+                    await apiRequest(
+                        "/vehicles"
+                    );
+
+
+                console.log(
+                    "Vehicles API response:",
+                    result
+                );
+
+
+                vehicles =
+                    result.data ||
+                    result.vehicles ||
+                    result;
+
+
+                if (!Array.isArray(vehicles)) {
+
+                    vehicles = [];
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "Backend vehicles unavailable:",
+                    error
+                );
+
+
+                /*
+                 * Fallback ONLY for display.
+                 *
+                 * A vehicle still needs a real database ID.
+                 */
+
+                try {
+
+                    const localVehicles =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "ev_vehicles"
+                            ) || "[]"
+                        );
+
+
+                    vehicles =
+                        Array.isArray(
+                            localVehicles
+                        )
+                            ? localVehicles
+                            : [];
+
+                } catch (storageError) {
+
+                    vehicles = [];
+
+                }
+
+            }
+
+
+            select.innerHTML = `
+                <option value="">
+                    Select your vehicle
+                </option>
+            `;
+
+
+            let validVehicleCount = 0;
+
+
+            vehicles.forEach(
+                vehicle => {
+
+                    const id =
+                        vehicle.id ??
+                        vehicle.vehicle_id;
+
+
+                    /*
+                     * IMPORTANT:
+                     * Only real DB IDs are allowed.
+                     */
+
+                    if (
+                        id === undefined ||
+                        id === null ||
+                        id === ""
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const name =
+                        vehicle.vehicle_name ||
+                        vehicle.name ||
+                        vehicle.vehicle_model ||
+                        vehicle.model ||
+                        "Electric Vehicle";
+
+
+                    const number =
+                        vehicle.vehicle_number ||
+                        vehicle.registration_number ||
+                        vehicle.regNumber ||
+                        "";
+
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        String(id);
+
+
+                    option.textContent =
+                        number
+                            ? `${name} • ${number}`
+                            : name;
+
+
+                    select.appendChild(
+                        option
+                    );
+
+
+                    validVehicleCount++;
+
+                }
+            );
+
+
+            if (
+                validVehicleCount === 0
+            ) {
+
+                help.style.display =
+                    "flex";
+
+                select.disabled =
+                    true;
+
+            } else {
+
+                help.style.display =
+                    "none";
+
+                select.disabled =
+                    false;
+
+            }
+
+
+            select.onchange =
+                updateSummary;
+
+        }
+
+
+        /* =====================================================
+           RENDER CHARGERS
+        ===================================================== */
+
+        function renderChargers() {
+
+            const container =
+                document.getElementById(
+                    "chargerList"
+                );
+
+
+            container.innerHTML = "";
+
+
+            if (!chargers.length) {
+
+                container.innerHTML = `
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            <i data-lucide="plug-zap"></i>
+                        </div>
+
+                        <strong>
+                            No chargers available
+                        </strong>
+
+                        <p style="margin-top:5px;font-size:12px;">
+                            This station currently has no charger
+                            information available.
+                        </p>
+
+                    </div>
+                `;
+
+                lucide.createIcons();
+
+                return;
+
+            }
+
+
+            /*
+             * Do not show chargers that are:
+             * Maintenance
+             * Offline
+             * Occupied
+             */
+
+            const availableChargers =
+                chargers.filter(
+                    charger => {
+
+                        const status =
+                            String(
+                                charger.status ||
+                                "Available"
+                            ).toLowerCase();
+
+
+                        return ![
+                            "maintenance",
+                            "offline",
+                            "occupied"
+                        ].includes(status);
+
+                    }
+                );
+
+
+            if (!availableChargers.length) {
+
+                container.innerHTML = `
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            <i data-lucide="battery-warning"></i>
+                        </div>
+
+                        <strong>
+                            No chargers currently available
+                        </strong>
+
+                        <p style="margin-top:5px;font-size:12px;">
+                            All chargers at this station are
+                            currently unavailable.
+                        </p>
+
+                    </div>
+                `;
+
+                lucide.createIcons();
+
+                return;
+
+            }
+
+
+            availableChargers.forEach(
+                (charger, index) => {
+
+                    /*
+                     * REAL DATABASE CHARGER ID
+                     */
+
+                    const id =
+                        charger.id ??
+                        charger.charger_id;
+
+
+                    if (
+                        id === undefined ||
+                        id === null
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const number =
+                        charger.charger_number ||
+                        charger.charger_name ||
+                        charger.slot_name ||
+                        `Charger ${index + 1}`;
+
+
+                    const type =
+                        charger.charger_type ||
+                        "EV Charger";
+
+
+                    const connector =
+                        charger.connector_type ||
+                        "";
+
+
+                    let power =
+                        charger.power_kw ??
+                        charger.power ??
+                        charger.charging_speed ??
+                        "";
+
+
+                    let powerText =
+                        String(power);
+
+
+                    if (
+                        powerText &&
+                        !powerText
+                            .toLowerCase()
+                            .includes("kw")
+                    ) {
+
+                        powerText += " kW";
+
+                    }
+
+
+                    const price =
+                        Number(
+                            charger.price_per_hour ??
+                            charger.price ??
+                            charger.rate ??
+                            0
+                        );
+
+
+                    const status =
+                        String(
+                            charger.status ||
+                            "Available"
+                        );
+
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    div.className =
+                        "charger-option";
+
+
+                    div.innerHTML = `
+
+                        <input
+                            type="radio"
+                            name="charger"
+                            id="charger_${escapeHtml(String(id))}"
+                            value="${escapeHtml(String(id))}"
+                        >
+
+                        <label
+                            for="charger_${escapeHtml(String(id))}"
+                        >
+
+                            <div class="charger-left">
+
+                                <div class="charger-icon">
+
+                                    <i
+                                        data-lucide="plug-zap"
+                                    ></i>
+
+                                </div>
+
+                                <div>
+
+                                    <div class="charger-name">
+                                        ${escapeHtml(number)}
+                                    </div>
+
+                                    <div class="charger-meta">
+
+                                        ${escapeHtml(type)}
+
+                                        ${
+                                            connector
+                                                ? " • " +
+                                                  escapeHtml(connector)
+                                                : ""
+                                        }
+
+                                        ${
+                                            powerText
+                                                ? " • " +
+                                                  escapeHtml(powerText)
+                                                : ""
+                                        }
+
+                                    </div>
+
+                                    <div class="status-pill">
+
+                                        <i
+                                            data-lucide="circle-check"
+                                            size="11"
+                                        ></i>
+
+                                        ${escapeHtml(status)}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="charger-price">
+                                ₹${price.toFixed(2)}/hr
+                            </div>
+
+                        </label>
+
+                    `;
+
+
+                    container.appendChild(
+                        div
+                    );
+
+
+                    const radio =
+                        div.querySelector(
+                            "input"
+                        );
+
+
+                    radio.addEventListener(
+                        "change",
+                        () => {
+
+                            selectedCharger =
+                                availableChargers.find(
+                                    charger => {
+
+                                        const chargerId =
+                                            charger.id ??
+                                            charger.charger_id;
+
+                                        return String(
+                                            chargerId
+                                        ) ===
+                                        String(id);
+
+                                    }
+                                );
+
+
+                            updateSummary();
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /*
+             * Automatically select first charger.
+             */
+
+            const first =
+                container.querySelector(
+                    'input[type="radio"]'
+                );
+
+
+            if (first) {
+
+                first.checked =
+                    true;
+
+                first.dispatchEvent(
+                    new Event("change")
+                );
+
+            }
+
+
+            lucide.createIcons();
+
+        }
+
+
+        /* =====================================================
+           UPDATE SUMMARY
+        ===================================================== */
+
+        function updateSummary() {
+
+            const vehicleId =
+                document.getElementById(
+                    "vehicleSelect"
+                ).value;
+
+
+            const vehicle =
+                vehicles.find(
+                    v => {
+
+                        const id =
+                            v.id ??
+                            v.vehicle_id;
+
+                        return String(id) ===
+                            String(vehicleId);
+
+                    }
+                );
+
+
+            const date =
+                document.getElementById(
+                    "bookingDate"
+                ).value;
+
+
+            const start =
+                document.getElementById(
+                    "startTime"
+                ).value;
+
+
+            const end =
+                document.getElementById(
+                    "endTime"
+                ).value;
+
+
+            /* VEHICLE */
+
+            document.getElementById(
+                "summaryVehicle"
+            ).textContent =
+                vehicle
+                    ? (
+                        vehicle.vehicle_name ||
+                        vehicle.name ||
+                        vehicle.vehicle_model ||
+                        vehicle.model ||
+                        "Vehicle"
+                    )
+                    : "—";
+
+
+            /* CHARGER */
+
+            document.getElementById(
+                "summaryCharger"
+            ).textContent =
+                selectedCharger
+                    ? (
+                        selectedCharger.charger_number ||
+                        selectedCharger.charger_name ||
+                        selectedCharger.slot_name ||
+                        "Selected Charger"
+                    )
+                    : "—";
+
+
+            /* DATE */
+
+            document.getElementById(
+                "summaryDate"
+            ).textContent =
+                date
+                    ? formatDate(date)
+                    : "—";
+
+
+            /* TIME */
+
+            document.getElementById(
+                "summaryTime"
+            ).textContent =
+                start && end
+                    ? `${formatTime(start)} – ${formatTime(end)}`
+                    : "—";
+
+
+            /* DURATION */
+
+            const duration =
+                calculateDuration(
+                    start,
+                    end
+                );
+
+
+            document.getElementById(
+                "summaryDuration"
+            ).textContent =
+                duration > 0
+                    ? formatDuration(duration)
+                    : "—";
+
+
+            /* PRICE */
+
+            const price =
+                selectedCharger
+                    ? Number(
+                        selectedCharger.price_per_hour ??
+                        selectedCharger.price ??
+                        selectedCharger.rate ??
+                        0
+                    )
+                    : 0;
+
+
+            document.getElementById(
+                "summaryRate"
+            ).textContent =
+                `₹${price.toFixed(2)}/hr`;
+
+
+            /* TOTAL */
+
+            const total =
+                duration > 0
+                    ? duration * price
+                    : 0;
+
+
+            document.getElementById(
+                "totalAmount"
+            ).textContent =
+                `₹${total.toFixed(2)}`;
+
+        }
+
+
+        /* =====================================================
+           DATE / TIME EVENTS
+        ===================================================== */
+
+        document.getElementById(
+            "bookingDate"
+        ).addEventListener(
+            "change",
+            updateSummary
+        );
+
+
+        document.getElementById(
+            "startTime"
+        ).addEventListener(
+            "change",
+            updateSummary
+        );
+
+
+        document.getElementById(
+            "endTime"
+        ).addEventListener(
+            "change",
+            updateSummary
+        );
+
+
+        /* =====================================================
+           CREATE BOOKING
+        ===================================================== */
+
+        async function createBooking() {
+
+            hideAlerts();
+
+
+            const vehicleId =
+                document.getElementById(
+                    "vehicleSelect"
+                ).value;
+
+
+            const bookingDate =
+                document.getElementById(
+                    "bookingDate"
+                ).value;
+
+
+            const startTime =
+                document.getElementById(
+                    "startTime"
+                ).value;
+
+
+            const endTime =
+                document.getElementById(
+                    "endTime"
+                ).value;
+
+
+            /* =================================================
+               VEHICLE VALIDATION
+            ================================================= */
+
+            if (!vehicleId) {
+
+                showError(
+                    "Please select a vehicle before booking."
+                );
+
+                return;
+
+            }
+
+
+            const selectedVehicle =
+                vehicles.find(
+                    vehicle => {
+
+                        const id =
+                            vehicle.id ??
+                            vehicle.vehicle_id;
+
+                        return String(id) ===
+                            String(vehicleId);
+
+                    }
+                );
+
+
+            if (!selectedVehicle) {
+
+                showError(
+                    "Selected vehicle could not be verified."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               CHARGER VALIDATION
+            ================================================= */
+
+            if (!selectedCharger) {
+
+                showError(
+                    "Please select a charger."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               DATE
+            ================================================= */
+
+            if (!bookingDate) {
+
+                showError(
+                    "Please select a charging date."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               TIME
+            ================================================= */
+
+            if (
+                !startTime ||
+                !endTime
+            ) {
+
+                showError(
+                    "Please select start and end time."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               DURATION
+            ================================================= */
+
+            const duration =
+                calculateDuration(
+                    startTime,
+                    endTime
+                );
+
+
+            if (duration <= 0) {
+
+                showError(
+                    "End time must be after start time."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Minimum 30 minutes.
+             */
+
+            if (duration < 0.5) {
+
+                showError(
+                    "Minimum charging duration is 30 minutes."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               PAST TIME VALIDATION
+            ================================================= */
+
+            if (
+                bookingDate ===
+                getLocalDate()
+            ) {
+
+                const now =
+                    new Date();
+
+
+                const selected =
+                    new Date(
+                        `${bookingDate}T${startTime}`
+                    );
+
+
+                if (
+                    selected <= now
+                ) {
+
+                    showError(
+                        "Please select a future charging time."
+                    );
+
+                    return;
+
+                }
+
+            }
+
+
+            /* =================================================
+               PRICE
+            ================================================= */
+
+            const price =
+                Number(
+                    selectedCharger.price_per_hour ??
+                    selectedCharger.price ??
+                    selectedCharger.rate ??
+                    0
+                );
+
+
+            if (
+                !Number.isFinite(price) ||
+                price < 0
+            ) {
+
+                showError(
+                    "Invalid charger pricing received from server."
+                );
+
+                return;
+
+            }
+
+
+            const amount =
+                Number(
+                    (
+                        duration *
+                        price
+                    ).toFixed(2)
+                );
+
+
+            if (amount <= 0) {
+
+                showError(
+                    "Booking amount must be greater than ₹0."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               REAL DATABASE IDs
+            ================================================= */
+
+            const chargerId =
+                selectedCharger.id ??
+                selectedCharger.charger_id;
+
+
+            if (
+                chargerId === undefined ||
+                chargerId === null ||
+                chargerId === ""
+            ) {
+
+                showError(
+                    "Invalid charger ID returned by the server."
+                );
+
+                return;
+
+            }
+
+
+            const numericVehicleId =
+                Number(vehicleId);
+
+
+            const numericStationId =
+                Number(stationId);
+
+
+            const numericChargerId =
+                Number(chargerId);
+
+
+            if (
+                !Number.isInteger(
+                    numericVehicleId
+                ) ||
+                !Number.isInteger(
+                    numericStationId
+                ) ||
+                !Number.isInteger(
+                    numericChargerId
+                )
+            ) {
+
+                showError(
+                    "Invalid database ID. Please refresh and try again."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               BUTTON
+            ================================================= */
+
+            const button =
+                document.getElementById(
+                    "bookButton"
+                );
+
+
+            const originalButton =
+                button.innerHTML;
+
+
+            button.disabled =
+                true;
+
+
+            button.innerHTML = `
+                <span class="spinner"></span>
+                Creating booking...
+            `;
+
+
+            lucide.createIcons();
+
+
+            try {
+
+                /* =================================================
+                   BOOKING PAYLOAD
+                ================================================= */
+
+                const bookingPayload = {
+
+                    vehicle_id:
+                        numericVehicleId,
+
+                    station_id:
+                        numericStationId,
+
+                    charger_id:
+                        numericChargerId,
+
+                    booking_date:
+                        bookingDate,
+
+                    start_time:
+                        startTime,
+
+                    end_time:
+                        endTime,
+
+                    amount:
+                        amount
+
+                };
+
+
+                console.log(
+                    "Creating database booking:",
+                    bookingPayload
+                );
+
+
+                /* =================================================
+                   CREATE DATABASE BOOKING
+                ================================================= */
+
+                const result =
+                    await apiRequest(
+                        "/bookings",
+                        {
+
+                            method:
+                                "POST",
+
+                            body:
+                                JSON.stringify(
+                                    bookingPayload
+                                )
+
+                        }
+                    );
+
+
+                console.log(
+                    "Booking response:",
+                    result
+                );
+
+
+                /* =================================================
+                   GET REAL DATABASE BOOKING ID
+                =================================================
+
+                   BACKEND RETURNS:
+
+                   {
+                       success: true,
+                       bookingId: 123,
+                       razorpayOrderId: "...",
+                       amount: 1500,
+                       keyId: "..."
+                   }
+
+                   NEVER generate a fake ID.
+                ================================================= */
+
+                const booking =
+                    result.booking ||
+                    result.data ||
+                    result;
+
+
+                console.log(
+                    "Normalized booking response:",
+                    booking
+                );
+
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * Your backend returns `bookingId`.
+                 *
+                 * Support a few compatibility formats too.
+                 */
+
+                const realBookingId =
+                    result.bookingId ??
+                    result.booking_id ??
+                    result.id ??
+                    booking?.bookingId ??
+                    booking?.booking_id ??
+                    booking?.id ??
+                    result.data?.bookingId ??
+                    result.data?.booking_id ??
+                    result.data?.id;
+
+
+                console.log(
+                    "REAL DATABASE BOOKING ID:",
+                    realBookingId
+                );
+
+
+                if (
+                    realBookingId === undefined ||
+                    realBookingId === null ||
+                    realBookingId === ""
+                ) {
+
+                    throw new Error(
+                        "Booking was created but the server did not return the database booking ID."
+                    );
+
+                }
+
+
+                /*
+                 * Convert to number because our MySQL
+                 * booking IDs are numeric.
+                 */
+
+                const numericBookingId =
+                    Number(realBookingId);
+
+
+                if (
+                    !Number.isInteger(
+                        numericBookingId
+                    ) ||
+                    numericBookingId <= 0
+                ) {
+
+                    throw new Error(
+                        "The server returned an invalid database booking ID."
+                    );
+
+                }
+
+
+                /* =================================================
+                   RAZORPAY RESPONSE
+                =================================================
+
+                   IMPORTANT:
+                   Backend uses camelCase:
+
+                   razorpayOrderId
+                   keyId
+                   amount
+
+                   Do NOT only look for snake_case.
+                ================================================= */
+
+                const razorpayOrderId =
+                    result.razorpayOrderId ??
+                    result.razorpay_order_id ??
+                    result.order_id ??
+                    booking?.razorpayOrderId ??
+                    booking?.razorpay_order_id ??
+                    booking?.order_id ??
+                    result.data?.razorpayOrderId ??
+                    result.data?.razorpay_order_id;
+
+
+                const razorpayKey =
+                    result.keyId ??
+                    result.key_id ??
+                    result.razorpayKeyId ??
+                    result.razorpay_key_id ??
+                    booking?.keyId ??
+                    booking?.key_id ??
+                    booking?.razorpayKeyId ??
+                    booking?.razorpay_key_id ??
+                    result.data?.keyId ??
+                    result.data?.key_id;
+
+
+                /*
+                 * Backend returns Razorpay amount
+                 * in paise.
+                 *
+                 * We use our calculated rupee amount
+                 * when opening Razorpay because the
+                 * openRazorpay() function converts it
+                 * to paise.
+                 */
+
+                const backendAmount =
+                    Number(
+                        result.amount ??
+                        booking?.amount ??
+                        result.data?.amount ??
+                        0
+                    );
+
+
+                console.log(
+                    "Razorpay Order ID:",
+                    razorpayOrderId
+                );
+
+                console.log(
+                    "Razorpay Key ID:",
+                    razorpayKey
+                );
+
+                console.log(
+                    "Backend Razorpay Amount:",
+                    backendAmount
+                );
+
+
+                /* =================================================
+                   PAYMENT NOT REQUIRED
+                ================================================= */
+
+                if (
+                    result.payment_required === false ||
+                    booking?.payment_required === false ||
+                    amount <= 0
+                ) {
+
+                    finishBooking(
+                        numericBookingId
+                    );
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   OPEN RAZORPAY
+                ================================================= */
+
+                if (
+                    razorpayOrderId &&
+                    razorpayKey &&
+                    typeof Razorpay !==
+                        "undefined"
+                ) {
+
+                    openRazorpay(
+
+                        numericBookingId,
+
+                        razorpayOrderId,
+
+                        razorpayKey,
+
+                        amount
+
+                    );
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   BACKEND ALREADY CONFIRMED
+                ================================================= */
+
+                const status =
+                    String(
+                        booking?.status ||
+                        result.status ||
+                        ""
+                    ).toLowerCase();
+
+
+                if (
+                    status === "confirmed" ||
+                    status === "active"
+                ) {
+
+                    finishBooking(
+                        numericBookingId
+                    );
+
+                    return;
+
+                }
+
+
+                throw new Error(
+                    "Booking was created with ID " +
+                    numericBookingId +
+                    ", but Razorpay payment information was not returned by the backend."
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Booking error:",
+                    error
+                );
+
+
+                showError(
+                    error.message ||
+                    "Unable to create booking."
+                );
+
+
+                button.disabled =
+                    false;
+
+
+                button.innerHTML =
+                    originalButton;
+
+
+                lucide.createIcons();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RAZORPAY
+        ===================================================== */
+
+        function openRazorpay(
+            bookingId,
+            orderId,
+            key,
+            amount
+        ) {
+
+            console.log(
+                "Opening Razorpay:",
+                {
+                    bookingId,
+                    orderId,
+                    key,
+                    amount
+                }
+            );
+
+
+            const options = {
+
+                key:
+                    key,
+
+                /*
+                 * Razorpay expects paise.
+                 *
+                 * Example:
+                 * ₹15 = 1500 paise
+                 */
+
+                amount:
+                    Math.round(
+                        Number(amount) * 100
+                    ),
+
+                currency:
+                    "INR",
+
+                name:
+                    "EV Charge Hub",
+
+                description:
+                    `EV Charging Session - Booking #${bookingId}`,
+
+                order_id:
+                    orderId,
+
+                prefill: {
+
+                    name:
+                        user?.name ||
+                        "",
+
+                    email:
+                        user?.email ||
+                        "",
+
+                    contact:
+                        user?.phone ||
+                        user?.mobileNumber ||
+                        ""
+
+                },
+
+                theme: {
+
+                    color:
+                        "#15803d"
+
+                },
+
+
+                /* =================================================
+                   PAYMENT SUCCESS
+                ================================================= */
+
+                handler:
+                    async function(
+                        response
+                    ) {
+
+                        try {
+
+                            console.log(
+                                "Razorpay payment response:",
+                                response
+                            );
+
+
+                            if (
+                                !response ||
+                                !response.razorpay_order_id ||
+                                !response.razorpay_payment_id ||
+                                !response.razorpay_signature
+                            ) {
+
+                                throw new Error(
+                                    "Razorpay returned incomplete payment information."
+                                );
+
+                            }
+
+
+                            const button =
+                                document.getElementById(
+                                    "bookButton"
+                                );
+
+
+                            button.innerHTML = `
+                                <span class="spinner"></span>
+                                Verifying Payment...
+                            `;
+
+
+                            lucide.createIcons();
+
+
+                            /* =================================================
+                               VERIFY PAYMENT
+                            =================================================
+
+                               Backend requires:
+
+                               razorpay_order_id
+                               razorpay_payment_id
+                               razorpay_signature
+
+                               booking_id is also sent for compatibility.
+                            ================================================= */
+
+                            const verifyResult =
+                                await apiRequest(
+                                    "/bookings/verify-payment",
+                                    {
+
+                                        method:
+                                            "POST",
+
+                                        body:
+                                            JSON.stringify({
+
+                                                booking_id:
+                                                    bookingId,
+
+                                                razorpay_order_id:
+                                                    response.razorpay_order_id,
+
+                                                razorpay_payment_id:
+                                                    response.razorpay_payment_id,
+
+                                                razorpay_signature:
+                                                    response.razorpay_signature
+
+                                            })
+
+                                    }
+                                );
+
+
+                            console.log(
+                                "Payment verification response:",
+                                verifyResult
+                            );
+
+
+                            if (
+                                verifyResult?.success === false
+                            ) {
+
+                                throw new Error(
+                                    verifyResult.message ||
+                                    "Payment verification failed."
+                                );
+
+                            }
+
+
+                            /*
+                             * IMPORTANT:
+                             *
+                             * Store only the REAL
+                             * database booking ID.
+                             */
+
+                            finishBooking(
+                                bookingId
+                            );
+
+
+                        } catch (error) {
+
+                            console.error(
+                                "Payment verification error:",
+                                error
+                            );
+
+
+                            showError(
+                                error.message ||
+                                "Payment verification failed."
+                            );
+
+
+                            resetBookButton();
+
+                        }
+
+                    },
+
+
+                /* =================================================
+                   PAYMENT DISMISSED
+                ================================================= */
+
+                modal: {
+
+                    ondismiss:
+                        function() {
+
+                            showError(
+                                "Payment was cancelled. Your booking may remain pending until payment is completed."
+                            );
+
+
+                            resetBookButton();
+
+                        }
+
+                }
+
             };
-            
-            var rzp1 = new Razorpay(options);
-            
-            // Handle Payment Failure
-            rzp1.on('payment.failed', function (response){
-                alert("Payment Failed: " + response.error.description);
-            });
-            
-            // Open the Modal
-            rzp1.open();
-        });
 
-        // Set Default Date to Today and Time to Next Hour
-        document.addEventListener('DOMContentLoaded', () => {
-            populateVehicles();
-            loadStationDetails();
 
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('bookingDate').value = today;
-            document.getElementById('startTime').value = "10:00";
-            document.getElementById('endTime').value = "11:00";
-            calculateTotal();
-        });
+            try {
+
+                const razorpay =
+                    new Razorpay(
+                        options
+                    );
+
+
+                razorpay.on(
+                    "payment.failed",
+                    function(response) {
+
+                        console.error(
+                            "Razorpay payment failed:",
+                            response
+                        );
+
+
+                        showError(
+                            response?.error?.description ||
+                            "Payment failed. Please try again."
+                        );
+
+
+                        resetBookButton();
+
+                    }
+                );
+
+
+                razorpay.open();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to open Razorpay:",
+                    error
+                );
+
+
+                showError(
+                    error.message ||
+                    "Unable to open payment gateway."
+                );
+
+
+                resetBookButton();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           BOOKING SUCCESS
+        ===================================================== */
+
+        function finishBooking(
+            bookingId
+        ) {
+
+            /*
+             * Only store the actual MySQL ID.
+             */
+
+            sessionStorage.setItem(
+                "last_booking_id",
+                String(bookingId)
+            );
+
+
+            showSuccess(
+                `Booking #${bookingId} confirmed successfully.`
+            );
+
+
+            setTimeout(
+                () => {
+
+                    window.location.href =
+                        "bookings.html";
+
+                },
+                1200
+            );
+
+        }
+
+
+        /* =====================================================
+           RESET BUTTON
+        ===================================================== */
+
+        function resetBookButton() {
+
+            const button =
+                document.getElementById(
+                    "bookButton"
+                );
+
+
+            button.disabled =
+                false;
+
+
+            button.innerHTML = `
+                <i
+                    data-lucide="calendar-check"
+                    size="18"
+                ></i>
+                Confirm Booking
+            `;
+
+
+            lucide.createIcons();
+
+        }
+
+
+        /* =====================================================
+           CALCULATE DURATION
+        ===================================================== */
+
+        function calculateDuration(
+            start,
+            end
+        ) {
+
+            if (
+                !start ||
+                !end
+            ) {
+
+                return 0;
+
+            }
+
+
+            const [
+                startH,
+                startM
+            ] =
+                start
+                    .split(":")
+                    .map(Number);
+
+
+            const [
+                endH,
+                endM
+            ] =
+                end
+                    .split(":")
+                    .map(Number);
+
+
+            const startMinutes =
+                startH * 60 +
+                startM;
+
+
+            const endMinutes =
+                endH * 60 +
+                endM;
+
+
+            /*
+             * Same-day charging only.
+             */
+
+            if (
+                endMinutes <=
+                startMinutes
+            ) {
+
+                return 0;
+
+            }
+
+
+            return (
+                endMinutes -
+                startMinutes
+            ) / 60;
+
+        }
+
+
+        /* =====================================================
+           FORMAT DURATION
+        ===================================================== */
+
+        function formatDuration(
+            duration
+        ) {
+
+            const hours =
+                Math.floor(
+                    duration
+                );
+
+
+            const minutes =
+                Math.round(
+                    (
+                        duration -
+                        hours
+                    ) * 60
+                );
+
+
+            if (
+                hours > 0 &&
+                minutes > 0
+            ) {
+
+                return `${hours} hr ${minutes} min`;
+
+            }
+
+
+            if (
+                hours > 0
+            ) {
+
+                return `${hours} hr`;
+
+            }
+
+
+            return `${minutes} min`;
+
+        }
+
+
+        /* =====================================================
+           FORMAT DATE
+        ===================================================== */
+
+        function formatDate(
+            dateString
+        ) {
+
+            const date =
+                new Date(
+                    `${dateString}T00:00:00`
+                );
+
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+
+                    day:
+                        "2-digit",
+
+                    month:
+                        "short",
+
+                    year:
+                        "numeric"
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           FORMAT TIME
+        ===================================================== */
+
+        function formatTime(
+            time
+        ) {
+
+            if (!time) {
+
+                return "";
+
+            }
+
+
+            const [
+                hours,
+                minutes
+            ] =
+                time
+                    .split(":")
+                    .map(Number);
+
+
+            const date =
+                new Date();
+
+
+            date.setHours(
+                hours,
+                minutes,
+                0,
+                0
+            );
+
+
+            return date.toLocaleTimeString(
+                "en-IN",
+                {
+
+                    hour:
+                        "numeric",
+
+                    minute:
+                        "2-digit"
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =====================================================
+           INITIALIZE
+        ===================================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+
+                lucide.createIcons();
+
+
+                if (stationId) {
+
+                    loadStation();
+
+                }
+
+            }
+        );
+
     </script>
+
 </body>
+
 </html>

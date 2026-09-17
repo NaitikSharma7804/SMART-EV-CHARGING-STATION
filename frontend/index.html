@@ -1,174 +1,2299 @@
-<!-- frontend/index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>EV Charge Hub | Charge Smarter. Travel Better.</title>
+
+    <!-- Existing stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Premium design system -->
+    <link rel="stylesheet" href="css/premium-ui.css">
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="index.html" class="logo">
-            <i data-lucide="zap"></i> EV Charge Hub
-        </a>
-        <ul class="nav-links">
-            <li><a href="#how-it-works">How It Works</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#nearby">Nearby Places</a></li>
-            <li><a href="#faq">FAQ</a></li>
-        </ul>
-        <div class="nav-actions">
-            <a href="pages/login.html" class="btn btn-outline">Login</a>
-            <a href="pages/register.html" class="btn btn-primary">Register</a>
-        </div>
-    </nav>
+    <style>
+        /* =========================================
+           EV CHARGE HUB — LANDING PAGE
+        ========================================= */
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Charge Smarter.<br>Travel Better.</h1>
-            <p>Find EV charging stations, reserve your slot, pay securely, and discover everything you need while your vehicle charges.</p>
-            <div style="display: flex; gap: 1rem;">
-                <a href="pages/search.html" class="btn btn-primary">
-                    <i data-lucide="map-pin"></i> Find Station
-                </a>
-                <a href="#how-it-works" class="btn btn-outline">Learn More</a>
-            </div>
-        </div>
-        <div class="hero-image">
-            <!-- Using a high-quality free Unsplash EV image as a placeholder -->
-            <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80" alt="EV Charging Station">
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="section">
-        <h2 style="text-align: center;">Why Choose EV Charge Hub?</h2>
-        <p class="section-subtitle">A complete ecosystem for modern EV drivers.</p>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <i data-lucide="clock" class="feature-icon" width="48" height="48"></i>
-                <h3>Real-Time Availability</h3>
-                <p>No more waiting in line. See exactly which chargers are free right now.</p>
-            </div>
-            <div class="feature-card">
-                <i data-lucide="calendar-check" class="feature-icon" width="48" height="48"></i>
-                <h3>Easy Slot Booking</h3>
-                <p>Reserve your time slot in advance. Guaranteed charging when you arrive.</p>
-            </div>
-            <div class="feature-card">
-                <i data-lucide="credit-card" class="feature-icon" width="48" height="48"></i>
-                <h3>Secure Payments</h3>
-                <p>Pay easily via UPI, Cards, or Wallets using our secure Razorpay gateway.</p>
-            </div>
-            <div class="feature-card">
-                <i data-lucide="coffee" class="feature-icon" width="48" height="48"></i>
-                <h3>While You Charge</h3>
-                <p>Discover nearby cafes, restaurants, hotels, and restrooms automatically.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Statistics Section (Demo data for counters) -->
-    <section class="section" style="background-color: white;">
-        <div class="features-grid" style="text-align: center;">
-            <div>
-                <h2 style="color: var(--primary); font-size: 3rem;">500+</h2>
-                <p>Charging Stations</p>
-            </div>
-            <div>
-                <h2 style="color: var(--primary); font-size: 3rem;">12k+</h2>
-                <p>Active Users</p>
-            </div>
-            <div>
-                <h2 style="color: var(--primary); font-size: 3rem;">1M+</h2>
-                <p>Successful Bookings</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI Chatbot Section -->
-    <section class="section" style="background-color: #f9fafb; padding: 4rem 5%;">
-        <h2 style="text-align: center; margin-bottom: 0.5rem;">Need Help? Ask AI Support</h2>
-        <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">Get instant answers regarding charging issues, station locations, or bookings.</p>
-        
-        <div id="chat-widget" class="chat-container" style="max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 400px; overflow: hidden;">
-            <div id="chat-messages" class="chat-messages" style="flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="background: #f3f4f6; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-start; max-width: 80%;">
-                    Hello! How can I help you with EV Charge Hub today?
-                </div>
-            </div>
-            <div class="chat-input-area" style="display: flex; border-top: 1px solid #e5e7eb; padding: 0.75rem; background: #fff;">
-                <input type="text" id="user-input" placeholder="Ask about charging issues..." style="flex: 1; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 4px; outline: none;" />
-                <button id="send-btn" style="margin-left: 0.5rem; background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Send</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="background-color: var(--text-main); color: white; padding: 3rem 5%; text-align: center;">
-        <div style="margin-bottom: 2rem;">
-            <h3 style="color: white; margin-bottom: 1rem;"><i data-lucide="zap"></i> EV Charge Hub</h3>
-            <p style="color: var(--text-muted);">Empowering the future of electric mobility.</p>
-        </div>
-        <p style="color: var(--text-muted); font-size: 0.875rem;">&copy; 2026 EV Charge Hub. All rights reserved.</p>
-    </footer>
-
-    <!-- Initialize Icons and Chat Functionality -->
-    <script>
-        lucide.createIcons();
-
-        const sendBtn = document.getElementById('send-btn');
-        const userInput = document.getElementById('user-input');
-        const chatMessages = document.getElementById('chat-messages');
-
-        async function handleSendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-
-            // Append User Message
-            const userMsgDiv = document.createElement('div');
-            userMsgDiv.style.cssText = "background: var(--primary); color: white; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-end; max-width: 80%;";
-            userMsgDiv.textContent = message;
-            chatMessages.appendChild(userMsgDiv);
-            
-            userInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                const response = await fetch('http://localhost:5000/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
-                
-                const data = await response.json();
-
-                // Append AI Response
-                const aiMsgDiv = document.createElement('div');
-                aiMsgDiv.style.cssText = "background: #f3f4f6; color: #1f2937; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-start; max-width: 80%;";
-                aiMsgDiv.textContent = data.reply || data.error || "Sorry, I couldn't process that.";
-                chatMessages.appendChild(aiMsgDiv);
-            } catch (error) {
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = "background: #fee2e2; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 6px; align-self: flex-start; max-width: 80%;";
-                errorDiv.textContent = "Error connecting to AI chat service.";
-                chatMessages.appendChild(errorDiv);
-            }
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        body {
+            background: #f7f9f8;
         }
 
-        sendBtn.addEventListener('click', handleSendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSendMessage();
-        });
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        .landing-navbar {
+            height: 76px;
+            padding: 0 5%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .landing-logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-family: 'Manrope', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+
+            color: #111827;
+            text-decoration: none;
+        }
+
+        .landing-logo-icon {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #090d0b;
+            color: #22c55e;
+
+            border-radius: 12px;
+        }
+
+        .landing-logo-icon svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .landing-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .landing-nav-links a {
+            display: block;
+
+            padding: 9px 14px;
+
+            color: #667085;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            transition: 0.25s ease;
+        }
+
+        .landing-nav-links a:hover {
+            color: #111827;
+            background: #f1f5f3;
+        }
+
+        .landing-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .landing-login {
+            padding: 10px 16px;
+
+            color: #111827;
+            background: transparent;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            text-decoration: none;
+
+            transition: 0.25s ease;
+        }
+
+        .landing-login:hover {
+            background: #f1f5f3;
+            border-color: #d1d5db;
+        }
+
+        .landing-register {
+            padding: 10px 17px;
+
+            color: #052e16;
+            background: #22c55e;
+
+            border-radius: 10px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            box-shadow: 0 6px 18px rgba(34, 197, 94, 0.18);
+
+            transition: 0.25s ease;
+        }
+
+        .landing-register:hover {
+            background: #16a34a;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================
+           HERO
+        ========================================= */
+
+        .landing-hero {
+            position: relative;
+
+            min-height: 680px;
+
+            display: flex;
+            align-items: center;
+
+            overflow: hidden;
+
+            background: #090d0b;
+            color: white;
+        }
+
+        .landing-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 650px;
+            height: 650px;
+
+            right: -170px;
+            top: -250px;
+
+            background: rgba(34, 197, 94, 0.13);
+
+            border-radius: 50%;
+
+            filter: blur(100px);
+        }
+
+        .landing-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 450px;
+            height: 450px;
+
+            left: -250px;
+            bottom: -250px;
+
+            background: rgba(34, 197, 94, 0.07);
+
+            border-radius: 50%;
+
+            filter: blur(100px);
+        }
+
+        .hero-inner {
+            width: min(1200px, 90%);
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+
+            align-items: center;
+
+            gap: 70px;
+
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-copy {
+            max-width: 680px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 11px;
+
+            margin-bottom: 24px;
+
+            background: rgba(34, 197, 94, 0.10);
+
+            border: 1px solid rgba(34, 197, 94, 0.25);
+
+            border-radius: 999px;
+
+            color: #86efac;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .hero-eyebrow-dot {
+            width: 7px;
+            height: 7px;
+
+            background: #22c55e;
+
+            border-radius: 50%;
+
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+        }
+
+        .hero-title {
+            margin: 0 0 25px;
+
+            font-family: 'Manrope', sans-serif;
+
+            font-size: clamp(48px, 6vw, 76px);
+
+            line-height: 1.02;
+
+            font-weight: 800;
+
+            letter-spacing: -0.055em;
+        }
+
+        .hero-title span {
+            color: #22c55e;
+        }
+
+        .hero-description {
+            max-width: 600px;
+
+            margin: 0 0 32px;
+
+            color: #a7b0aa;
+
+            font-size: 17px;
+            line-height: 1.75;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+        .hero-primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
+            padding: 13px 20px;
+
+            background: #22c55e;
+            color: #052e16;
+
+            border-radius: 11px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.20);
+
+            transition: 0.25s ease;
+        }
+
+        .hero-primary-btn:hover {
+            background: #16a34a;
+            color: white;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 15px 35px rgba(34, 197, 94, 0.28);
+        }
+
+        .hero-primary-btn svg {
+            width: 17px;
+        }
+
+        .hero-secondary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 13px 20px;
+
+            color: white;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border: 1px solid rgba(255, 255, 255, 0.13);
+
+            border-radius: 11px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            text-decoration: none;
+
+            transition: 0.25s ease;
+        }
+
+        .hero-secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.10);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+
+        /* =========================================
+           HERO VISUAL
+        ========================================= */
+
+        .hero-visual {
+            position: relative;
+
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image-wrapper {
+            width: 100%;
+            max-width: 530px;
+
+            position: relative;
+
+            border-radius: 28px;
+
+            overflow: hidden;
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.45);
+
+            transform: rotate(1deg);
+        }
+
+        .hero-image-wrapper::after {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(34, 197, 94, 0.10),
+                    transparent 45%
+                );
+
+            pointer-events: none;
+        }
+
+        .hero-image-wrapper img {
+            display: block;
+
+            width: 100%;
+            height: 500px;
+
+            object-fit: cover;
+        }
+
+        .hero-floating-card {
+            position: absolute;
+
+            bottom: 28px;
+            left: -35px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 14px 16px;
+
+            background: rgba(255, 255, 255, 0.94);
+
+            backdrop-filter: blur(15px);
+
+            border: 1px solid rgba(255, 255, 255, 0.6);
+
+            border-radius: 14px;
+
+            color: #111827;
+
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+        }
+
+        .floating-icon {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #dcfce7;
+            color: #16a34a;
+
+            border-radius: 11px;
+        }
+
+        .floating-icon svg {
+            width: 19px;
+        }
+
+        .floating-text strong {
+            display: block;
+
+            font-family: 'Manrope', sans-serif;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .floating-text span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #667085;
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================
+           TRUST BAR
+        ========================================= */
+
+        .trust-bar {
+            padding: 22px 0;
+
+            background: white;
+
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .trust-inner {
+            width: min(1100px, 90%);
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
+            color: #667085;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .trust-item svg {
+            width: 16px;
+            color: #16a34a;
+        }
+
+
+        /* =========================================
+           SECTION
+        ========================================= */
+
+        .landing-section {
+            padding: 100px 5%;
+        }
+
+        .section-heading {
+            max-width: 650px;
+
+            margin: 0 auto 55px;
+
+            text-align: center;
+        }
+
+        .section-eyebrow {
+            display: block;
+
+            margin-bottom: 11px;
+
+            color: #16a34a;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 14px;
+
+            color: #111827;
+
+            font-family: 'Manrope', sans-serif;
+
+            font-size: clamp(30px, 4vw, 44px);
+
+            line-height: 1.12;
+
+            letter-spacing: -0.045em;
+        }
+
+        .section-heading p {
+            margin: 0;
+
+            color: #667085;
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================
+           FEATURES
+        ========================================= */
+
+        .features-grid-premium {
+            width: min(1150px, 100%);
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+        .feature-premium-card {
+            padding: 27px 24px;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 18px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+            transition: 0.28s ease;
+        }
+
+        .feature-premium-card:hover {
+            transform: translateY(-6px);
+
+            border-color: #d1d5db;
+
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-icon-box {
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 22px;
+
+            background: #ecfdf3;
+            color: #16a34a;
+
+            border-radius: 12px;
+        }
+
+        .feature-icon-box svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .feature-premium-card h3 {
+            margin: 0 0 9px;
+
+            color: #111827;
+
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .feature-premium-card p {
+            margin: 0;
+
+            color: #667085;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================================
+           HOW IT WORKS
+        ========================================= */
+
+        .how-section {
+            background: #f1f5f3;
+        }
+
+        .steps-grid {
+            width: min(1050px, 100%);
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 22px;
+        }
+
+        .step-card {
+            position: relative;
+
+            padding: 28px;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 18px;
+        }
+
+        .step-number {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 20px;
+
+            background: #090d0b;
+            color: #22c55e;
+
+            border-radius: 10px;
+
+            font-family: 'Manrope', sans-serif;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .step-card h3 {
+            margin: 0 0 9px;
+
+            font-size: 18px;
+        }
+
+        .step-card p {
+            margin: 0;
+
+            color: #667085;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================================
+           STATS
+        ========================================= */
+
+        .stats-section {
+            background: #090d0b;
+
+            color: white;
+        }
+
+        .stats-section .section-heading h2 {
+            color: white;
+        }
+
+        .stats-section .section-heading p {
+            color: #98a2b3;
+        }
+
+        .stats-grid-premium {
+            width: min(1000px, 100%);
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+        .stat-premium {
+            padding: 30px;
+
+            text-align: center;
+
+            border: 1px solid rgba(255, 255, 255, 0.09);
+
+            background: rgba(255, 255, 255, 0.035);
+
+            border-radius: 18px;
+        }
+
+        .stat-premium strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #22c55e;
+
+            font-family: 'Manrope', sans-serif;
+
+            font-size: 38px;
+            font-weight: 800;
+
+            letter-spacing: -0.04em;
+        }
+
+        .stat-premium span {
+            color: #98a2b3;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           AI CHAT
+        ========================================= */
+
+        .ai-section {
+            background: #f7f9f8;
+        }
+
+        .chat-container-premium {
+            width: min(700px, 100%);
+
+            margin: auto;
+
+            overflow: hidden;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 22px;
+
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.07);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 17px 20px;
+
+            background: #090d0b;
+
+            color: white;
+        }
+
+        .chat-ai-icon {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #22c55e;
+            color: #052e16;
+
+            border-radius: 10px;
+        }
+
+        .chat-ai-icon svg {
+            width: 18px;
+        }
+
+        .chat-header-text strong {
+            display: block;
+
+            font-size: 13px;
+        }
+
+        .chat-header-text span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #98a2b3;
+
+            font-size: 10px;
+        }
+
+        .chat-online {
+            width: 7px;
+            height: 7px;
+
+            margin-left: auto;
+
+            background: #22c55e;
+
+            border-radius: 50%;
+
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+        }
+
+        #chat-messages {
+            height: 350px;
+
+            padding: 22px;
+
+            overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 12px;
+
+            background: #fbfcfb;
+        }
+
+        .chat-message {
+            max-width: 78%;
+
+            padding: 11px 14px;
+
+            border-radius: 13px;
+
+            font-size: 13px;
+
+            line-height: 1.55;
+        }
+
+        .chat-message.ai {
+            align-self: flex-start;
+
+            background: #f1f5f3;
+
+            color: #344054;
+
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+
+            background: #22c55e;
+
+            color: #052e16;
+
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+
+            gap: 9px;
+
+            padding: 13px;
+
+            border-top: 1px solid #e5e7eb;
+
+            background: white;
+        }
+
+        #user-input {
+            flex: 1;
+
+            min-width: 0;
+
+            height: 45px;
+
+            padding: 0 14px;
+
+            background: #f8faf9;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            color: #111827;
+
+            font-size: 13px;
+
+            transition: 0.2s ease;
+        }
+
+        #user-input:focus {
+            background: white;
+
+            border-color: #22c55e;
+
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.09);
+        }
+
+        #send-btn {
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: none;
+
+            background: #22c55e;
+            color: #052e16;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+        #send-btn:hover {
+            background: #16a34a;
+            color: white;
+
+            transform: translateY(-1px);
+        }
+
+        #send-btn svg {
+            width: 17px;
+        }
+
+
+        /* =========================================
+           CTA
+        ========================================= */
+
+        .cta-section {
+            padding: 100px 5%;
+        }
+
+        .cta-card {
+            width: min(1100px, 100%);
+
+            margin: auto;
+
+            padding: 60px 50px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            background: #eaf8ee;
+
+            border: 1px solid #cdebd6;
+
+            border-radius: 25px;
+
+            text-align: center;
+        }
+
+        .cta-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            right: -100px;
+            top: -170px;
+
+            background: rgba(34, 197, 94, 0.15);
+
+            border-radius: 50%;
+
+            filter: blur(40px);
+        }
+
+        .cta-card h2 {
+            position: relative;
+
+            margin: 0 0 13px;
+
+            font-size: clamp(30px, 4vw, 44px);
+
+            letter-spacing: -0.045em;
+        }
+
+        .cta-card p {
+            position: relative;
+
+            max-width: 580px;
+
+            margin: 0 auto 26px;
+
+            color: #667085;
+
+            font-size: 14px;
+        }
+
+        .cta-button {
+            position: relative;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 13px 20px;
+
+            background: #090d0b;
+            color: white;
+
+            border-radius: 11px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            transition: 0.25s ease;
+        }
+
+        .cta-button:hover {
+            background: #16a34a;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .landing-footer {
+            padding: 55px 5% 28px;
+
+            background: #090d0b;
+
+            color: white;
+        }
+
+        .footer-inner {
+            width: min(1150px, 100%);
+
+            margin: auto;
+        }
+
+        .footer-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+
+            gap: 40px;
+
+            padding-bottom: 40px;
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-brand {
+            max-width: 350px;
+        }
+
+        .footer-brand .landing-logo {
+            color: white;
+
+            margin-bottom: 13px;
+        }
+
+        .footer-description {
+            margin: 0;
+
+            color: #98a2b3;
+
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .footer-column h4 {
+            margin: 0 0 13px;
+
+            color: white;
+
+            font-size: 12px;
+        }
+
+        .footer-column a {
+            display: block;
+
+            margin-bottom: 9px;
+
+            color: #98a2b3;
+
+            font-size: 12px;
+
+            text-decoration: none;
+
+            transition: 0.2s ease;
+        }
+
+        .footer-column a:hover {
+            color: #22c55e;
+        }
+
+        .footer-bottom {
+            padding-top: 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+
+            color: #667085;
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 1000px) {
+
+            .landing-nav-links {
+                display: none;
+            }
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+
+                gap: 50px;
+
+                padding: 80px 0;
+            }
+
+            .hero-copy {
+                max-width: 750px;
+            }
+
+            .hero-visual {
+                justify-content: flex-start;
+            }
+
+            .hero-image-wrapper {
+                max-width: 650px;
+            }
+
+            .features-grid-premium {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .landing-navbar {
+                padding: 0 18px;
+            }
+
+            .landing-register {
+                display: none;
+            }
+
+            .landing-logo {
+                font-size: 17px;
+            }
+
+            .landing-logo-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .landing-hero {
+                min-height: auto;
+            }
+
+            .hero-inner {
+                width: min(100% - 32px, 1200px);
+
+                padding: 65px 0 75px;
+            }
+
+            .hero-title {
+                font-size: 46px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .hero-image-wrapper img {
+                height: 350px;
+            }
+
+            .hero-floating-card {
+                left: 15px;
+                bottom: 15px;
+            }
+
+            .trust-inner {
+                grid-template-columns: 1fr;
+
+                gap: 12px;
+            }
+
+            .landing-section,
+            .cta-section {
+                padding: 70px 16px;
+            }
+
+            .features-grid-premium,
+            .steps-grid,
+            .stats-grid-premium {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-card {
+                padding: 45px 25px;
+            }
+
+            .footer-top {
+                flex-direction: column;
+            }
+
+            .footer-links {
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================================
+         NAVBAR
+    ========================================= -->
+
+    <nav class="landing-navbar">
+
+        <a href="index.html" class="landing-logo">
+
+            <span class="landing-logo-icon">
+                <i data-lucide="zap"></i>
+            </span>
+
+            <span>EV Charge Hub</span>
+
+        </a>
+
+
+        <ul class="landing-nav-links">
+
+            <li>
+                <a href="#how-it-works">
+                    How It Works
+                </a>
+            </li>
+
+            <li>
+                <a href="#features">
+                    Features
+                </a>
+            </li>
+
+            <li>
+                <a href="#nearby">
+                    Nearby Places
+                </a>
+            </li>
+
+            <li>
+                <a href="#faq">
+                    FAQ
+                </a>
+            </li>
+
+        </ul>
+
+
+        <div class="landing-nav-actions">
+
+            <a href="pages/login.html"
+               class="landing-login">
+                Login
+            </a>
+
+            <a href="pages/register.html"
+               class="landing-register">
+                Get Started
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         HERO
+    ========================================= -->
+
+    <section class="landing-hero">
+
+        <div class="hero-inner">
+
+
+            <div class="hero-copy">
+
+                <div class="hero-eyebrow">
+
+                    <span class="hero-eyebrow-dot"></span>
+
+                    Smart EV Charging Platform
+
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    Charge smarter.<br>
+
+                    <span>Travel better.</span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    Find EV charging stations, check real-time
+                    availability, reserve your slot, pay securely,
+                    and discover everything you need while your
+                    vehicle charges.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a href="pages/search.html"
+                       class="hero-primary-btn">
+
+                        <i data-lucide="map-pin"></i>
+
+                        Find a Charging Station
+
+                    </a>
+
+
+                    <a href="#how-it-works"
+                       class="hero-secondary-btn">
+
+                        See how it works
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-visual">
+
+                <div class="hero-image-wrapper">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1000&q=85"
+                        alt="Electric vehicle charging at a charging station"
+                    >
+
+                </div>
+
+
+                <div class="hero-floating-card">
+
+                    <div class="floating-icon">
+
+                        <i data-lucide="battery-charging"></i>
+
+                    </div>
+
+                    <div class="floating-text">
+
+                        <strong>Charging made simple</strong>
+
+                        <span>Find • Book • Charge • Go</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         TRUST BAR
+    ========================================= -->
+
+    <section class="trust-bar">
+
+        <div class="trust-inner">
+
+            <div class="trust-item">
+
+                <i data-lucide="zap"></i>
+
+                Real-time charging availability
+
+            </div>
+
+
+            <div class="trust-item">
+
+                <i data-lucide="shield-check"></i>
+
+                Secure booking & payments
+
+            </div>
+
+
+            <div class="trust-item">
+
+                <i data-lucide="map-pin"></i>
+
+                Nearby places & amenities
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         FEATURES
+    ========================================= -->
+
+    <section id="features"
+             class="landing-section">
+
+        <div class="section-heading">
+
+            <span class="section-eyebrow">
+                Everything in one place
+            </span>
+
+            <h2>
+                Your complete EV charging companion.
+            </h2>
+
+            <p>
+                From finding the right charger to exploring
+                what is around you, EV Charge Hub brings your
+                entire charging journey together.
+            </p>
+
+        </div>
+
+
+        <div class="features-grid-premium">
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="activity"></i>
+
+                </div>
+
+                <h3>
+                    Real-Time Availability
+                </h3>
+
+                <p>
+                    Know which charging points are available
+                    before you reach the station.
+                </p>
+
+            </div>
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="calendar-check"></i>
+
+                </div>
+
+                <h3>
+                    Easy Slot Booking
+                </h3>
+
+                <p>
+                    Reserve a charging slot in advance and
+                    arrive with confidence.
+                </p>
+
+            </div>
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="credit-card"></i>
+
+                </div>
+
+                <h3>
+                    Secure Payments
+                </h3>
+
+                <p>
+                    Pay conveniently using secure digital
+                    payment options.
+                </p>
+
+            </div>
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="coffee"></i>
+
+                </div>
+
+                <h3>
+                    Explore Nearby
+                </h3>
+
+                <p>
+                    Discover cafes, restaurants, hotels and
+                    essential places while you charge.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         HOW IT WORKS
+    ========================================= -->
+
+    <section id="how-it-works"
+             class="landing-section how-section">
+
+        <div class="section-heading">
+
+            <span class="section-eyebrow">
+                Simple by design
+            </span>
+
+            <h2>
+                Charging in three simple steps.
+            </h2>
+
+            <p>
+                No complicated process. Find your station,
+                reserve your slot and get back on the road.
+            </p>
+
+        </div>
+
+
+        <div class="steps-grid">
+
+
+            <div class="step-card">
+
+                <div class="step-number">
+                    01
+                </div>
+
+                <h3>
+                    Find a Charger
+                </h3>
+
+                <p>
+                    Search for charging stations based on
+                    location, availability and charging needs.
+                </p>
+
+            </div>
+
+
+            <div class="step-card">
+
+                <div class="step-number">
+                    02
+                </div>
+
+                <h3>
+                    Reserve Your Slot
+                </h3>
+
+                <p>
+                    Select a suitable charging point, date
+                    and time, then confirm your reservation.
+                </p>
+
+            </div>
+
+
+            <div class="step-card">
+
+                <div class="step-number">
+                    03
+                </div>
+
+                <h3>
+                    Charge & Go
+                </h3>
+
+                <p>
+                    Arrive at the station, charge your EV,
+                    explore nearby places and continue your journey.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         STATISTICS
+    ========================================= -->
+
+    <section class="landing-section stats-section">
+
+        <div class="section-heading">
+
+            <span class="section-eyebrow">
+                EV Charge Hub
+            </span>
+
+            <h2>
+                Built for the growing EV community.
+            </h2>
+
+            <p>
+                A smarter way to connect EV drivers with
+                charging infrastructure.
+            </p>
+
+        </div>
+
+
+        <div class="stats-grid-premium">
+
+
+            <div class="stat-premium">
+
+                <strong>500+</strong>
+
+                <span>
+                    Charging Stations
+                </span>
+
+            </div>
+
+
+            <div class="stat-premium">
+
+                <strong>12K+</strong>
+
+                <span>
+                    Active Users
+                </span>
+
+            </div>
+
+
+            <div class="stat-premium">
+
+                <strong>1M+</strong>
+
+                <span>
+                    Successful Bookings
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         NEARBY PLACES
+    ========================================= -->
+
+    <section id="nearby"
+             class="landing-section">
+
+        <div class="section-heading">
+
+            <span class="section-eyebrow">
+                More than charging
+            </span>
+
+            <h2>
+                Make the most of your charging time.
+            </h2>
+
+            <p>
+                Find useful places around your charging
+                station and turn charging time into productive time.
+            </p>
+
+        </div>
+
+
+        <div class="features-grid-premium">
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="hotel"></i>
+
+                </div>
+
+                <h3>
+                    Hotels
+                </h3>
+
+                <p>
+                    Find nearby hotels when you need
+                    a comfortable place to stay.
+                </p>
+
+            </div>
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="utensils"></i>
+
+                </div>
+
+                <h3>
+                    Restaurants
+                </h3>
+
+                <p>
+                    Discover restaurants around your
+                    charging station.
+                </p>
+
+            </div>
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="coffee"></i>
+
+                </div>
+
+                <h3>
+                    Cafes
+                </h3>
+
+                <p>
+                    Grab a coffee or get some work done
+                    while your vehicle charges.
+                </p>
+
+            </div>
+
+
+            <div class="feature-premium-card">
+
+                <div class="feature-icon-box">
+
+                    <i data-lucide="map"></i>
+
+                </div>
+
+                <h3>
+                    Essential Places
+                </h3>
+
+                <p>
+                    Discover useful amenities and
+                    important locations nearby.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         AI SUPPORT
+    ========================================= -->
+
+    <section class="landing-section ai-section">
+
+        <div class="section-heading">
+
+            <span class="section-eyebrow">
+                Intelligent assistance
+            </span>
+
+            <h2>
+                Need help? Ask EV Charge AI.
+            </h2>
+
+            <p>
+                Get instant assistance with charging issues,
+                station information and bookings.
+            </p>
+
+        </div>
+
+
+        <div id="chat-widget"
+             class="chat-container-premium">
+
+
+            <div class="chat-header">
+
+                <div class="chat-ai-icon">
+
+                    <i data-lucide="bot"></i>
+
+                </div>
+
+
+                <div class="chat-header-text">
+
+                    <strong>
+                        EV Charge AI
+                    </strong>
+
+                    <span>
+                        Intelligent EV support
+                    </span>
+
+                </div>
+
+
+                <span class="chat-online"></span>
+
+            </div>
+
+
+            <div id="chat-messages">
+
+                <div class="chat-message ai">
+
+                    Hello! How can I help you with
+                    EV Charge Hub today?
+
+                </div>
+
+            </div>
+
+
+            <div class="chat-input-area">
+
+                <input
+                    type="text"
+                    id="user-input"
+                    placeholder="Ask about charging, bookings..."
+                    autocomplete="off"
+                >
+
+
+                <button id="send-btn"
+                        type="button"
+                        aria-label="Send message">
+
+                    <i data-lucide="send"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         CTA
+    ========================================= -->
+
+    <section class="cta-section">
+
+        <div class="cta-card">
+
+            <h2>
+                Ready to charge smarter?
+            </h2>
+
+            <p>
+                Find your next charging station,
+                reserve your slot and get back on the road.
+            </p>
+
+            <a href="pages/search.html"
+               class="cta-button">
+
+                Find a Charging Station
+
+                <i data-lucide="arrow-right"></i>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================= -->
+
+    <footer class="landing-footer">
+
+        <div class="footer-inner">
+
+
+            <div class="footer-top">
+
+
+                <div class="footer-brand">
+
+                    <a href="index.html"
+                       class="landing-logo">
+
+                        <span class="landing-logo-icon">
+
+                            <i data-lucide="zap"></i>
+
+                        </span>
+
+                        EV Charge Hub
+
+                    </a>
+
+
+                    <p class="footer-description">
+
+                        Empowering the future of electric mobility
+                        with smarter charging, easier booking and
+                        better journeys.
+
+                    </p>
+
+                </div>
+
+
+                <div class="footer-links">
+
+
+                    <div class="footer-column">
+
+                        <h4>
+                            Platform
+                        </h4>
+
+                        <a href="pages/search.html">
+                            Find Chargers
+                        </a>
+
+                        <a href="pages/login.html">
+                            Login
+                        </a>
+
+                        <a href="pages/register.html">
+                            Create Account
+                        </a>
+
+                    </div>
+
+
+                    <div class="footer-column">
+
+                        <h4>
+                            Explore
+                        </h4>
+
+                        <a href="#features">
+                            Features
+                        </a>
+
+                        <a href="#how-it-works">
+                            How It Works
+                        </a>
+
+                        <a href="#nearby">
+                            Nearby Places
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © 2026 EV Charge Hub. All rights reserved.
+                </p>
+
+                <p>
+                    Charge smarter. Travel better. ⚡
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================= -->
+
+    <script>
+
+        /* -----------------------------------------
+           Initialize Lucide Icons
+        ----------------------------------------- */
+
+        lucide.createIcons();
+
+
+        /* -----------------------------------------
+           AI CHAT
+        ----------------------------------------- */
+
+        const sendBtn =
+            document.getElementById('send-btn');
+
+        const userInput =
+            document.getElementById('user-input');
+
+        const chatMessages =
+            document.getElementById('chat-messages');
+
+
+        async function handleSendMessage() {
+
+            const message =
+                userInput.value.trim();
+
+            if (!message) return;
+
+
+            /* User message */
+
+            const userMsgDiv =
+                document.createElement('div');
+
+            userMsgDiv.className =
+                'chat-message user';
+
+            userMsgDiv.textContent =
+                message;
+
+            chatMessages.appendChild(
+                userMsgDiv
+            );
+
+
+            userInput.value = '';
+
+            chatMessages.scrollTop =
+                chatMessages.scrollHeight;
+
+
+            /* AI response */
+
+            try {
+
+                const response =
+                    await fetch(
+                        'http://localhost:5000/api/chat',
+                        {
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body: JSON.stringify({
+                                message: message
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                const aiMsgDiv =
+                    document.createElement('div');
+
+                aiMsgDiv.className =
+                    'chat-message ai';
+
+                aiMsgDiv.textContent =
+                    data.reply ||
+                    data.error ||
+                    "Sorry, I couldn't process that.";
+
+
+                chatMessages.appendChild(
+                    aiMsgDiv
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    'AI Chat Error:',
+                    error
+                );
+
+
+                const errorDiv =
+                    document.createElement('div');
+
+                errorDiv.className =
+                    'chat-message ai';
+
+                errorDiv.style.background =
+                    '#fef2f2';
+
+                errorDiv.style.color =
+                    '#b91c1c';
+
+                errorDiv.textContent =
+                    'Error connecting to AI chat service.';
+
+
+                chatMessages.appendChild(
+                    errorDiv
+                );
+
+            }
+
+
+            chatMessages.scrollTop =
+                chatMessages.scrollHeight;
+
+        }
+
+
+        /* -----------------------------------------
+           Chat Events
+        ----------------------------------------- */
+
+        sendBtn.addEventListener(
+            'click',
+            handleSendMessage
+        );
+
+
+        userInput.addEventListener(
+            'keypress',
+            function (event) {
+
+                if (event.key === 'Enter') {
+
+                    handleSendMessage();
+
+                }
+
+            }
+        );
+
     </script>
+
 </body>
+
 </html>

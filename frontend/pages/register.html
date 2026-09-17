@@ -1,154 +1,2429 @@
-<!-- frontend/pages/register.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | EV Charge Hub</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="auth-page">
 
-    <div class="auth-card">
-        <div class="auth-header">
-            <a href="../index.html" class="logo" style="justify-content: center; margin-bottom: 1rem;">
-                <i data-lucide="zap"></i> EV Charge Hub
+    <title>Register | EV Charge Hub</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --green: #22c55e;
+            --green-dark: #15803d;
+            --green-soft: #ecfdf3;
+
+            --dark: #101814;
+            --dark-2: #17221c;
+
+            --text: #17201b;
+            --muted: #6b766f;
+
+            --border: #e5ebe7;
+            --background: #f6f8f7;
+            --white: #ffffff;
+
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(34, 197, 94, 0.12),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(34, 197, 94, 0.08),
+                    transparent 30%
+                ),
+                var(--background);
+
+            color: var(--text);
+        }
+
+        /* ================================
+           MAIN
+        ================================= */
+
+        .register-wrapper {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+        }
+
+        /* ================================
+           LEFT BRAND PANEL
+        ================================= */
+
+        .register-brand {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+
+            background: var(--dark);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 60px;
+        }
+
+        .brand-glow {
+            position: absolute;
+
+            width: 430px;
+            height: 430px;
+
+            border-radius: 50%;
+
+            background: rgba(34, 197, 94, 0.14);
+
+            top: -170px;
+            right: -140px;
+        }
+
+        .brand-glow-two {
+            position: absolute;
+
+            width: 340px;
+            height: 340px;
+
+            border-radius: 50%;
+
+            background: rgba(34, 197, 94, 0.08);
+
+            bottom: -150px;
+            left: -130px;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+
+            max-width: 510px;
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: #fff;
+            text-decoration: none;
+
+            font-size: 22px;
+            font-weight: 800;
+
+            margin-bottom: 60px;
+        }
+
+        .brand-logo-icon {
+            width: 42px;
+            height: 42px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 13px;
+
+            background: var(--green);
+            color: #052e16;
+
+            box-shadow:
+                0 12px 35px rgba(34, 197, 94, 0.25);
+        }
+
+        .brand-logo-icon svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .brand-content h1 {
+            margin: 0 0 20px;
+
+            font-size: clamp(40px, 4vw, 62px);
+            line-height: 1.02;
+
+            letter-spacing: -2px;
+            font-weight: 800;
+        }
+
+        .brand-content h1 span {
+            color: var(--green);
+        }
+
+        .brand-content > p {
+            margin: 0;
+
+            max-width: 455px;
+
+            color: #aeb9b2;
+
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .brand-features {
+            margin-top: 40px;
+
+            display: grid;
+            gap: 17px;
+        }
+
+        .brand-feature {
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+        }
+
+        .feature-icon {
+            width: 43px;
+            height: 43px;
+
+            flex-shrink: 0;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.07);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            color: var(--green);
+        }
+
+        .feature-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .brand-feature strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            font-size: 14px;
+        }
+
+        .brand-feature span {
+            color: #89958e;
+            font-size: 13px;
+        }
+
+        /* ================================
+           RIGHT AREA
+        ================================= */
+
+        .register-area {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 35px 40px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 470px;
+
+            background: var(--white);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 24px;
+
+            padding: 34px 38px;
+
+            box-shadow:
+                0 25px 70px rgba(16, 24, 20, 0.08),
+                0 4px 16px rgba(16, 24, 20, 0.03);
+        }
+
+        /* ================================
+           MOBILE LOGO
+        ================================= */
+
+        .mobile-logo {
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 9px;
+
+            margin-bottom: 25px;
+
+            text-decoration: none;
+            color: var(--dark);
+
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .mobile-logo-icon {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            background: var(--green);
+            color: #052e16;
+        }
+
+        /* ================================
+           HEADER
+        ================================= */
+
+        .auth-header {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .auth-header h2 {
+            margin: 0 0 7px;
+
+            color: var(--dark);
+
+            font-size: 29px;
+            line-height: 1.2;
+
+            letter-spacing: -0.7px;
+        }
+
+        .auth-header p {
+            margin: 0;
+
+            color: var(--muted);
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* ================================
+           STEP INDICATOR
+        ================================= */
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 23px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            color: #8b968f;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .step-number {
+            width: 25px;
+            height: 25px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 50%;
+
+            background: #f1f4f2;
+            color: #77827b;
+
+            font-size: 11px;
+        }
+
+        .step.active {
+            color: var(--green-dark);
+        }
+
+        .step.active .step-number {
+            background: var(--green);
+            color: #052e16;
+        }
+
+        .step.completed {
+            color: var(--green-dark);
+        }
+
+        .step.completed .step-number {
+            background: var(--green-dark);
+            color: white;
+        }
+
+        .step-line {
+            height: 1px;
+            flex: 1;
+
+            background: var(--border);
+
+            max-width: 40px;
+        }
+
+        /* ================================
+           ALERT
+        ================================= */
+
+        #registerAlert {
+            display: none;
+
+            align-items: flex-start;
+            gap: 9px;
+
+            border-radius: 12px;
+
+            padding: 12px 14px;
+
+            margin-bottom: 19px;
+
+            font-size: 12px;
+            line-height: 1.5;
+
+            word-break: break-word;
+        }
+
+        #registerAlert.success,
+        #registerAlert.error {
+            display: flex;
+        }
+
+        #registerAlert.success {
+            background: #ecfdf3;
+            color: #166534;
+
+            border: 1px solid #bbf7d0;
+        }
+
+        #registerAlert.error {
+            background: #fef2f2;
+            color: #b91c1c;
+
+            border: 1px solid #fecaca;
+        }
+
+        /* ================================
+           FORM
+        ================================= */
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #26322b;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 14px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 17px;
+            height: 17px;
+
+            color: #8b968f;
+
+            pointer-events: none;
+
+            z-index: 2;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 47px;
+
+            padding: 0 43px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background: #fbfcfb;
+            color: var(--text);
+
+            font-size: 13px;
+
+            outline: none;
+
+            transition:
+                border 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .form-control::placeholder {
+            color: #a4ada7;
+        }
+
+        .form-control:hover {
+            border-color: #cbd5ce;
+        }
+
+        .form-control:focus {
+            background: #fff;
+
+            border-color: var(--green);
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.10);
+        }
+
+        /* ================================
+           PASSWORD
+        ================================= */
+
+        .password-toggle {
+            position: absolute;
+
+            right: 9px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 31px;
+            height: 31px;
+
+            display: grid;
+            place-items: center;
+
+            border: 0;
+            background: transparent;
+
+            color: #89958e;
+
+            cursor: pointer;
+
+            border-radius: 8px;
+        }
+
+        .password-toggle:hover {
+            background: #f1f5f2;
+            color: var(--dark);
+        }
+
+        .password-toggle svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        /* ================================
+           PASSWORD STRENGTH
+        ================================= */
+
+        .password-strength {
+            margin-top: 7px;
+            display: none;
+        }
+
+        .strength-bars {
+            display: flex;
+            gap: 4px;
+
+            margin-bottom: 4px;
+        }
+
+        .strength-bar {
+            height: 3px;
+
+            flex: 1;
+
+            border-radius: 5px;
+
+            background: #e5e9e6;
+
+            transition: background 0.2s ease;
+        }
+
+        .strength-text {
+            color: #89958e;
+            font-size: 10px;
+        }
+
+        /* ================================
+           BUTTON
+        ================================= */
+
+        .register-btn {
+            width: 100%;
+            height: 49px;
+
+            border: 0;
+            border-radius: 11px;
+
+            background: var(--green);
+            color: #052e16;
+
+            font-size: 13px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            box-shadow:
+                0 10px 25px rgba(34, 197, 94, 0.18);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .register-btn:hover:not(:disabled) {
+            background: #16a34a;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 14px 30px rgba(34, 197, 94, 0.22);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .register-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        /* ================================
+           OTP
+        ================================= */
+
+        #otpForm {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .otp-intro {
+            padding: 15px;
+
+            margin-bottom: 18px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            background: var(--green-soft);
+
+            border:
+                1px solid #bbf7d0;
+
+            border-radius: 13px;
+        }
+
+        .otp-icon {
+            width: 39px;
+            height: 39px;
+
+            min-width: 39px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            background: var(--green);
+            color: #052e16;
+        }
+
+        .otp-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .otp-intro strong {
+            display: block;
+
+            margin-bottom: 2px;
+
+            color: #14532d;
+
+            font-size: 12px;
+        }
+
+        .otp-intro span {
+            color: #4d725b;
+
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .otp-input {
+            text-align: center;
+
+            padding: 0 12px;
+
+            font-size: 22px;
+            font-weight: 800;
+
+            letter-spacing: 7px;
+        }
+
+        .otp-input::placeholder {
+            letter-spacing: 5px;
+        }
+
+        /* ================================
+           LINKS
+        ================================= */
+
+        .auth-links {
+            text-align: center;
+
+            margin-top: 21px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .auth-links a {
+            color: var(--green-dark);
+
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* ================================
+           SECURITY
+        ================================= */
+
+        .security-note {
+            margin-top: 19px;
+
+            padding-top: 16px;
+
+            border-top:
+                1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            color: #89958e;
+
+            font-size: 10px;
+        }
+
+        .security-note svg {
+            width: 13px;
+            height: 13px;
+
+            color: var(--green-dark);
+        }
+
+        /* ================================
+           SPINNER
+        ================================= */
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+
+            border:
+                2px solid rgba(5, 46, 22, 0.25);
+
+            border-top-color: #052e16;
+
+            border-radius: 50%;
+
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ================================
+           DEMO OTP
+        ================================= */
+
+        .demo-otp {
+            display: none;
+
+            margin-top: 12px;
+
+            padding: 11px 13px;
+
+            border-radius: 10px;
+
+            background: #fff7ed;
+
+            border: 1px solid #fed7aa;
+
+            color: #9a3412;
+
+            font-size: 11px;
+
+            text-align: center;
+        }
+
+        .demo-otp strong {
+            font-size: 15px;
+            letter-spacing: 3px;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 900px) {
+
+            .register-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .register-brand {
+                display: none;
+            }
+
+            .register-area {
+                min-height: 100vh;
+                padding: 25px 20px;
+            }
+
+            .mobile-logo {
+                display: flex;
+            }
+
+            .auth-card {
+                max-width: 470px;
+            }
+        }
+
+        @media (max-width: 520px) {
+
+            .register-area {
+                padding: 15px;
+            }
+
+            .auth-card {
+                padding: 27px 21px;
+                border-radius: 20px;
+            }
+
+            .auth-header h2 {
+                font-size: 26px;
+            }
+
+            .step {
+                font-size: 10px;
+            }
+
+            .step-line {
+                max-width: 25px;
+            }
+
+            .form-group {
+                margin-bottom: 14px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="register-wrapper">
+
+    <!-- =====================================================
+         LEFT BRAND PANEL
+    ====================================================== -->
+
+    <section class="register-brand">
+
+        <div class="brand-glow"></div>
+        <div class="brand-glow-two"></div>
+
+        <div class="brand-content">
+
+            <a href="../index.html" class="brand-logo">
+
+                <span class="brand-logo-icon">
+                    <i data-lucide="zap"></i>
+                </span>
+
+                EV Charge Hub
+
             </a>
-            <h2 id="formTitle">Create Account</h2>
-            <p id="formSubtitle" style="color: var(--text-muted);">Join the smart EV charging network</p>
+
+            <h1>
+                Join the
+                <br>
+                <span>electric</span>
+                revolution.
+            </h1>
+
+            <p>
+                Create your EV Charge Hub account and get
+                access to smart charging, easy bookings,
+                and convenient journey planning.
+            </p>
+
+            <div class="brand-features">
+
+                <div class="brand-feature">
+
+                    <div class="feature-icon">
+                        <i data-lucide="map-pin"></i>
+                    </div>
+
+                    <div>
+                        <strong>Find nearby chargers</strong>
+
+                        <span>
+                            Discover charging stations around you
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="brand-feature">
+
+                    <div class="feature-icon">
+                        <i data-lucide="calendar-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>Reserve charging slots</strong>
+
+                        <span>
+                            Book your preferred time in seconds
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="brand-feature">
+
+                    <div class="feature-icon">
+                        <i data-lucide="leaf"></i>
+                    </div>
+
+                    <div>
+                        <strong>Drive greener</strong>
+
+                        <span>
+                            Track your sustainable EV journey
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div id="registerAlert" class="alert"></div>
+    </section>
 
-        <!-- Registration Form -->
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" class="form-control" required placeholder="John Doe">
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" class="form-control" required placeholder="john@example.com">
-            </div>
-            <div class="form-group">
-                <label for="mobile">Mobile Number</label>
-                <input type="tel" id="mobile" class="form-control" required placeholder="9876543210" pattern="[0-9]{10}">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" class="form-control" required placeholder="Create a password">
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" class="form-control" required placeholder="Confirm password">
-            </div>
-            
-            <button type="submit" class="btn btn-primary btn-block" id="registerBtn">Create Account</button>
-            
-            <div class="auth-links">
-                Already have an account? <a href="login.html">Login here</a>
-            </div>
-        </form>
 
-        <!-- OTP Verification Form (Hidden Initially) -->
-        <form id="otpForm" style="display: none;">
-            <div class="form-group">
-                <label for="otp">Enter 6-digit OTP sent to your email/mobile</label>
-                <input type="text" id="otp" class="form-control" required placeholder="123456" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.25rem;">
+    <!-- =====================================================
+         REGISTER AREA
+    ====================================================== -->
+
+    <main class="register-area">
+
+        <div class="auth-card">
+
+            <!-- MOBILE LOGO -->
+
+            <a href="../index.html" class="mobile-logo">
+
+                <span class="mobile-logo-icon">
+                    <i data-lucide="zap"></i>
+                </span>
+
+                EV Charge Hub
+
+            </a>
+
+
+            <!-- HEADER -->
+
+            <div class="auth-header">
+
+                <h2 id="formTitle">
+                    Create your account
+                </h2>
+
+                <p id="formSubtitle">
+                    Join the smart EV charging network
+                </p>
+
             </div>
-            <button type="submit" class="btn btn-primary btn-block" id="verifyBtn">Verify & Login</button>
-            <div class="auth-links">
-                <a href="#" onclick="location.reload();">Use a different email</a>
+
+
+            <!-- STEP INDICATOR -->
+
+            <div class="step-indicator" id="stepIndicator">
+
+                <div class="step active" id="stepAccount">
+
+                    <span class="step-number">
+                        1
+                    </span>
+
+                    Account
+
+                </div>
+
+                <div class="step-line"></div>
+
+                <div class="step" id="stepVerification">
+
+                    <span class="step-number">
+                        2
+                    </span>
+
+                    Verification
+
+                </div>
+
             </div>
-        </form>
 
-    </div>
 
-    <script src="../js/api.js"></script>
-    <script>
-        lucide.createIcons();
+            <!-- ALERT -->
 
-        let registeredEmail = '';
+            <div
+                id="registerAlert"
+                class="alert">
+            </div>
 
-        // Handle Registration
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const mobile = document.getElementById('mobile').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            const btn = document.getElementById('registerBtn');
-            const alertBox = document.getElementById('registerAlert');
 
-            if (password !== confirmPassword) {
-                alertBox.textContent = "Passwords do not match!";
-                alertBox.className = 'alert error';
+            <!-- =================================================
+                 REGISTRATION FORM
+            ================================================== -->
+
+            <form id="registerForm">
+
+                <!-- FULL NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i
+                            data-lucide="user"
+                            class="input-icon">
+                        </i>
+
+                        <input
+                            type="text"
+                            id="name"
+                            class="form-control"
+                            required
+                            autocomplete="name"
+                            placeholder="John Doe"
+                            maxlength="100">
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i
+                            data-lucide="mail"
+                            class="input-icon">
+                        </i>
+
+                        <input
+                            type="email"
+                            id="email"
+                            class="form-control"
+                            required
+                            autocomplete="email"
+                            placeholder="john@example.com"
+                            maxlength="150">
+
+                    </div>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Mobile Number
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i
+                            data-lucide="smartphone"
+                            class="input-icon">
+                        </i>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            class="form-control"
+                            required
+                            autocomplete="tel"
+                            placeholder="9876543210"
+                            maxlength="10"
+                            inputmode="numeric">
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i
+                            data-lucide="lock"
+                            class="input-icon">
+                        </i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            class="form-control"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Create a password"
+                            minlength="6">
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show password">
+
+                            <i data-lucide="eye"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="password-strength"
+                        id="passwordStrength">
+
+                        <div class="strength-bars">
+
+                            <span class="strength-bar"></span>
+                            <span class="strength-bar"></span>
+                            <span class="strength-bar"></span>
+                            <span class="strength-bar"></span>
+
+                        </div>
+
+                        <span
+                            class="strength-text"
+                            id="strengthText">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i
+                            data-lucide="shield-check"
+                            class="input-icon">
+                        </i>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            class="form-control"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Confirm your password"
+                            minlength="6">
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="confirmPasswordToggle"
+                            aria-label="Show password">
+
+                            <i data-lucide="eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REGISTER BUTTON -->
+
+                <button
+                    type="submit"
+                    class="register-btn"
+                    id="registerBtn">
+
+                    <i data-lucide="user-plus"></i>
+
+                    <span>
+                        Create Account
+                    </span>
+
+                </button>
+
+
+                <!-- LOGIN -->
+
+                <div class="auth-links">
+
+                    Already have an account?
+
+                    <a href="login.html">
+                        Login here
+                    </a>
+
+                </div>
+
+            </form>
+
+
+            <!-- =================================================
+                 OTP FORM
+            ================================================== -->
+
+            <form
+                id="otpForm"
+                style="display:none;">
+
+                <div class="otp-intro">
+
+                    <div class="otp-icon">
+
+                        <i data-lucide="mail-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Check your inbox
+                        </strong>
+
+                        <span>
+                            Enter the verification code
+                            sent to your registered email.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="otp">
+                        Enter 6-digit OTP
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i
+                            data-lucide="key-round"
+                            class="input-icon">
+                        </i>
+
+                        <input
+                            type="text"
+                            id="otp"
+                            class="form-control otp-input"
+                            required
+                            placeholder="123456"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            inputmode="numeric"
+                            autocomplete="one-time-code">
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEVELOPMENT OTP -->
+
+                <div
+                    id="demoOtp"
+                    class="demo-otp">
+
+                    Development OTP:
+
+                    <strong id="demoOtpValue"></strong>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="register-btn"
+                    id="verifyBtn">
+
+                    <i data-lucide="badge-check"></i>
+
+                    <span>
+                        Verify & Login
+                    </span>
+
+                </button>
+
+
+                <div class="auth-links">
+
+                    <a
+                        href="#"
+                        id="differentEmail">
+
+                        Use a different email
+
+                    </a>
+
+                </div>
+
+            </form>
+
+
+            <!-- SECURITY -->
+
+            <div class="security-note">
+
+                <i data-lucide="shield-check"></i>
+
+                Your account information is securely protected
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =====================================================
+       CONFIGURATION
+    ===================================================== */
+
+    const API_BASE_URL =
+        'http://localhost:5000/api';
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let registeredEmail = '';
+
+
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
+
+    const registerForm =
+        document.getElementById('registerForm');
+
+    const otpForm =
+        document.getElementById('otpForm');
+
+    const registerBtn =
+        document.getElementById('registerBtn');
+
+    const verifyBtn =
+        document.getElementById('verifyBtn');
+
+    const alertBox =
+        document.getElementById('registerAlert');
+
+    const passwordInput =
+        document.getElementById('password');
+
+    const confirmPasswordInput =
+        document.getElementById('confirmPassword');
+
+    const phoneInput =
+        document.getElementById('phone');
+
+    const otpInput =
+        document.getElementById('otp');
+
+    const demoOtpBox =
+        document.getElementById('demoOtp');
+
+    const demoOtpValue =
+        document.getElementById('demoOtpValue');
+
+
+    /* =====================================================
+       LUCIDE
+    ===================================================== */
+
+    function refreshIcons() {
+
+        if (
+            window.lucide &&
+            typeof lucide.createIcons === 'function'
+        ) {
+            lucide.createIcons();
+        }
+
+    }
+
+    refreshIcons();
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement('div');
+
+        div.textContent =
+            String(value ?? '');
+
+        return div.innerHTML;
+    }
+
+
+    /* =====================================================
+       ALERT
+    ===================================================== */
+
+    function showAlert(
+        message,
+        type = 'error'
+    ) {
+
+        alertBox.innerHTML = `
+
+            <i
+                data-lucide="${
+                    type === 'success'
+                        ? 'circle-check'
+                        : 'circle-alert'
+                }"
+                style="width:16px;height:16px;flex-shrink:0;">
+            </i>
+
+            <span>
+                ${escapeHtml(message)}
+            </span>
+
+        `;
+
+        alertBox.className =
+            `alert ${type}`;
+
+        refreshIcons();
+    }
+
+
+    function hideAlert() {
+
+        alertBox.className =
+            'alert';
+
+        alertBox.innerHTML = '';
+    }
+
+
+    /* =====================================================
+       API REQUEST
+    ===================================================== */
+
+    async function request(
+        endpoint,
+        method = 'GET',
+        body = null
+    ) {
+
+        const options = {
+            method: method,
+
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        };
+
+
+        if (body !== null) {
+
+            options.body =
+                JSON.stringify(body);
+        }
+
+
+        console.log(
+            '========================================'
+        );
+
+        console.log(
+            'API REQUEST'
+        );
+
+        console.log(
+            method,
+            `${API_BASE_URL}${endpoint}`
+        );
+
+        console.log(
+            'Request Body:',
+            body
+        );
+
+        console.log(
+            '========================================'
+        );
+
+
+        let response;
+
+
+        try {
+
+            response =
+                await fetch(
+                    `${API_BASE_URL}${endpoint}`,
+                    options
+                );
+
+        } catch (networkError) {
+
+            console.error(
+                'Network error:',
+                networkError
+            );
+
+            throw new Error(
+                'Cannot connect to the backend. Make sure the server is running on localhost:5000.'
+            );
+        }
+
+
+        let data = {};
+
+
+        const contentType =
+            response.headers.get('content-type') || '';
+
+
+        if (
+            contentType.includes('application/json')
+        ) {
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch (jsonError) {
+
+                console.error(
+                    'JSON parsing error:',
+                    jsonError
+                );
+
+                data = {};
+            }
+
+        } else {
+
+            try {
+
+                const text =
+                    await response.text();
+
+                data = {
+                    message: text
+                };
+
+            } catch (textError) {
+
+                data = {};
+            }
+
+        }
+
+
+        console.log(
+            '========================================'
+        );
+
+        console.log(
+            'API RESPONSE'
+        );
+
+        console.log(
+            'Status:',
+            response.status
+        );
+
+        console.log(
+            'Response:',
+            data
+        );
+
+        console.log(
+            '========================================'
+        );
+
+
+        if (!response.ok) {
+
+            const actualError =
+                data.error ||
+                data.sqlMessage ||
+                data.message ||
+                data.details ||
+                `Server returned HTTP ${response.status}`;
+
+
+            throw new Error(
+                actualError
+            );
+        }
+
+
+        return data;
+    }
+
+
+    /* =====================================================
+       PASSWORD TOGGLE
+    ===================================================== */
+
+    function setupPasswordToggle(
+        inputId,
+        buttonId
+    ) {
+
+        const input =
+            document.getElementById(inputId);
+
+        const button =
+            document.getElementById(buttonId);
+
+
+        if (!input || !button) {
+            return;
+        }
+
+
+        button.addEventListener(
+            'click',
+            () => {
+
+                const isPassword =
+                    input.type === 'password';
+
+
+                input.type =
+                    isPassword
+                        ? 'text'
+                        : 'password';
+
+
+                button.innerHTML = `
+
+                    <i
+                        data-lucide="${
+                            isPassword
+                                ? 'eye-off'
+                                : 'eye'
+                        }">
+                    </i>
+
+                `;
+
+
+                button.setAttribute(
+                    'aria-label',
+                    isPassword
+                        ? 'Hide password'
+                        : 'Show password'
+                );
+
+
+                refreshIcons();
+
+            }
+        );
+    }
+
+
+    setupPasswordToggle(
+        'password',
+        'passwordToggle'
+    );
+
+
+    setupPasswordToggle(
+        'confirmPassword',
+        'confirmPasswordToggle'
+    );
+
+
+    /* =====================================================
+       PASSWORD STRENGTH
+    ===================================================== */
+
+    const strengthBox =
+        document.getElementById(
+            'passwordStrength'
+        );
+
+    const strengthBars =
+        document.querySelectorAll(
+            '.strength-bar'
+        );
+
+    const strengthText =
+        document.getElementById(
+            'strengthText'
+        );
+
+
+    passwordInput.addEventListener(
+        'input',
+        () => {
+
+            const password =
+                passwordInput.value;
+
+
+            if (!password) {
+
+                strengthBox.style.display =
+                    'none';
+
                 return;
             }
 
-            btn.textContent = 'Creating account...';
-            btn.disabled = true;
-            alertBox.className = 'alert';
+
+            strengthBox.style.display =
+                'block';
+
+
+            let score = 0;
+
+
+            if (password.length >= 6) {
+                score++;
+            }
+
+            if (password.length >= 10) {
+                score++;
+            }
+
+            if (/[A-Z]/.test(password)) {
+                score++;
+            }
+
+            if (
+                /[0-9]/.test(password) ||
+                /[^A-Za-z0-9]/.test(password)
+            ) {
+                score++;
+            }
+
+
+            strengthBars.forEach(
+                bar => {
+                    bar.style.background =
+                        '#e5e9e6';
+                }
+            );
+
+
+            let text;
+
+
+            if (score <= 1) {
+
+                text = 'Weak';
+
+            } else if (score === 2) {
+
+                text = 'Fair';
+
+            } else if (score === 3) {
+
+                text = 'Good';
+
+            } else {
+
+                text = 'Strong';
+            }
+
+
+            strengthText.textContent =
+                `Password strength: ${text}`;
+
+
+            for (
+                let i = 0;
+                i < score;
+                i++
+            ) {
+
+                strengthBars[i].style.background =
+                    '#22c55e';
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       PHONE INPUT
+    ===================================================== */
+
+    phoneInput.addEventListener(
+        'input',
+        function () {
+
+            this.value =
+                this.value
+                    .replace(/\D/g, '')
+                    .slice(0, 10);
+
+        }
+    );
+
+
+    /* =====================================================
+       OTP INPUT
+    ===================================================== */
+
+    otpInput.addEventListener(
+        'input',
+        function () {
+
+            this.value =
+                this.value
+                    .replace(/\D/g, '')
+                    .slice(0, 6);
+
+        }
+    );
+
+
+    /* =====================================================
+       REGISTRATION
+    ===================================================== */
+
+    registerForm.addEventListener(
+        'submit',
+        async (event) => {
+
+            event.preventDefault();
+
+            hideAlert();
+
+
+            const name =
+                document
+                    .getElementById('name')
+                    .value
+                    .trim();
+
+
+            const email =
+                document
+                    .getElementById('email')
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            const phone =
+                phoneInput
+                    .value
+                    .trim();
+
+
+            const password =
+                passwordInput.value;
+
+
+            const confirmPassword =
+                confirmPasswordInput.value;
+
+
+            /* ==========================
+               VALIDATION
+            ========================== */
+
+
+            if (name.length < 2) {
+
+                showAlert(
+                    'Please enter your full name.'
+                );
+
+                return;
+            }
+
+
+            /*
+             * CORRECT EMAIL REGEX
+             */
+
+            const emailRegex =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (!emailRegex.test(email)) {
+
+                showAlert(
+                    'Please enter a valid email address.'
+                );
+
+                return;
+            }
+
+
+            if (
+                !/^[6-9][0-9]{9}$/.test(phone)
+            ) {
+
+                showAlert(
+                    'Please enter a valid 10-digit mobile number.'
+                );
+
+                return;
+            }
+
+
+            if (password.length < 6) {
+
+                showAlert(
+                    'Password must contain at least 6 characters.'
+                );
+
+                return;
+            }
+
+
+            if (password !== confirmPassword) {
+
+                showAlert(
+                    'Passwords do not match.'
+                );
+
+                return;
+            }
+
+
+            /* ==========================
+               LOADING
+            ========================== */
+
+            registerBtn.disabled = true;
+
+            registerBtn.innerHTML = `
+
+                <span class="spinner"></span>
+
+                <span>
+                    Creating account...
+                </span>
+
+            `;
+
 
             try {
-                const data = await apiCall('/auth/register', 'POST', { 
-                    name, email, mobile, password, confirmPassword 
-                });
-                
-                // Keep email for OTP step
-                registeredEmail = email;
 
-                // Show OTP form, hide Register form
-                document.getElementById('registerForm').style.display = 'none';
-                document.getElementById('otpForm').style.display = 'block';
-                document.getElementById('formTitle').textContent = 'Verify Account';
-                document.getElementById('formSubtitle').textContent = `OTP sent to ${email}`;
-                
-                alertBox.textContent = data.message;
-                alertBox.className = 'alert success';
-                
-                // Dev helpful log
-                if (data.demoOtp) console.log(`[DEMO MODE] Your OTP is: ${data.demoOtp}`);
+                console.log(
+                    'Sending registration request...'
+                );
+
+
+                /*
+                 * IMPORTANT
+                 *
+                 * NEW DATABASE USERS TABLE:
+                 *
+                 * id
+                 * name
+                 * email
+                 * password
+                 * phone
+                 * role
+                 * is_verified
+                 *
+                 * Therefore we send:
+                 *
+                 * phone
+                 *
+                 * NOT:
+                 *
+                 * mobile
+                 */
+
+                const data =
+                    await request(
+                        '/auth/register',
+                        'POST',
+                        {
+                            name: name,
+                            email: email,
+                            phone: phone,
+                            password: password,
+                            confirmPassword: confirmPassword
+                        }
+                    );
+
+
+                console.log(
+                    'Registration successful:',
+                    data
+                );
+
+
+                registeredEmail =
+                    email;
+
+
+                /* ==========================
+                   SHOW OTP FORM
+                ========================== */
+
+                registerForm.style.display =
+                    'none';
+
+                otpForm.style.display =
+                    'block';
+
+
+                document
+                    .getElementById('formTitle')
+                    .textContent =
+                        'Verify your account';
+
+
+                document
+                    .getElementById('formSubtitle')
+                    .textContent =
+                        `OTP sent to ${email}`;
+
+
+                /* ==========================
+                   UPDATE STEPS
+                ========================== */
+
+                document
+                    .getElementById('stepAccount')
+                    .classList
+                    .remove('active');
+
+
+                document
+                    .getElementById('stepAccount')
+                    .classList
+                    .add('completed');
+
+
+                document
+                    .getElementById('stepVerification')
+                    .classList
+                    .add('active');
+
+
+                /* ==========================
+                   SUCCESS
+                ========================== */
+
+                showAlert(
+                    data.message ||
+                    'Registration successful. Please verify your email.',
+                    'success'
+                );
+
+
+                /* ==========================
+                   DEMO OTP
+                ========================== */
+
+                if (data.demoOtp) {
+
+                    demoOtpValue.textContent =
+                        data.demoOtp;
+
+                    demoOtpBox.style.display =
+                        'block';
+
+
+                    console.log(
+                        '===================================='
+                    );
+
+                    console.log(
+                        '[DEMO MODE] OTP:',
+                        data.demoOtp
+                    );
+
+                    console.log(
+                        '===================================='
+                    );
+                }
+
+
+                setTimeout(
+                    () => {
+
+                        otpInput.focus();
+
+                    },
+                    200
+                );
+
 
             } catch (error) {
-                alertBox.textContent = error.message;
-                alertBox.className = 'alert error';
-                btn.textContent = 'Create Account';
-                btn.disabled = false;
+
+                console.error(
+                    'Registration error:',
+                    error
+                );
+
+
+                showAlert(
+                    error.message ||
+                    'Unable to create account.'
+                );
+
+
+                registerBtn.disabled =
+                    false;
+
+
+                registerBtn.innerHTML = `
+
+                    <i data-lucide="user-plus"></i>
+
+                    <span>
+                        Create Account
+                    </span>
+
+                `;
+
+
+                refreshIcons();
             }
-        });
 
-        // Handle OTP Verification
-        document.getElementById('otpForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const otp = document.getElementById('otp').value;
-            const btn = document.getElementById('verifyBtn');
-            const alertBox = document.getElementById('registerAlert');
+        }
+    );
 
-            btn.textContent = 'Verifying...';
-            btn.disabled = true;
-            alertBox.className = 'alert';
+
+    /* =====================================================
+       OTP VERIFICATION
+    ===================================================== */
+
+    otpForm.addEventListener(
+        'submit',
+        async (event) => {
+
+            event.preventDefault();
+
+            hideAlert();
+
+
+            const otp =
+                otpInput
+                    .value
+                    .trim();
+
+
+            if (!/^[0-9]{6}$/.test(otp)) {
+
+                showAlert(
+                    'Please enter a valid 6-digit OTP.'
+                );
+
+                return;
+            }
+
+
+            if (!registeredEmail) {
+
+                showAlert(
+                    'Registration session expired. Please register again.'
+                );
+
+                return;
+            }
+
+
+            /* ==========================
+               LOADING
+            ========================== */
+
+            verifyBtn.disabled =
+                true;
+
+
+            verifyBtn.innerHTML = `
+
+                <span class="spinner"></span>
+
+                <span>
+                    Verifying...
+                </span>
+
+            `;
+
 
             try {
-                await apiCall('/auth/verify-otp', 'POST', { identifier: registeredEmail, otp });
-                
-                alertBox.textContent = 'Account verified successfully! Redirecting to login...';
-                alertBox.className = 'alert success';
-                
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
+
+                console.log(
+                    'Verifying OTP for:',
+                    registeredEmail
+                );
+
+
+                const data =
+                    await request(
+                        '/auth/verify-otp',
+                        'POST',
+                        {
+                            identifier:
+                                registeredEmail,
+
+                            otp: otp
+                        }
+                    );
+
+
+                console.log(
+                    'OTP verification successful:',
+                    data
+                );
+
+
+                showAlert(
+                    data.message ||
+                    'Account verified successfully!',
+                    'success'
+                );
+
+
+                verifyBtn.innerHTML = `
+
+                    <i data-lucide="circle-check"></i>
+
+                    <span>
+                        Verified
+                    </span>
+
+                `;
+
+
+                refreshIcons();
+
+
+                /*
+                 * Give the user time to see
+                 * the successful verification message.
+                 */
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            'login.html';
+
+                    },
+                    1200
+                );
+
 
             } catch (error) {
-                alertBox.textContent = error.message;
-                alertBox.className = 'alert error';
-                btn.textContent = 'Verify & Login';
-                btn.disabled = false;
+
+                console.error(
+                    'OTP verification error:',
+                    error
+                );
+
+
+                showAlert(
+                    error.message ||
+                    'Invalid or expired OTP.'
+                );
+
+
+                verifyBtn.disabled =
+                    false;
+
+
+                verifyBtn.innerHTML = `
+
+                    <i data-lucide="badge-check"></i>
+
+                    <span>
+                        Verify & Login
+                    </span>
+
+                `;
+
+
+                refreshIcons();
             }
-        });
-    </script>
+
+        }
+    );
+
+
+    /* =====================================================
+       DIFFERENT EMAIL
+    ===================================================== */
+
+    document
+        .getElementById('differentEmail')
+        .addEventListener(
+            'click',
+            (event) => {
+
+                event.preventDefault();
+
+                window.location.reload();
+
+            }
+        );
+
+
+</script>
+
 </body>
+
 </html>

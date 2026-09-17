@@ -1,376 +1,2176 @@
 <!-- frontend/pages/nearby-explore.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Nearby Amenities | EV Charge Hub</title>
+
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+
+    <!-- Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Leaflet Map CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        body { 
-            background-color: var(--background, #f8fafc); 
-            margin: 0; 
-            overflow: hidden; 
+
+        /* =====================================================
+           DESIGN SYSTEM
+        ===================================================== */
+
+        :root {
+            --green: #22c55e;
+            --green-dark: #15803d;
+            --green-soft: #ecfdf3;
+
+            --dark: #101814;
+            --dark-2: #17221c;
+
+            --text: #17201b;
+            --muted: #6b766f;
+
+            --border: #e5ebe7;
+            --background: #f6f8f7;
+            --white: #ffffff;
+
+            --blue: #3b82f6;
+
+            --shadow-sm:
+                0 4px 14px rgba(16, 24, 20, 0.05);
+
+            --shadow-md:
+                0 12px 30px rgba(16, 24, 20, 0.08);
         }
-        .layout { 
-            display: flex; 
-            height: calc(100vh - 72px); 
+
+
+        /* =====================================================
+           BASE
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
         }
-        
+
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            height: 70px;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 1000;
+            backdrop-filter: blur(14px);
+        }
+
+        .nav-container {
+            height: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--dark);
+            text-decoration: none;
+
+            font-size: 18px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 10px;
+
+            background: var(--green);
+            color: #052e16;
+
+            box-shadow:
+                0 7px 18px rgba(34, 197, 94, 0.20);
+        }
+
+        .logo-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+
+        /* =====================================================
+           NAV LINKS
+        ===================================================== */
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 9px 12px;
+
+            border-radius: 9px;
+
+            color: #66736b;
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .nav-link:hover {
+            background: #f3f6f4;
+            color: var(--dark);
+        }
+
+        .nav-link.active {
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+
+        /* =====================================================
+           MAIN LAYOUT
+        ===================================================== */
+
+        .layout {
+            height: calc(100vh - 70px);
+
+            display: flex;
+            position: relative;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
         .sidebar {
-            width: 420px;
-            background: #ffffff;
-            border-right: 1px solid var(--border, #e2e8f0);
+            width: 410px;
+            min-width: 410px;
+
+            background: var(--white);
+
+            border-right: 1px solid var(--border);
+
             display: flex;
             flex-direction: column;
-            z-index: 10;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.04);
+
+            position: relative;
+            z-index: 500;
+
+            box-shadow:
+                5px 0 25px rgba(16, 24, 20, 0.04);
         }
-        
-        .filters {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border, #e2e8f0);
+
+
+        /* =====================================================
+           SIDEBAR HEADER
+        ===================================================== */
+
+        .sidebar-header {
+            padding: 24px 22px 18px;
+
+            border-bottom: 1px solid var(--border);
         }
-        
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--green-dark);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+
+            margin-bottom: 9px;
+        }
+
+        .eyebrow svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .sidebar-header h1 {
+            margin: 0 0 6px;
+
+            color: var(--dark);
+
+            font-size: 25px;
+            line-height: 1.2;
+
+            letter-spacing: -0.6px;
+        }
+
+        .sidebar-header p {
+            margin: 0;
+
+            color: var(--muted);
+
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+
+        /* =====================================================
+           LOCATION STATUS
+        ===================================================== */
+
+        .location-status {
+            margin-top: 17px;
+
+            padding: 11px 13px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            background: #f8faf9;
+            border: 1px solid var(--border);
+
+            border-radius: 11px;
+
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .location-dot {
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.10);
+        }
+
+        .location-dot.loading {
+            background: #f59e0b;
+        }
+
+        .location-dot.error {
+            background: #ef4444;
+        }
+
+
+        /* =====================================================
+           FILTERS
+        ===================================================== */
+
+        .filter-section {
+            padding: 17px 22px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            margin-bottom: 10px;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            color: #7a857e;
+
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
         .filter-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-top: 0.75rem;
+            gap: 7px;
         }
 
         .filter-btn {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 0.45rem 0.85rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.82rem;
-            font-weight: 500;
-            color: #475569;
+            height: 36px;
+
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            transition: all 0.2s ease;
+            gap: 7px;
+
+            padding: 0 12px;
+
+            border-radius: 10px;
+
+            background: #f5f7f6;
+            border: 1px solid var(--border);
+
+            color: #5e6a63;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                border 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
         }
-        
+
+        .filter-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
         .filter-btn:hover {
-            background: #e2e8f0;
-            color: #1e293b;
+            background: #eef3ef;
+            color: var(--dark);
+            transform: translateY(-1px);
         }
 
         .filter-btn.active {
-            background: rgba(16, 185, 129, 0.15);
-            color: #059669;
-            border-color: #10b981;
-            font-weight: 600;
+            background: var(--green-soft);
+            border-color: #86efac;
+            color: var(--green-dark);
         }
+
+
+        /* =====================================================
+           PLACES HEADER
+        ===================================================== */
+
+        .results-header {
+            padding: 15px 22px 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .results-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .results-count {
+            min-width: 25px;
+            height: 24px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 8px;
+
+            border-radius: 20px;
+
+            background: var(--green-soft);
+            color: var(--green-dark);
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           PLACES LIST
+        ===================================================== */
 
         .places-list {
             flex: 1;
+
             overflow-y: auto;
-            padding: 1rem 1.25rem;
+
+            padding: 0 15px 20px;
         }
+
+        .places-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .places-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .places-list::-webkit-scrollbar-thumb {
+            background: #d9e1dc;
+            border-radius: 10px;
+        }
+
+
+        /* =====================================================
+           PLACE CARD
+        ===================================================== */
 
         .place-card {
-            background: #ffffff;
-            border: 1px solid var(--border, #e2e8f0);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
+            background: var(--white);
+
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            padding: 15px;
+
+            margin-bottom: 10px;
+
             cursor: pointer;
-            transition: all 0.2s ease;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
         }
-        .place-card:hover { 
-            border-color: #10b981;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+
+        .place-card:hover {
+            border-color: #86efac;
+
+            box-shadow: var(--shadow-sm);
+
+            transform: translateY(-1px);
         }
-        
-        #map { 
-            flex: 1; 
-            height: 100%; 
-            z-index: 1; 
+
+        .place-main {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
         }
+
+        .place-icon {
+            width: 40px;
+            height: 40px;
+
+            min-width: 40px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+        .place-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .place-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .place-name {
+            margin: 0 0 5px;
+
+            color: var(--dark);
+
+            font-size: 14px;
+            font-weight: 800;
+
+            line-height: 1.35;
+        }
+
+        .place-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+            font-weight: 600;
+
+            text-transform: capitalize;
+        }
+
+        .place-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            margin-top: 13px;
+
+            padding-top: 12px;
+
+            border-top: 1px solid #eef2ef;
+        }
+
+        .map-btn,
+        .route-btn {
+            height: 32px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+
+            border-radius: 9px;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+        .map-btn {
+            flex: 1;
+
+            border: 1px solid var(--border);
+            background: #fff;
+
+            color: #5e6a63;
+        }
+
+        .map-btn:hover {
+            background: #f5f7f6;
+            color: var(--dark);
+        }
+
+        .route-btn {
+            flex: 1;
+
+            border: 1px solid #bbf7d0;
+            background: var(--green-soft);
+
+            color: var(--green-dark);
+        }
+
+        .route-btn:hover {
+            background: #dcfce7;
+        }
+
+        .map-btn svg,
+        .route-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+
+        /* =====================================================
+           EMPTY / LOADING
+        ===================================================== */
+
+        .empty-state {
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: var(--muted);
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+
+            margin: 0 auto 13px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 14px;
+
+            background: #f2f5f3;
+            color: #87928b;
+        }
+
+        .empty-icon svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .empty-state strong {
+            display: block;
+
+            color: var(--dark);
+
+            font-size: 14px;
+
+            margin-bottom: 5px;
+        }
+
+        .empty-state p {
+            margin: 0;
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           MAP
+        ===================================================== */
+
+        #map {
+            flex: 1;
+            height: 100%;
+            min-width: 0;
+
+            position: relative;
+        }
+
+        .leaflet-container {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+
+        /* =====================================================
+           MAP OVERLAY
+        ===================================================== */
+
+        .map-badge {
+            position: absolute;
+
+            top: 18px;
+            right: 18px;
+
+            z-index: 450;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 10px 13px;
+
+            background: rgba(255, 255, 255, 0.95);
+
+            border: 1px solid rgba(229, 235, 231, 0.9);
+
+            border-radius: 11px;
+
+            box-shadow: var(--shadow-sm);
+
+            color: #56625b;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            backdrop-filter: blur(10px);
+        }
+
+        .map-badge svg {
+            width: 15px;
+            height: 15px;
+
+            color: var(--green-dark);
+        }
+
+
+        /* =====================================================
+           MAP LOCATION BUTTON
+        ===================================================== */
+
+        .locate-btn {
+            position: absolute;
+
+            bottom: 25px;
+            right: 18px;
+
+            z-index: 450;
+
+            width: 44px;
+            height: 44px;
+
+            display: grid;
+            place-items: center;
+
+            border: 0;
+
+            border-radius: 12px;
+
+            background: #fff;
+
+            color: var(--dark);
+
+            box-shadow: var(--shadow-md);
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+        .locate-btn:hover {
+            color: var(--green-dark);
+            transform: translateY(-2px);
+        }
+
+        .locate-btn svg {
+            width: 19px;
+            height: 19px;
+        }
+
+
+        /* =====================================================
+           LEAFLET POPUP
+        ===================================================== */
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 13px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .leaflet-popup-content {
+            margin: 14px 16px;
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .popup-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--dark);
+
+            margin-bottom: 3px;
+        }
+
+        .popup-type {
+            color: var(--green-dark);
+            text-transform: capitalize;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           SPINNER
+        ===================================================== */
+
+        .spin {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 850px) {
+
+            body {
+                overflow: auto;
+            }
+
+            .navbar {
+                height: 64px;
+            }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .nav-links {
+                gap: 2px;
+            }
+
+            .nav-link {
+                padding: 8px;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .layout {
+                height: auto;
+                min-height: calc(100vh - 64px);
+
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+
+                height: auto;
+
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sidebar-header {
+                padding: 19px 17px 15px;
+            }
+
+            .sidebar-header h1 {
+                font-size: 22px;
+            }
+
+            .filter-section {
+                padding: 14px 17px;
+            }
+
+            .results-header {
+                padding: 14px 17px 9px;
+            }
+
+            .places-list {
+                max-height: 390px;
+                padding: 0 12px 15px;
+            }
+
+            #map {
+                height: 430px;
+                min-height: 430px;
+                flex: none;
+            }
+
+            .map-badge {
+                top: 12px;
+                right: 12px;
+            }
+
+            .locate-btn {
+                bottom: 15px;
+                right: 12px;
+            }
+        }
+
+
+        @media (max-width: 500px) {
+
+            .logo {
+                font-size: 16px;
+            }
+
+            .logo-icon {
+                width: 33px;
+                height: 33px;
+            }
+
+            .nav-link {
+                padding: 7px;
+            }
+
+            .place-card {
+                padding: 13px;
+            }
+        }
+
     </style>
 </head>
+
+
 <body>
 
-    <!-- Navbar -->
-    <header class="navbar" style="border-bottom: 1px solid var(--border, #e2e8f0); background: #ffffff; height: 72px; box-sizing: border-box;">
-        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; height: 100%;">
-            <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; text-decoration: none; color: #10b981; font-size: 1.25rem;">
-                <i data-lucide="zap"></i> EV Charge Hub
+
+<!-- =====================================================
+     NAVBAR
+====================================================== -->
+
+<header class="navbar">
+
+    <div class="nav-container">
+
+        <a href="dashboard.html" class="logo">
+
+            <span class="logo-icon">
+                <i data-lucide="zap"></i>
+            </span>
+
+            EV Charge Hub
+
+        </a>
+
+
+        <nav class="nav-links">
+
+            <a
+                href="dashboard.html"
+                class="nav-link">
+
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+
             </a>
-            <nav style="display: flex; align-items: center; gap: 1.5rem;">
-                <a href="dashboard.html" style="text-decoration: none; color: #64748b;">Dashboard</a>
-                <a href="search.html" style="text-decoration: none; color: #64748b;">Find Chargers</a>
-                <a href="bookings.html" style="text-decoration: none; color: #64748b;">My Bookings</a>
-            </nav>
-        </div>
-    </header>
 
-    <div class="layout">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="filters">
-                <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #1e293b;">While you charge...</h2>
-                <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Find live amenities near your charging station.</p>
-                
-                <div class="filter-group">
-                    <button class="filter-btn active" onclick="searchAmenities('cafe', this)">
-                        <i data-lucide="coffee" style="width: 15px; height: 15px;"></i> Cafes
-                    </button>
-                    <button class="filter-btn" onclick="searchAmenities('restaurant', this)">
-                        <i data-lucide="utensils" style="width: 15px; height: 15px;"></i> Food
-                    </button>
-                    <button class="filter-btn" onclick="searchAmenities('hotel', this)">
-                        <i data-lucide="bed" style="width: 15px; height: 15px;"></i> Hotels
-                    </button>
-                    <button class="filter-btn" onclick="searchAmenities('hospital', this)">
-                        <i data-lucide="activity" style="width: 15px; height: 15px;"></i> Hospitals
-                    </button>
-                    <button class="filter-btn" onclick="searchAmenities('mall', this)">
-                        <i data-lucide="shopping-bag" style="width: 15px; height: 15px;"></i> Malls
-                    </button>
-                </div>
-            </div>
 
-            <div class="places-list" id="placesList">
-                <div style="text-align: center; padding: 2.5rem 1rem; color: #64748b;">
-                    <i data-lucide="map-pin" style="width: 32px; height: 32px; margin-bottom: 0.75rem; opacity: 0.5;"></i>
-                    <p>Detecting your location...</p>
-                </div>
-            </div>
-        </div>
+            <a
+                href="search.html"
+                class="nav-link">
 
-        <!-- Map -->
-        <div id="map"></div>
+                <i data-lucide="plug-zap"></i>
+                <span>Find Chargers</span>
+
+            </a>
+
+
+            <a
+                href="bookings.html"
+                class="nav-link">
+
+                <i data-lucide="calendar-check"></i>
+                <span>My Bookings</span>
+
+            </a>
+
+
+            <a
+                href="nearby-explore.html"
+                class="nav-link active">
+
+                <i data-lucide="map"></i>
+                <span>Explore</span>
+
+            </a>
+
+        </nav>
+
     </div>
 
-    <script>
-        lucide.createIcons();
+</header>
 
-        // 1. Initialize Map
-        let map = L.map('map').setView([18.5204, 73.8567], 14);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
 
-        let userLat = 18.5204;
-        let userLng = 73.8567;
-        let markers = [];
-        let userMarker = null;
+<!-- =====================================================
+     MAIN
+====================================================== -->
 
-        // In-memory cache so switching tabs is instant (0ms)
-        const memoryCache = {};
+<div class="layout">
 
-        // Offline Instant Fallback Data for Pune (Just in case network is completely blocked)
-        const demoFallbackData = {
-            cafe: [
-                { tags: { name: "Irani Cafe" }, lat: 18.5215, lon: 73.8540 },
-                { tags: { name: "Starbucks Coffee" }, lat: 18.5170, lon: 73.8420 },
-                { tags: { name: "Cafe Goodluck" }, lat: 18.5200, lon: 73.8415 },
-                { tags: { name: "Barista Lavazza" }, lat: 18.5140, lon: 73.8390 }
-            ],
-            restaurant: [
-                { tags: { name: "Vaishali Restaurant" }, lat: 18.5208, lon: 73.8412 },
-                { tags: { name: "Barbeque Nation" }, lat: 18.5180, lon: 73.8500 },
-                { tags: { name: "Le Plaisir" }, lat: 18.5135, lon: 73.8402 },
-                { tags: { name: "Wadeshwar" }, lat: 18.5205, lon: 73.8408 }
-            ],
-            hotel: [
-                { tags: { name: "JW Marriott Hotel" }, lat: 18.5332, lon: 73.8335 },
-                { tags: { name: "The Pride Hotel" }, lat: 18.5310, lon: 73.8475 },
-                { tags: { name: "Sheraton Grand" }, lat: 18.5290, lon: 73.8640 },
-                { tags: { name: "Hotel Sagar Plaza" }, lat: 18.5185, lon: 73.8750 }
-            ],
-            hospital: [
-                { tags: { name: "Deenanath Mangeshkar Hospital" }, lat: 18.5020, lon: 73.8290 },
-                { tags: { name: "Sahyadri Super Speciality Hospital" }, lat: 18.5160, lon: 73.8340 },
-                { tags: { name: "Poona Hospital & Research Centre" }, lat: 18.5145, lon: 73.8470 },
-                { tags: { name: "Ruby Hall Clinic" }, lat: 18.5330, lon: 73.8770 }
-            ],
-            mall: [
-                { tags: { name: "The Pavillion Mall" }, lat: 18.5340, lon: 73.8300 },
-                { tags: { name: "Phoenix Marketcity" }, lat: 18.5620, lon: 73.9168 },
-                { tags: { name: "Kumar Pacific Mall" }, lat: 18.5005, lon: 73.8760 }
-            ]
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- Sidebar Header -->
+
+        <div class="sidebar-header">
+
+            <div class="eyebrow">
+
+                <i data-lucide="sparkles"></i>
+
+                Smart Nearby Search
+
+            </div>
+
+
+            <h1>
+                While you charge...
+            </h1>
+
+
+            <p>
+                Discover useful places around your charging
+                station while your EV powers up.
+            </p>
+
+
+            <!-- Location -->
+
+            <div class="location-status">
+
+                <span
+                    class="location-dot loading"
+                    id="locationDot">
+                </span>
+
+                <span id="locationText">
+                    Detecting your location...
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Filters -->
+
+        <div class="filter-section">
+
+            <div class="section-label">
+                Explore nearby
+            </div>
+
+
+            <div class="filter-group">
+
+                <button
+                    class="filter-btn active"
+                    onclick="searchAmenities('cafe', this)">
+
+                    <i data-lucide="coffee"></i>
+
+                    Cafes
+
+                </button>
+
+
+                <button
+                    class="filter-btn"
+                    onclick="searchAmenities('restaurant', this)">
+
+                    <i data-lucide="utensils"></i>
+
+                    Food
+
+                </button>
+
+
+                <button
+                    class="filter-btn"
+                    onclick="searchAmenities('hotel', this)">
+
+                    <i data-lucide="bed-double"></i>
+
+                    Hotels
+
+                </button>
+
+
+                <button
+                    class="filter-btn"
+                    onclick="searchAmenities('hospital', this)">
+
+                    <i data-lucide="heart-pulse"></i>
+
+                    Hospitals
+
+                </button>
+
+
+                <button
+                    class="filter-btn"
+                    onclick="searchAmenities('mall', this)">
+
+                    <i data-lucide="shopping-bag"></i>
+
+                    Malls
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Results Header -->
+
+        <div class="results-header">
+
+            <span class="results-title">
+                Nearby places
+            </span>
+
+            <span
+                class="results-count"
+                id="resultsCount">
+                0
+            </span>
+
+        </div>
+
+
+        <!-- Places -->
+
+        <div
+            class="places-list"
+            id="placesList">
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+
+                    <i data-lucide="map-pin"></i>
+
+                </div>
+
+                <strong>
+                    Finding your location
+                </strong>
+
+                <p>
+                    Looking for nearby places around you...
+                </p>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =================================================
+         MAP
+    ================================================== -->
+
+    <main id="map">
+
+        <div class="map-badge">
+
+            <i data-lucide="layers"></i>
+
+            OpenStreetMap
+
+        </div>
+
+
+        <button
+            class="locate-btn"
+            onclick="centerOnUser()"
+            title="Center on my location">
+
+            <i data-lucide="crosshair"></i>
+
+        </button>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =====================================================
+       ICONS
+    ===================================================== */
+
+    lucide.createIcons();
+
+
+    /* =====================================================
+       MAP INITIALIZATION
+    ===================================================== */
+
+    let map = L
+        .map('map')
+        .setView([18.5204, 73.8567], 14);
+
+
+    L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            attribution:
+                '© OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+
+    /* =====================================================
+       LOCATION
+    ===================================================== */
+
+    let userLat = 18.5204;
+    let userLng = 73.8567;
+
+    let userMarker = null;
+
+    let markers = [];
+
+    const memoryCache = {};
+
+
+    /* =====================================================
+       FALLBACK DATA
+    ===================================================== */
+
+    const demoFallbackData = {
+
+        cafe: [
+            {
+                tags: { name: "Irani Cafe" },
+                lat: 18.5215,
+                lon: 73.8540
+            },
+            {
+                tags: { name: "Starbucks Coffee" },
+                lat: 18.5170,
+                lon: 73.8420
+            },
+            {
+                tags: { name: "Cafe Goodluck" },
+                lat: 18.5200,
+                lon: 73.8415
+            },
+            {
+                tags: { name: "Barista Lavazza" },
+                lat: 18.5140,
+                lon: 73.8390
+            }
+        ],
+
+
+        restaurant: [
+            {
+                tags: { name: "Vaishali Restaurant" },
+                lat: 18.5208,
+                lon: 73.8412
+            },
+            {
+                tags: { name: "Barbeque Nation" },
+                lat: 18.5180,
+                lon: 73.8500
+            },
+            {
+                tags: { name: "Le Plaisir" },
+                lat: 18.5135,
+                lon: 73.8402
+            },
+            {
+                tags: { name: "Wadeshwar" },
+                lat: 18.5205,
+                lon: 73.8408
+            }
+        ],
+
+
+        hotel: [
+            {
+                tags: { name: "JW Marriott Hotel" },
+                lat: 18.5332,
+                lon: 73.8335
+            },
+            {
+                tags: { name: "The Pride Hotel" },
+                lat: 18.5310,
+                lon: 73.8475
+            },
+            {
+                tags: { name: "Sheraton Grand" },
+                lat: 18.5290,
+                lon: 73.8640
+            },
+            {
+                tags: { name: "Hotel Sagar Plaza" },
+                lat: 18.5185,
+                lon: 73.8750
+            }
+        ],
+
+
+        hospital: [
+            {
+                tags: {
+                    name: "Deenanath Mangeshkar Hospital"
+                },
+                lat: 18.5020,
+                lon: 73.8290
+            },
+            {
+                tags: {
+                    name: "Sahyadri Super Speciality Hospital"
+                },
+                lat: 18.5160,
+                lon: 73.8340
+            },
+            {
+                tags: {
+                    name: "Poona Hospital & Research Centre"
+                },
+                lat: 18.5145,
+                lon: 73.8470
+            },
+            {
+                tags: {
+                    name: "Ruby Hall Clinic"
+                },
+                lat: 18.5330,
+                lon: 73.8770
+            }
+        ],
+
+
+        mall: [
+            {
+                tags: {
+                    name: "The Pavillion Mall"
+                },
+                lat: 18.5340,
+                lon: 73.8300
+            },
+            {
+                tags: {
+                    name: "Phoenix Marketcity"
+                },
+                lat: 18.5620,
+                lon: 73.9168
+            },
+            {
+                tags: {
+                    name: "Kumar Pacific Mall"
+                },
+                lat: 18.5005,
+                lon: 73.8760
+            }
+        ]
+
+    };
+
+
+    /* =====================================================
+       CATEGORY ICONS
+    ===================================================== */
+
+    function getCategoryIcon(type) {
+
+        const icons = {
+            cafe: 'coffee',
+            restaurant: 'utensils',
+            hotel: 'bed-double',
+            hospital: 'heart-pulse',
+            mall: 'shopping-bag'
         };
 
-        // 2. Get User's Live Location
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(position => {
-                userLat = position.coords.latitude;
-                userLng = position.coords.longitude;
-                
-                map.setView([userLat, userLng], 15);
-                
-                if (userMarker) map.removeLayer(userMarker);
-                userMarker = L.circleMarker([userLat, userLng], {
-                    color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.8, radius: 8
-                }).addTo(map).bindPopup("Your Location");
+        return icons[type] || 'map-pin';
+    }
 
-                searchAmenities('cafe', document.querySelector('.filter-btn'));
-            }, () => {
-                searchAmenities('cafe', document.querySelector('.filter-btn'));
-            });
-        }
 
-        // 3. Fast Overpass Query with Fallback & Cache
-        async function searchAmenities(type, btnElement) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
+    /* =====================================================
+       CATEGORY LABEL
+    ===================================================== */
 
-            // Serve instantly from cache if previously loaded
-            if (memoryCache[type] && memoryCache[type].length > 0) {
-                renderPlaces(memoryCache[type], type);
-                return;
-            }
+    function getCategoryLabel(type) {
 
-            const listEl = document.getElementById('placesList');
-            listEl.innerHTML = `
-                <div style="text-align: center; padding: 2.5rem 1rem; color: #64748b;">
-                    <i data-lucide="loader" class="spin" style="margin-bottom: 0.75rem;"></i>
-                    <p>Finding nearby ${type}s...</p>
-                </div>
-            `;
-            lucide.createIcons();
+        const labels = {
+            cafe: 'Cafe',
+            restaurant: 'Restaurant',
+            hotel: 'Hotel',
+            hospital: 'Hospital',
+            mall: 'Shopping Mall'
+        };
 
-            // Clear old map markers
-            markers.forEach(m => map.removeLayer(m));
-            markers = [];
+        return labels[type] || type;
 
-            // Define accurate OSM tag mappings
-            let tagFilter = `["amenity"="${type}"]`;
-            if (type === 'hotel') tagFilter = `["tourism"="hotel"]`;
-            if (type === 'mall') tagFilter = `["shop"="mall"]`;
+    }
 
-            // FAST QUERY: Query 'node' only with a 4-second timeout limit to guarantee high speed
-            const query = `
-                [out:json][timeout:4];
-                node${tagFilter}(around:3000,${userLat},${userLng});
-                out body 15;
-            `;
 
-            const servers = [
-                'https://overpass-api.de/api/interpreter',
-                'https://overpass.kumi.systems/api/interpreter',
-                'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
-            ];
+    /* =====================================================
+       USER LOCATION
+    ===================================================== */
 
-            let places = [];
-            let fetchedSuccessfully = false;
+    if ("geolocation" in navigator) {
 
-            for (let url of servers) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 3500);
+        navigator.geolocation.getCurrentPosition(
 
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        body: query,
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId);
+            position => {
 
-                    if (res.ok) {
-                        const data = await res.json();
-                        places = (data.elements || []).filter(e => e.tags && e.tags.name);
-                        if (places.length > 0) {
-                            fetchedSuccessfully = true;
-                            break;
+                userLat =
+                    position.coords.latitude;
+
+                userLng =
+                    position.coords.longitude;
+
+
+                map.setView(
+                    [userLat, userLng],
+                    15
+                );
+
+
+                updateLocationStatus(
+                    'Location detected',
+                    'success'
+                );
+
+
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                }
+
+
+                userMarker =
+                    L.circleMarker(
+                        [userLat, userLng],
+                        {
+                            color: '#3b82f6',
+                            fillColor: '#3b82f6',
+                            fillOpacity: 0.85,
+                            radius: 8,
+                            weight: 3
                         }
-                    }
-                } catch (e) {
-                    // Try next server
-                }
+                    )
+                    .addTo(map)
+                    .bindPopup(
+                        '<b>Your Location</b><br>' +
+                        '<span style="color:#6b766f">' +
+                        'Current device location' +
+                        '</span>'
+                    );
+
+
+                searchAmenities(
+                    'cafe',
+                    document.querySelector('.filter-btn')
+                );
+
+            },
+
+            () => {
+
+                updateLocationStatus(
+                    'Using Pune default location',
+                    'error'
+                );
+
+
+                searchAmenities(
+                    'cafe',
+                    document.querySelector('.filter-btn')
+                );
+
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 7000,
+                maximumAge: 300000
             }
 
-            // Fallback gracefully to demo data if servers are overloaded
-            if (!fetchedSuccessfully || places.length === 0) {
-                places = demoFallbackData[type] || [];
-            }
+        );
 
-            // Save in cache
-            memoryCache[type] = places;
-            renderPlaces(places, type);
+    } else {
+
+        updateLocationStatus(
+            'Using Pune default location',
+            'error'
+        );
+
+        searchAmenities(
+            'cafe',
+            document.querySelector('.filter-btn')
+        );
+
+    }
+
+
+    /* =====================================================
+       LOCATION STATUS
+    ===================================================== */
+
+    function updateLocationStatus(
+        text,
+        state
+    ) {
+
+        const textEl =
+            document.getElementById('locationText');
+
+        const dot =
+            document.getElementById('locationDot');
+
+
+        textEl.textContent = text;
+
+        dot.className =
+            'location-dot';
+
+
+        if (state === 'loading') {
+            dot.classList.add('loading');
         }
 
-        // 4. Render Places on List & Map
-        function renderPlaces(places, type) {
-            const listEl = document.getElementById('placesList');
+        if (state === 'error') {
+            dot.classList.add('error');
+        }
 
-            // Clear existing map pins
-            markers.forEach(m => map.removeLayer(m));
-            markers = [];
-            
-            if (places.length === 0) {
-                listEl.innerHTML = `<div style="text-align: center; padding: 2.5rem 1rem; color: #64748b;"><p>No ${type}s found nearby.</p></div>`;
-                return;
-            }
+    }
 
-            const greenIcon = L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
+
+    /* =====================================================
+       SEARCH AMENITIES
+    ===================================================== */
+
+    async function searchAmenities(
+        type,
+        btnElement
+    ) {
+
+        /* Active filter */
+
+        document
+            .querySelectorAll('.filter-btn')
+            .forEach(btn => {
+                btn.classList.remove('active');
             });
 
-            listEl.innerHTML = places.map((place, index) => {
-                const name = place.tags.name;
-                const lat = place.lat || (place.center && place.center.lat);
-                const lng = place.lon || (place.center && place.center.lon);
-                
-                if (lat && lng) {
-                    const marker = L.marker([lat, lng], { icon: greenIcon }).addTo(map)
-                        .bindPopup(`<b>${name}</b><br><span style="text-transform: capitalize; color: #64748b;">${type}</span>`);
-                    markers.push(marker);
+
+        if (btnElement) {
+            btnElement.classList.add('active');
+        }
+
+
+        /* Cache */
+
+        if (
+            memoryCache[type] &&
+            memoryCache[type].length > 0
+        ) {
+
+            renderPlaces(
+                memoryCache[type],
+                type
+            );
+
+            return;
+        }
+
+
+        const listEl =
+            document.getElementById('placesList');
+
+
+        const countEl =
+            document.getElementById('resultsCount');
+
+
+        countEl.textContent = '';
+
+
+        listEl.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+
+                    <i
+                        data-lucide="loader"
+                        class="spin">
+                    </i>
+
+                </div>
+
+                <strong>
+                    Finding nearby places
+                </strong>
+
+                <p>
+                    Searching for nearby
+                    ${getCategoryLabel(type).toLowerCase()}s...
+                </p>
+
+            </div>
+
+        `;
+
+
+        lucide.createIcons();
+
+
+        /* Clear old markers */
+
+        markers.forEach(marker => {
+
+            map.removeLayer(marker);
+
+        });
+
+        markers = [];
+
+
+        /* OSM tag */
+
+        let tagFilter =
+            `["amenity"="${type}"]`;
+
+
+        if (type === 'hotel') {
+
+            tagFilter =
+                `["tourism"="hotel"]`;
+
+        }
+
+
+        if (type === 'mall') {
+
+            tagFilter =
+                `["shop"="mall"]`;
+
+        }
+
+
+        /* =================================================
+           OVERPASS QUERY
+        ================================================== */
+
+        const query = `
+
+            [out:json][timeout:4];
+
+            node${tagFilter}
+            (around:3000,${userLat},${userLng});
+
+            out body 15;
+
+        `;
+
+
+        const servers = [
+
+            'https://overpass-api.de/api/interpreter',
+
+            'https://overpass.kumi.systems/api/interpreter',
+
+            'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+
+        ];
+
+
+        let places = [];
+
+        let fetchedSuccessfully = false;
+
+
+        /* Try servers */
+
+        for (let url of servers) {
+
+            try {
+
+                const controller =
+                    new AbortController();
+
+
+                const timeoutId =
+                    setTimeout(
+                        () => controller.abort(),
+                        3500
+                    );
+
+
+                const res =
+                    await fetch(
+                        url,
+                        {
+                            method: 'POST',
+
+                            body: query,
+
+                            headers: {
+                                'Content-Type':
+                                    'application/x-www-form-urlencoded'
+                            },
+
+                            signal:
+                                controller.signal
+                        }
+                    );
+
+
+                clearTimeout(timeoutId);
+
+
+                if (res.ok) {
+
+                    const data =
+                        await res.json();
+
+
+                    places =
+                        (data.elements || [])
+                        .filter(
+                            element =>
+                                element.tags &&
+                                element.tags.name
+                        );
+
+
+                    if (places.length > 0) {
+
+                        fetchedSuccessfully = true;
+
+                        break;
+
+                    }
+
                 }
 
-                return `
-                    <div class="place-card" onclick="focusMap(${lat}, ${lng}, ${index})">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-                            <div>
-                                <h3 style="margin: 0 0 0.25rem 0; color: #1e293b; font-size: 1rem; font-weight: 600;">${name}</h3>
-                                <span style="font-size: 0.8rem; color: #64748b; text-transform: capitalize;">${type}</span>
-                            </div>
-                            <button class="btn btn-outline btn-sm" onclick="openNav('${name.replace(/'/g, "\\'")}'); event.stopPropagation();" style="padding: 0.3rem 0.6rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.25rem;">
-                                <i data-lucide="navigation" style="width: 13px; height: 13px;"></i> Route
-                            </button>
-                        </div>
+            } catch (error) {
+
+                console.log(
+                    'Trying next Overpass server...'
+                );
+
+            }
+
+        }
+
+
+        /* Fallback */
+
+        if (
+            !fetchedSuccessfully ||
+            places.length === 0
+        ) {
+
+            places =
+                demoFallbackData[type] || [];
+
+        }
+
+
+        /* Cache */
+
+        memoryCache[type] =
+            places;
+
+
+        renderPlaces(
+            places,
+            type
+        );
+
+    }
+
+
+    /* =====================================================
+       RENDER PLACES
+    ===================================================== */
+
+    function renderPlaces(
+        places,
+        type
+    ) {
+
+        const listEl =
+            document.getElementById('placesList');
+
+
+        const countEl =
+            document.getElementById('resultsCount');
+
+
+        /* Clear markers */
+
+        markers.forEach(marker => {
+
+            map.removeLayer(marker);
+
+        });
+
+        markers = [];
+
+
+        countEl.textContent =
+            places.length;
+
+
+        /* Empty */
+
+        if (places.length === 0) {
+
+            listEl.innerHTML = `
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+
+                        <i data-lucide="search-x"></i>
+
                     </div>
-                `;
-            }).join('');
-            
+
+                    <strong>
+                        No places found
+                    </strong>
+
+                    <p>
+                        There aren't any nearby
+                        ${getCategoryLabel(type).toLowerCase()}s
+                        in the current search area.
+                    </p>
+
+                </div>
+
+            `;
+
+
             lucide.createIcons();
-            
-            if (markers.length > 0) {
-                const group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
-            }
+
+            return;
+
         }
 
-        // 5. Navigation & Map Focus Helpers
-        function focusMap(lat, lng, index) {
-            if (lat && lng) {
-                map.setView([lat, lng], 16);
-                if (markers[index]) markers[index].openPopup();
-            }
+
+        /* =================================================
+           MAP MARKER
+        ================================================== */
+
+        const greenIcon =
+            L.icon({
+
+                iconUrl:
+                    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+
+                shadowUrl:
+                    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+
+                iconSize: [25, 41],
+
+                iconAnchor: [12, 41],
+
+                popupAnchor: [1, -34],
+
+                shadowSize: [41, 41]
+
+            });
+
+
+        /* =================================================
+           CARDS
+        ================================================== */
+
+        listEl.innerHTML =
+            places
+                .map((place, index) => {
+
+                    const name =
+                        place.tags.name;
+
+
+                    const lat =
+                        place.lat ||
+                        (
+                            place.center &&
+                            place.center.lat
+                        );
+
+
+                    const lng =
+                        place.lon ||
+                        (
+                            place.center &&
+                            place.center.lon
+                        );
+
+
+                    /* Marker */
+
+                    if (
+                        lat !== undefined &&
+                        lng !== undefined
+                    ) {
+
+                        const marker =
+                            L.marker(
+                                [lat, lng],
+                                {
+                                    icon: greenIcon
+                                }
+                            )
+                            .addTo(map);
+
+
+                        marker.bindPopup(`
+
+                            <div class="popup-title">
+                                ${escapeHtml(name)}
+                            </div>
+
+                            <div class="popup-type">
+                                ${getCategoryLabel(type)}
+                            </div>
+
+                        `);
+
+
+                        markers.push(marker);
+
+                    }
+
+
+                    return `
+
+                        <div
+                            class="place-card"
+                            onclick="focusMap(
+                                ${lat},
+                                ${lng},
+                                ${index}
+                            )">
+
+                            <div class="place-main">
+
+                                <div class="place-icon">
+
+                                    <i
+                                        data-lucide="${getCategoryIcon(type)}">
+                                    </i>
+
+                                </div>
+
+
+                                <div class="place-info">
+
+                                    <h3 class="place-name">
+
+                                        ${escapeHtml(name)}
+
+                                    </h3>
+
+
+                                    <span class="place-type">
+
+                                        <i
+                                            data-lucide="map-pin">
+                                        </i>
+
+                                        ${getCategoryLabel(type)}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="place-actions">
+
+                                <button
+                                    class="map-btn"
+                                    onclick="
+                                        event.stopPropagation();
+                                        focusMap(
+                                            ${lat},
+                                            ${lng},
+                                            ${index}
+                                        );
+                                    ">
+
+                                    <i data-lucide="map"></i>
+
+                                    View Map
+
+                                </button>
+
+
+                                <button
+                                    class="route-btn"
+                                    onclick="
+                                        event.stopPropagation();
+                                        openNav(
+                                            '${escapeJs(name)}'
+                                        );
+                                    ">
+
+                                    <i data-lucide="navigation"></i>
+
+                                    Route
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                })
+                .join('');
+
+
+        lucide.createIcons();
+
+
+        /* Fit map */
+
+        if (markers.length > 0) {
+
+            const group =
+                new L.featureGroup(markers);
+
+
+            map.fitBounds(
+                group
+                    .getBounds()
+                    .pad(0.1)
+            );
+
         }
 
-        function openNav(destinationName) {
-            const destination = encodeURIComponent(destinationName + ", Pune, Maharashtra");
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank');
+    }
+
+
+    /* =====================================================
+       FOCUS MAP
+    ===================================================== */
+
+    function focusMap(
+        lat,
+        lng,
+        index
+    ) {
+
+        if (
+            lat === undefined ||
+            lng === undefined
+        ) {
+            return;
         }
-    </script>
+
+
+        map.setView(
+            [lat, lng],
+            16,
+            {
+                animate: true
+            }
+        );
+
+
+        if (markers[index]) {
+
+            setTimeout(() => {
+
+                markers[index].openPopup();
+
+            }, 250);
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CENTER USER
+    ===================================================== */
+
+    function centerOnUser() {
+
+        map.setView(
+            [userLat, userLng],
+            16,
+            {
+                animate: true
+            }
+        );
+
+
+        if (userMarker) {
+
+            userMarker.openPopup();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       GOOGLE MAPS NAVIGATION
+    ===================================================== */
+
+    function openNav(
+        destinationName
+    ) {
+
+        const destination =
+            encodeURIComponent(
+                destinationName +
+                ", Pune, Maharashtra"
+            );
+
+
+        window.open(
+            `https://www.google.com/maps/dir/?api=1&destination=${destination}`,
+            '_blank'
+        );
+
+    }
+
+
+    /* =====================================================
+       SECURITY HELPERS
+    ===================================================== */
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement('div');
+
+        div.textContent =
+            String(value);
+
+        return div.innerHTML;
+
+    }
+
+
+    function escapeJs(value) {
+
+        return String(value)
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r');
+
+    }
+
+</script>
+
 </body>
 </html>

@@ -1,374 +1,2290 @@
 <!-- frontend/pages/search.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Find Chargers | EV Charge Hub</title>
+
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Leaflet Map CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
 
     <style>
-        html, body {
-            background-color: var(--background, #f8fafc);
+
+        /* =========================================
+           ROOT
+        ========================================== */
+
+        :root {
+            --green: #22c55e;
+            --green-dark: #15803d;
+            --green-soft: #ecfdf3;
+
+            --dark: #101814;
+            --dark-2: #17221b;
+
+            --text: #17221b;
+            --muted: #6b756e;
+
+            --border: #e3eae5;
+            --surface: #ffffff;
+            --background: #f6f8f7;
+
+            --blue: #2563eb;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
             margin: 0;
             padding: 0;
-            height: 100%;
+            background: var(--background);
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
             overflow-x: hidden;
-            overflow-y: auto !important; /* Forces normal, smooth page scrolling */
         }
-        .search-layout {
-            display: flex;
-            min-height: calc(100vh - 72px);
-            width: 100vw;
-            position: relative;
-        }
-        @media (max-width: 900px) {
-            .search-layout { flex-direction: column; }
-            #map { height: 400px; width: 100%; position: relative !important; }
-            .sidebar { width: 100% !important; height: auto !important; }
-        }
-        .sidebar {
-            width: 450px;
-            background: #ffffff;
-            border-right: 1px solid var(--border, #e2e8f0);
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.04);
-        }
-        .search-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border, #e2e8f0);
-            background: #ffffff;
+
+
+        /* =========================================
+           NAVBAR
+        ========================================== */
+
+        .topbar {
+            height: 72px;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
+            border-bottom: 1px solid var(--border);
+
             position: sticky;
             top: 0;
-            z-index: 5;
+            z-index: 1000;
         }
-        .controls-row {
+
+        .nav-inner {
+            width: min(1200px, calc(100% - 32px));
+            height: 100%;
+            margin: auto;
+
             display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
         }
-        .station-list {
-            padding: 1.25rem;
-            overflow-y: visible !important; /* Allows natural scrolling without trapping the mouse */
-        }
-        .station-card {
-            background: #ffffff;
-            border: 1px solid var(--border, #e2e8f0);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .station-card:hover {
-            border-color: #10b981;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        }
-        .station-card.active {
-            border-color: #10b981;
-            background-color: #f0fdf4;
-        }
-        .amenities-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin: 0.75rem 0;
-        }
-        .amenity-chip {
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 3px 8px;
-            border-radius: 14px;
+
+        .brand {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            border: 1px solid #e2e8f0;
+            gap: 10px;
+
+            color: var(--dark);
+            text-decoration: none;
+
+            font-size: 1.05rem;
+            font-weight: 800;
+
+            white-space: nowrap;
         }
-        .card-footer {
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            place-items: center;
+
+            background: var(--dark);
+            color: #fff;
+
+            border-radius: 12px;
+        }
+
+        .brand-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 9px 13px;
+
+            border-radius: 10px;
+
+            color: #5f6963;
+            text-decoration: none;
+
+            font-size: 0.86rem;
+            font-weight: 650;
+
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--green-dark);
+            background: var(--green-soft);
+        }
+
+        .nav-link.active {
+            color: var(--green-dark);
+            background: var(--green-soft);
+        }
+
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+
+        /* =========================================
+           SEARCH LAYOUT
+        ========================================== */
+
+        .search-layout {
+            display: grid;
+            grid-template-columns: 430px minmax(0, 1fr);
+
+            min-height: calc(100vh - 72px);
+
+            width: 100%;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================== */
+
+        .sidebar {
+            background: #fff;
+
+            border-right: 1px solid var(--border);
+
+            display: flex;
+            flex-direction: column;
+
+            min-width: 0;
+
+            position: relative;
+            z-index: 10;
+
+            box-shadow: 4px 0 20px rgba(16, 24, 20, 0.035);
+        }
+
+
+        /* =========================================
+           SEARCH HEADER
+        ========================================== */
+
+        .search-header {
+            padding: 24px 22px 20px;
+
+            border-bottom: 1px solid var(--border);
+
+            background:
+                radial-gradient(
+                    circle at 100% 0%,
+                    rgba(34, 197, 94, 0.08),
+                    transparent 35%
+                ),
+                #fff;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 5;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .header-icon {
+            width: 42px;
+            height: 42px;
+
+            display: grid;
+            place-items: center;
+
+            background: var(--green-soft);
+            color: var(--green-dark);
+
+            border-radius: 13px;
+        }
+
+        .header-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .header-title h1 {
+            margin: 0;
+
+            font-size: 1.18rem;
+            line-height: 1.2;
+
+            letter-spacing: -0.025em;
+        }
+
+        .header-title p {
+            margin: 4px 0 0;
+
+            color: var(--muted);
+
+            font-size: 0.76rem;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            padding: 6px 9px;
+
+            border-radius: 999px;
+
+            background: #f0fdf4;
+            color: var(--green-dark);
+
+            font-size: 0.68rem;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+
+        /* =========================================
+           CONTROLS
+        ========================================== */
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: 1fr 105px;
+
+            gap: 9px;
+
+            margin-top: 20px;
+        }
+
+        .location-btn {
+            min-height: 44px;
+
+            border: 0;
+            border-radius: 11px;
+
+            background: linear-gradient(
+                135deg,
+                var(--green),
+                var(--green-dark)
+            );
+
+            color: #fff;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            font-size: 0.82rem;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 18px rgba(21, 128, 61, 0.17);
+
+            transition: 0.2s ease;
+        }
+
+        .location-btn:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 11px 23px rgba(21, 128, 61, 0.22);
+        }
+
+        .location-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .radius-wrap {
+            position: relative;
+        }
+
+        .radius-wrap svg {
+            position: absolute;
+
+            left: 10px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 15px;
+            height: 15px;
+
+            color: #7c8780;
+
+            pointer-events: none;
+        }
+
+        #radiusFilter {
+            width: 100%;
+            min-height: 44px;
+
+            border: 1px solid #dce5df;
+            border-radius: 11px;
+
+            background: #fafcfb;
+            color: #29342e;
+
+            padding: 0 9px 0 31px;
+
+            outline: none;
+
+            font-size: 0.8rem;
+            font-weight: 650;
+
+            cursor: pointer;
+        }
+
+        #radiusFilter:focus {
+            border-color: var(--green);
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.09);
+        }
+
+
+        /* =========================================
+           LOCATION STATUS
+        ========================================== */
+
+        .location-status {
+            margin-top: 12px;
+
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: #7a847e;
+
+            font-size: 0.71rem;
+        }
+
+        .location-status svg {
+            width: 14px;
+            height: 14px;
+
+            color: var(--blue);
+        }
+
+
+        /* =========================================
+           STATION LIST
+        ========================================== */
+
+        .station-list {
+            padding: 17px;
+
+            flex: 1;
+
+            overflow-y: auto;
+
+            scrollbar-width: thin;
+        }
+
+        .results-heading {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px dashed var(--border, #e2e8f0);
+
+            margin: 0 3px 12px;
         }
+
+        .results-heading strong {
+            font-size: 0.78rem;
+            color: #536058;
+        }
+
+        .results-heading span {
+            color: #8b958f;
+            font-size: 0.72rem;
+        }
+
+
+        /* =========================================
+           STATION CARD
+        ========================================== */
+
+        .station-card {
+            background: #fff;
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+
+            padding: 16px;
+
+            margin-bottom: 12px;
+
+            box-shadow:
+                0 4px 13px rgba(16, 24, 20, 0.035);
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .station-card:hover {
+            transform: translateY(-1px);
+
+            border-color: #9be7b5;
+
+            box-shadow:
+                0 9px 24px rgba(16, 24, 20, 0.075);
+        }
+
+        .station-card.active {
+            border-color: var(--green);
+
+            background: #f7fff9;
+
+            box-shadow:
+                0 0 0 3px rgba(34, 197, 94, 0.08),
+                0 9px 24px rgba(16, 24, 20, 0.06);
+        }
+
+        .station-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 12px;
+        }
+
+        .station-name {
+            margin: 0;
+
+            color: #17221b;
+
+            font-size: 0.96rem;
+            line-height: 1.3;
+
+            font-weight: 800;
+
+            letter-spacing: -0.015em;
+        }
+
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+
+            color: #d97706;
+
+            background: #fffbeb;
+
+            border: 1px solid #fef3c7;
+
+            padding: 4px 7px;
+
+            border-radius: 8px;
+
+            font-size: 0.72rem;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .rating svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+        }
+
+        .station-meta {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 9px;
+
+            margin-top: 8px;
+        }
+
+        .meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            color: #738078;
+
+            font-size: 0.72rem;
+        }
+
+        .meta-item svg {
+            width: 13px;
+            height: 13px;
+        }
+
+
+        /* =========================================
+           AMENITIES
+        ========================================== */
+
+        .amenities-row {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 6px;
+
+            margin-top: 13px;
+        }
+
+        .amenity-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            padding: 5px 8px;
+
+            border-radius: 8px;
+
+            background: #f5f8f6;
+
+            border: 1px solid #e7ece8;
+
+            color: #647069;
+
+            font-size: 0.67rem;
+            font-weight: 650;
+        }
+
+        .amenity-chip svg {
+            width: 12px;
+            height: 12px;
+
+            color: var(--blue);
+        }
+
+
+        /* =========================================
+           CARD FOOTER
+        ========================================== */
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-top: 14px;
+            padding-top: 13px;
+
+            border-top: 1px dashed #e4eae6;
+        }
+
+        .availability {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            color: #16803d;
+
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .availability-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .book-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+
+            min-height: 34px;
+
+            padding: 0 12px;
+
+            border-radius: 9px;
+
+            background: var(--dark);
+            color: #fff;
+
+            text-decoration: none;
+
+            font-size: 0.7rem;
+            font-weight: 800;
+
+            transition: 0.2s ease;
+        }
+
+        .book-btn:hover {
+            background: var(--green-dark);
+
+            transform: translateY(-1px);
+        }
+
+        .book-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+
+
+        /* =========================================
+           EMPTY / ERROR / LOADING
+        ========================================== */
+
+        .state-box {
+            min-height: 260px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 30px 18px;
+
+            color: #78837c;
+        }
+
+        .state-icon {
+            width: 52px;
+            height: 52px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 16px;
+
+            background: #f0f4f1;
+
+            color: #7c8880;
+
+            margin-bottom: 14px;
+        }
+
+        .state-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .state-box strong {
+            display: block;
+
+            color: #354039;
+
+            font-size: 0.88rem;
+
+            margin-bottom: 5px;
+        }
+
+        .state-box p {
+            margin: 0;
+
+            max-width: 280px;
+
+            font-size: 0.75rem;
+
+            line-height: 1.55;
+        }
+
+        .state-box.error .state-icon {
+            background: #fef2f2;
+            color: var(--red);
+        }
+
+        .state-box.error strong {
+            color: #991b1b;
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =========================================
+           MAP
+        ========================================== */
+
+        .map-panel {
+            position: relative;
+
+            min-width: 0;
+
+            background: #e8eee9;
+        }
+
         #map {
-            flex: 1;
+            width: 100%;
             height: calc(100vh - 72px);
+
             position: sticky;
             top: 72px;
-            z-index: 1;
         }
+
+        .map-overlay {
+            position: absolute;
+
+            top: 18px;
+            left: 18px;
+
+            z-index: 500;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 12px;
+
+            background: rgba(255,255,255,0.94);
+
+            border: 1px solid rgba(255,255,255,0.9);
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 7px 20px rgba(16, 24, 20, 0.1);
+
+            color: #435047;
+
+            font-size: 0.72rem;
+            font-weight: 750;
+
+            pointer-events: none;
+        }
+
+        .map-overlay svg {
+            width: 15px;
+            height: 15px;
+
+            color: var(--green-dark);
+        }
+
+        .map-location-btn {
+            position: absolute;
+
+            right: 18px;
+            bottom: 22px;
+
+            z-index: 500;
+
+            width: 45px;
+            height: 45px;
+
+            border: 1px solid #dce4de;
+
+            border-radius: 13px;
+
+            background: rgba(255,255,255,0.96);
+
+            color: #354139;
+
+            display: grid;
+            place-items: center;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 22px rgba(16, 24, 20, 0.12);
+
+            transition: 0.2s ease;
+        }
+
+        .map-location-btn:hover {
+            color: var(--green-dark);
+
+            transform: translateY(-1px);
+        }
+
+        .map-location-btn svg {
+            width: 19px;
+            height: 19px;
+        }
+
+
+        /* =========================================
+           LEAFLET POPUP
+        ========================================== */
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(16,24,20,0.14);
+        }
+
+        .leaflet-popup-content {
+            margin: 13px;
+        }
+
+        .popup-name {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #17221b;
+            margin-bottom: 4px;
+        }
+
+        .popup-address {
+            font-size: 0.72rem;
+            color: #718078;
+            line-height: 1.4;
+        }
+
+        .popup-book {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 9px;
+
+            padding: 7px 12px;
+
+            border-radius: 8px;
+
+            background: var(--green);
+            color: #fff;
+
+            text-decoration: none;
+
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================== */
+
+        @media (max-width: 900px) {
+
+            .search-layout {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: 0;
+            }
+
+            .search-header {
+                position: relative;
+            }
+
+            .station-list {
+                overflow: visible;
+            }
+
+            .map-panel {
+                min-height: 430px;
+            }
+
+            #map {
+                height: 430px;
+                position: relative;
+                top: auto;
+                sticky: auto;
+            }
+
+            .map-overlay {
+                top: 14px;
+                left: 14px;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .topbar {
+                height: 66px;
+            }
+
+            .nav-inner {
+                width: calc(100% - 20px);
+            }
+
+            .brand span:last-child {
+                display: none;
+            }
+
+            .nav-links {
+                gap: 2px;
+            }
+
+            .nav-link {
+                padding: 8px;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .nav-link svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .search-header {
+                padding: 18px 15px 16px;
+            }
+
+            .station-list {
+                padding: 13px;
+            }
+
+            .controls-row {
+                grid-template-columns: 1fr 95px;
+            }
+
+            .map-panel,
+            #map {
+                height: 390px;
+                min-height: 390px;
+            }
+        }
+
     </style>
 </head>
+
+
 <body>
 
-    <!-- Header Navbar -->
-    <header class="navbar" style="border-bottom: 1px solid var(--border, #e2e8f0); background: #ffffff; height: 72px; box-sizing: border-box; position: sticky; top: 0; z-index: 1000;">
-        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; height: 100%;">
-            <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; text-decoration: none; color: #10b981; font-size: 1.25rem;">
-                <i data-lucide="zap"></i> EV Charge Hub
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <header class="topbar">
+
+        <div class="nav-inner">
+
+            <a href="dashboard.html" class="brand">
+
+                <span class="brand-icon">
+                    <i data-lucide="zap"></i>
+                </span>
+
+                <span>EV Charge Hub</span>
+
             </a>
-            <nav style="display: flex; align-items: center; gap: 1.5rem;">
-                <a href="dashboard.html" style="text-decoration: none; color: #64748b;">Dashboard</a>
-                <a href="search.html" style="text-decoration: none; color: #10b981; font-weight: 600;">Find Chargers</a>
-                <a href="bookings.html" style="text-decoration: none; color: #64748b;">My Bookings</a>
+
+
+            <nav class="nav-links">
+
+                <a href="dashboard.html" class="nav-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="search.html" class="nav-link active">
+                    <i data-lucide="map-pin"></i>
+                    <span>Find Chargers</span>
+                </a>
+
+                <a href="bookings.html" class="nav-link">
+                    <i data-lucide="calendar-check"></i>
+                    <span>My Bookings</span>
+                </a>
+
             </nav>
+
         </div>
+
     </header>
 
+
+    <!-- =========================================
+         SEARCH AREA
+    ========================================== -->
+
     <div class="search-layout">
-        <!-- Sidebar -->
-        <div class="sidebar">
+
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- Search Header -->
+
             <div class="search-header">
-                <h2 style="margin: 0; font-size: 1.35rem; color: #1e293b; display: flex; align-items: center; gap: 0.5rem;">
-                    <i data-lucide="search" style="color: #10b981; width: 22px; height: 22px;"></i> Locate Stations
-                </h2>
+
+                <div class="header-top">
+
+                    <div class="header-title">
+
+                        <div class="header-icon">
+                            <i data-lucide="search"></i>
+                        </div>
+
+                        <div>
+
+                            <h1>Find Chargers</h1>
+
+                            <p>
+                                Discover EV charging stations near you
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="status-pill">
+
+                        <span class="status-dot"></span>
+
+                        Live
+
+                    </div>
+
+                </div>
+
+
+                <!-- Controls -->
+
                 <div class="controls-row">
-                    <button class="btn btn-primary" onclick="locateUser()" style="flex: 1; display: flex; justify-content: center; align-items: center; gap: 0.4rem; font-size: 0.88rem;">
-                        <i data-lucide="crosshair" style="width: 16px; height: 16px;"></i> My Location
+
+                    <button
+                        type="button"
+                        class="location-btn"
+                        onclick="locateUser()"
+                    >
+
+                        <i data-lucide="crosshair"></i>
+
+                        My Location
+
                     </button>
-                    <select id="radiusFilter" class="form-control" style="width: 110px; padding: 0.45rem 0.65rem;" onchange="loadStations()">
-                        <option value="5">5 km</option>
-                        <option value="10" selected>10 km</option>
-                        <option value="25">25 km</option>
-                    </select>
+
+
+                    <div class="radius-wrap">
+
+                        <i data-lucide="circle-dashed"></i>
+
+                        <select
+                            id="radiusFilter"
+                            onchange="loadStations()"
+                        >
+
+                            <option value="5">
+                                5 km
+                            </option>
+
+                            <option value="10" selected>
+                                10 km
+                            </option>
+
+                            <option value="25">
+                                25 km
+                            </option>
+
+                        </select>
+
+                    </div>
+
                 </div>
+
+
+                <div
+                    class="location-status"
+                    id="locationStatus"
+                >
+
+                    <i data-lucide="navigation"></i>
+
+                    <span>
+                        Using your current location
+                    </span>
+
+                </div>
+
             </div>
 
-            <!-- Station Results (Fully Scrollable) -->
-            <div class="station-list" id="stationListContainer">
-                <div style="text-align: center; padding: 3rem 1rem; color: #64748b;">
-                    <i data-lucide="loader" class="spin" style="margin-bottom: 0.75rem;"></i>
-                    <p>Connecting to backend API...</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Map Container -->
-        <div id="map"></div>
+            <!-- Station Results -->
+
+            <div
+                class="station-list"
+                id="stationListContainer"
+            >
+
+                <div class="state-box">
+
+                    <div class="state-icon">
+
+                        <i
+                            data-lucide="loader"
+                            class="spin"
+                        ></i>
+
+                    </div>
+
+                    <strong>
+                        Finding charging stations
+                    </strong>
+
+                    <p>
+                        Connecting to the EV Charge Hub server...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================
+             MAP
+        ====================================== -->
+
+        <section class="map-panel">
+
+            <div class="map-overlay">
+
+                <i data-lucide="map"></i>
+
+                <span>
+                    Charging stations & nearby amenities
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="map-location-btn"
+                onclick="locateUser()"
+                title="Use my location"
+            >
+
+                <i data-lucide="locate-fixed"></i>
+
+            </button>
+
+
+            <div id="map"></div>
+
+        </section>
+
     </div>
 
+
+    <!-- API -->
+
     <script src="../js/api.js"></script>
+
+
     <script>
+
+        /* =========================================
+           ICONS
+        ========================================== */
+
         lucide.createIcons();
 
-        let map = L.map('map').setView([18.5204, 73.8567], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+
+        /* =========================================
+           MAP INITIALIZATION
+        ========================================== */
+
+        let map =
+            L.map("map").setView(
+                [18.5204, 73.8567],
+                13
+            );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    "© OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+        /* =========================================
+           STATE
+        ========================================== */
 
         let userLat = 18.5204;
+
         let userLng = 73.8567;
+
         let markers = [];
+
         let stationsData = [];
+
         const amenityCache = {};
 
-        function calculateDistance(lat1, lon1, lat2, lon2) {
+
+        /* =========================================
+           DISTANCE CALCULATION
+        ========================================== */
+
+        function calculateDistance(
+            lat1,
+            lon1,
+            lat2,
+            lon2
+        ) {
+
             const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            const dLat =
+                (lat2 - lat1) *
+                Math.PI / 180;
+
+            const dLon =
+                (lon2 - lon1) *
+                Math.PI / 180;
+
+
+            const a =
+                Math.sin(dLat / 2) *
+                Math.sin(dLat / 2) +
+
+                Math.cos(
+                    lat1 * Math.PI / 180
+                ) *
+
+                Math.cos(
+                    lat2 * Math.PI / 180
+                ) *
+
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+
+
+            const c =
+                2 *
+                Math.atan2(
+                    Math.sqrt(a),
+                    Math.sqrt(1 - a)
+                );
+
+
             const d = R * c;
-            
-            if (d < 1) return Math.round(d * 1000) + 'm';
-            return d.toFixed(1) + 'km';
+
+
+            if (d < 1) {
+
+                return (
+                    Math.round(d * 1000) +
+                    "m"
+                );
+
+            }
+
+
+            return d.toFixed(1) + "km";
+
         }
 
-        // Safe cached amenity loader to prevent 429 rate limit errors
-        async function fetchLiveAmenities(sLat, sLng) {
-            const cacheKey = `${sLat.toFixed(3)}_${sLng.toFixed(3)}`;
-            if (amenityCache[cacheKey]) return amenityCache[cacheKey];
 
-            // Fallback default list to guarantee zero rate-limit blocks during demos
+        /* =========================================
+           AMENITIES
+        ========================================== */
+
+        async function fetchLiveAmenities(
+            sLat,
+            sLng
+        ) {
+
+            const cacheKey =
+                `${sLat.toFixed(3)}_${sLng.toFixed(3)}`;
+
+
+            if (amenityCache[cacheKey]) {
+
+                return amenityCache[cacheKey];
+
+            }
+
+
+            /*
+             * Existing fallback amenity system.
+             * Kept intentionally so demos continue
+             * working without rate-limit problems.
+             */
+
             const defaultAmenities = [
-                { type: 'cafe', icon: 'coffee', name: 'Nearby Cafe', lat: sLat + 0.001, lng: sLng + 0.001, label: `Cafe (180m)` },
-                { type: 'restaurant', icon: 'utensils', name: 'Local Dining', lat: sLat - 0.001, lng: sLng + 0.001, label: `Dining (310m)` }
+
+                {
+                    type: "cafe",
+                    icon: "coffee",
+                    name: "Nearby Cafe",
+
+                    lat: sLat + 0.001,
+                    lng: sLng + 0.001,
+
+                    label: "Cafe (180m)"
+                },
+
+                {
+                    type: "restaurant",
+                    icon: "utensils",
+                    name: "Local Dining",
+
+                    lat: sLat - 0.001,
+                    lng: sLng + 0.001,
+
+                    label: "Dining (310m)"
+                }
+
             ];
 
-            amenityCache[cacheKey] = defaultAmenities;
+
+            amenityCache[cacheKey] =
+                defaultAmenities;
+
+
             return defaultAmenities;
+
         }
 
-        // 1. Fetch Stations strictly from your Node.js MySQL Backend API Server
+
+        /* =========================================
+           LOAD STATIONS
+        ========================================== */
+
         async function loadStations() {
-            const listEl = document.getElementById('stationListContainer');
+
+            const listEl =
+                document.getElementById(
+                    "stationListContainer"
+                );
+
+
             listEl.innerHTML = `
-                <div style="text-align: center; padding: 3rem 1rem; color: #64748b;">
-                    <i data-lucide="loader" class="spin" style="margin-bottom: 0.75rem;"></i>
-                    <p>Fetching stations from API server...</p>
+
+                <div class="state-box">
+
+                    <div class="state-icon">
+
+                        <i
+                            data-lucide="loader"
+                            class="spin"
+                        ></i>
+
+                    </div>
+
+                    <strong>
+                        Finding charging stations
+                    </strong>
+
+                    <p>
+                        Fetching stations from the API server...
+                    </p>
+
                 </div>
+
             `;
+
+
             lucide.createIcons();
+
 
             try {
-                const radius = document.getElementById('radiusFilter').value;
-                const response = await fetch(`http://localhost:5000/api/stations?lat=${userLat}&lng=${userLng}&radius=${radius}`);
-                const data = await response.json();
 
-                const stations = data.stations || data.data || [];
+                const radius =
+                    document.getElementById(
+                        "radiusFilter"
+                    ).value;
+
+
+                const response =
+                    await fetch(
+                        `http://localhost:5000/api/stations?lat=${userLat}&lng=${userLng}&radius=${radius}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                const stations =
+                    data.stations ||
+                    data.data ||
+                    [];
+
 
                 if (stations.length > 0) {
-                    stationsData = stations;
-                    renderStations(stationsData);
-                } else {
-                    listEl.innerHTML = `
-                        <div style="text-align: center; padding: 3rem 1rem; color: #64748b;">
-                            <i data-lucide="map-pin" style="width: 36px; height: 36px; opacity: 0.4; margin-bottom: 0.75rem;"></i>
-                            <p>No stations returned from the server database for this radius.</p>
-                        </div>
-                    `;
-                    lucide.createIcons();
+
+                    stationsData =
+                        stations;
+
+
+                    renderStations(
+                        stationsData
+                    );
+
                 }
-            } catch (error) {
-                listEl.innerHTML = `
-                    <div style="text-align: center; padding: 3rem 1rem; color: #ef4444;">
-                        <i data-lucide="alert-circle" style="width: 36px; height: 36px; margin-bottom: 0.75rem;"></i>
-                        <p>Server connection error.<br><span style="font-size:0.8rem; color:#64748b;">Ensure your backend is running on port 5000.</span></p>
-                    </div>
-                `;
-                lucide.createIcons();
+
+                else {
+
+                    listEl.innerHTML = `
+
+                        <div class="state-box">
+
+                            <div class="state-icon">
+
+                                <i
+                                    data-lucide="map-pin-off"
+                                ></i>
+
+                            </div>
+
+                            <strong>
+                                No stations found
+                            </strong>
+
+                            <p>
+                                No charging stations were returned
+                                for the selected radius.
+                                Try expanding your search area.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    lucide.createIcons();
+
+                }
+
             }
+
+            catch (error) {
+
+                console.error(
+                    "Station loading error:",
+                    error
+                );
+
+
+                listEl.innerHTML = `
+
+                    <div class="state-box error">
+
+                        <div class="state-icon">
+
+                            <i
+                                data-lucide="server-crash"
+                            ></i>
+
+                        </div>
+
+                        <strong>
+                            Server connection error
+                        </strong>
+
+                        <p>
+                            Make sure your backend is running
+                            on port 5000 and try again.
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                lucide.createIcons();
+
+            }
+
         }
 
-        // 2. Render Server Stations Smoothly
-        async function renderStations(stations) {
-            const listEl = document.getElementById('stationListContainer');
-            
-            markers.forEach(m => map.removeLayer(m));
+
+        /* =========================================
+           RENDER STATIONS
+        ========================================== */
+
+        async function renderStations(
+            stations
+        ) {
+
+            const listEl =
+                document.getElementById(
+                    "stationListContainer"
+                );
+
+
+            /*
+             * Remove existing map markers.
+             */
+
+            markers.forEach(
+                marker =>
+                    map.removeLayer(marker)
+            );
+
+
             markers = [];
 
-            let htmlContent = '';
 
-            for (let index = 0; index < stations.length; index++) {
-                const s = stations[index];
-                const lat = parseFloat(s.latitude || s.lat);
-                const lng = parseFloat(s.longitude || s.lng);
-                
-                const amenities = await fetchLiveAmenities(lat, lng);
+            let htmlContent = `
 
-                if (lat && lng) {
-                    const stationIcon = L.divIcon({
-                        className: 'custom-map-pin',
-                        html: `
-                            <div style="background: #10b981; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid #ffffff;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                            </div>
-                        `,
-                        iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -20]
-                    });
+                <div class="results-heading">
 
-                    const marker = L.marker([lat, lng], { icon: stationIcon }).addTo(map)
+                    <strong>
+                        Charging stations
+                    </strong>
+
+                    <span>
+                        ${stations.length} found
+                    </span>
+
+                </div>
+
+            `;
+
+
+            for (
+                let index = 0;
+                index < stations.length;
+                index++
+            ) {
+
+                const s =
+                    stations[index];
+
+
+                const lat =
+                    parseFloat(
+                        s.latitude ||
+                        s.lat
+                    );
+
+
+                const lng =
+                    parseFloat(
+                        s.longitude ||
+                        s.lng
+                    );
+
+
+                const amenities =
+                    await fetchLiveAmenities(
+                        lat,
+                        lng
+                    );
+
+
+                /* =================================
+                   STATION MAP MARKER
+                ================================== */
+
+                if (
+                    Number.isFinite(lat) &&
+                    Number.isFinite(lng)
+                ) {
+
+                    const stationIcon =
+                        L.divIcon({
+
+                            className:
+                                "custom-map-pin",
+
+                            html: `
+
+                                <div
+                                    style="
+                                        background:#22c55e;
+                                        color:#fff;
+                                        width:38px;
+                                        height:38px;
+                                        border-radius:50%;
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        box-shadow:0 5px 14px rgba(0,0,0,.25);
+                                        border:3px solid #fff;
+                                    "
+                                >
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+
+                                        <path
+                                            d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+                                        />
+
+                                    </svg>
+
+                                </div>
+
+                            `,
+
+                            iconSize: [38, 38],
+
+                            iconAnchor: [19, 19],
+
+                            popupAnchor: [0, -21]
+
+                        });
+
+
+                    const marker =
+                        L.marker(
+                            [lat, lng],
+                            {
+                                icon: stationIcon
+                            }
+                        )
+                        .addTo(map)
                         .bindPopup(`
-                            <div style="text-align: center; font-family: inherit; padding: 4px;">
-                                <b style="font-size: 1rem; color: #1e293b;">${s.name}</b><br>
-                                <span style="font-size: 0.85rem; color: #64748b;">${s.address || 'Location'}</span><br>
-                                <a href="booking.html?station_id=${s.id}" style="display: inline-block; margin-top: 8px; background: #10b981; color: #fff; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">Book Slot</a>
+
+                            <div
+                                style="
+                                    min-width:180px;
+                                    font-family:inherit;
+                                "
+                            >
+
+                                <div class="popup-name">
+                                    ${escapeHtml(
+                                        s.name ||
+                                        "Charging Station"
+                                    )}
+                                </div>
+
+                                <div class="popup-address">
+
+                                    ${escapeHtml(
+                                        s.address ||
+                                        "Station location"
+                                    )}
+
+                                </div>
+
+                                <a
+                                    href="booking.html?station_id=${encodeURIComponent(s.id)}"
+                                    class="popup-book"
+                                >
+                                    Book Slot
+                                </a>
+
                             </div>
+
                         `);
+
+
+                    marker.stationId =
+                        s.id;
+
+
+                    marker.stationIndex =
+                        index;
+
+
                     markers.push(marker);
 
+
+                    /* =================================
+                       AMENITY MARKERS
+                    ================================== */
+
                     amenities.forEach(a => {
-                        const emoji = a.type === 'cafe' ? '☕' : '🍔';
-                        const amenityIcon = L.divIcon({
-                            className: 'amenity-map-pin',
-                            html: `<div style="background: #3b82f6; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.25); border: 2px solid #ffffff; font-size: 12px;" title="${a.name}">${emoji}</div>`,
-                            iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -15]
-                        });
-                        const aMarker = L.marker([a.lat, a.lng], { icon: amenityIcon }).addTo(map)
-                            .bindPopup(`<b>${a.name}</b>`);
-                        markers.push(aMarker);
+
+                        const emoji =
+                            a.type === "cafe"
+                                ? "☕"
+                                : "🍔";
+
+
+                        const amenityIcon =
+                            L.divIcon({
+
+                                className:
+                                    "amenity-map-pin",
+
+                                html: `
+
+                                    <div
+                                        style="
+                                            background:#2563eb;
+                                            color:white;
+                                            width:29px;
+                                            height:29px;
+                                            border-radius:50%;
+                                            display:flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            box-shadow:0 3px 8px rgba(0,0,0,.22);
+                                            border:2px solid white;
+                                            font-size:12px;
+                                        "
+                                        title="${escapeHtml(a.name)}"
+                                    >
+                                        ${emoji}
+                                    </div>
+
+                                `,
+
+                                iconSize: [29, 29],
+
+                                iconAnchor: [14.5, 14.5],
+
+                                popupAnchor: [0, -15]
+
+                            });
+
+
+                        const aMarker =
+                            L.marker(
+                                [a.lat, a.lng],
+                                {
+                                    icon: amenityIcon
+                                }
+                            )
+                            .addTo(map)
+                            .bindPopup(
+                                `<b>${escapeHtml(a.name)}</b>`
+                            );
+
+
+                        markers.push(
+                            aMarker
+                        );
+
                     });
+
                 }
 
+
+                /* =================================
+                   STATION CARD
+                ================================== */
+
+                const distance =
+                    s.distance !== undefined
+                        ? Number(s.distance)
+                            .toFixed(1) + " km"
+                        : "Nearby";
+
+
+                const available =
+                    s.available_chargers ||
+                    s.available ||
+                    2;
+
+
                 htmlContent += `
-                    <div class="station-card" id="card-${index}" onclick="focusStation(${lat}, ${lng}, ${index})">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
-                            <h3 style="margin: 0; font-size: 1.05rem; color: #1e293b;">${s.name}</h3>
-                            <span style="font-size: 0.85rem; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 2px;">
-                                <i data-lucide="star" style="width: 14px; height: 14px; fill: #f59e0b;"></i> ${s.rating || '4.8'}
+
+                    <div
+                        class="station-card"
+                        id="card-${index}"
+                        onclick="focusStation(${lat}, ${lng}, ${index})"
+                    >
+
+                        <div class="station-top">
+
+                            <div>
+
+                                <h3 class="station-name">
+                                    ${escapeHtml(
+                                        s.name ||
+                                        "EV Charging Station"
+                                    )}
+                                </h3>
+
+                            </div>
+
+
+                            <span class="rating">
+
+                                <i data-lucide="star"></i>
+
+                                ${s.rating || "4.8"}
+
                             </span>
+
                         </div>
 
-                        <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 0.5rem; display: flex; gap: 0.75rem;">
-                            <span><i data-lucide="map-pin" style="width: 13px; height: 13px; vertical-align: middle;"></i> ${s.distance !== undefined ? Number(s.distance).toFixed(1) + ' km' : 'Nearby'}</span>
-                            <span><i data-lucide="clock" style="width: 13px; height: 13px; vertical-align: middle;"></i> ${s.operating_hours || '24/7'}</span>
+
+                        <div class="station-meta">
+
+                            <span class="meta-item">
+
+                                <i data-lucide="map-pin"></i>
+
+                                ${distance}
+
+                            </span>
+
+
+                            <span class="meta-item">
+
+                                <i data-lucide="clock-3"></i>
+
+                                ${escapeHtml(
+                                    s.operating_hours ||
+                                    "24/7"
+                                )}
+
+                            </span>
+
                         </div>
+
 
                         <div class="amenities-row">
-                            ${amenities.map(a => `
-                                <span class="amenity-chip">
-                                    <i data-lucide="${a.icon}" style="width: 12px; height: 12px; color: #3b82f6;"></i>
-                                    ${a.label}
-                                </span>
-                            `).join('')}
+
+                            ${amenities
+                                .map(
+                                    a => `
+
+                                    <span class="amenity-chip">
+
+                                        <i
+                                            data-lucide="${a.icon}"
+                                        ></i>
+
+                                        ${escapeHtml(a.label)}
+
+                                    </span>
+
+                                `
+                                )
+                                .join("")
+                            }
+
                         </div>
+
 
                         <div class="card-footer">
-                            <div style="font-size: 0.82rem; color: #059669; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                                <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
-                                ${s.available_chargers || s.available || 2} Available
+
+                            <div class="availability">
+
+                                <span class="availability-dot"></span>
+
+                                ${available} Available
+
                             </div>
-                            <a href="booking.html?station_id=${s.id}" class="btn btn-primary btn-sm" style="padding: 0.35rem 0.85rem; font-size: 0.82rem; text-decoration: none;">
+
+
+                            <a
+                                href="booking.html?station_id=${encodeURIComponent(s.id)}"
+                                class="book-btn"
+                                onclick="event.stopPropagation()"
+                            >
+
                                 View & Book
+
+                                <i data-lucide="arrow-up-right"></i>
+
                             </a>
+
                         </div>
+
                     </div>
+
                 `;
+
             }
 
-            listEl.innerHTML = htmlContent;
+
+            listEl.innerHTML =
+                htmlContent;
+
+
             lucide.createIcons();
 
-            if (markers.length > 0) {
-                const group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
+
+            /* =================================
+               FIT MAP TO STATIONS
+            ================================== */
+
+            const stationMarkers =
+                markers.filter(
+                    marker =>
+                        marker.stationId !== undefined
+                );
+
+
+            if (
+                stationMarkers.length > 0
+            ) {
+
+                const group =
+                    new L.featureGroup(
+                        stationMarkers
+                    );
+
+
+                map.fitBounds(
+                    group
+                        .getBounds()
+                        .pad(0.1)
+                );
+
             }
+
         }
 
-        // 3. Helpers
-        function focusStation(lat, lng, index) {
-            document.querySelectorAll('.station-card').forEach(c => c.classList.remove('active'));
-            const card = document.getElementById(`card-${index}`);
-            if (card) card.classList.add('active');
 
-            if (lat && lng) {
-                map.setView([lat, lng], 15);
-                if (markers[index]) markers[index].openPopup();
-            }
+        /* =========================================
+           ESCAPE HTML
+        ========================================== */
+
+        function escapeHtml(value) {
+
+            return String(value ?? "")
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
         }
+
+
+        /* =========================================
+           FOCUS STATION
+        ========================================== */
+
+        function focusStation(
+            lat,
+            lng,
+            index
+        ) {
+
+            document
+                .querySelectorAll(
+                    ".station-card"
+                )
+                .forEach(
+                    card =>
+                        card.classList.remove(
+                            "active"
+                        )
+                );
+
+
+            const card =
+                document.getElementById(
+                    `card-${index}`
+                );
+
+
+            if (card) {
+
+                card.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            if (
+                Number.isFinite(lat) &&
+                Number.isFinite(lng)
+            ) {
+
+                map.setView(
+                    [lat, lng],
+                    15,
+                    {
+                        animate: true
+                    }
+                );
+
+
+                /*
+                 * Find the actual station marker
+                 * instead of relying on markers[index],
+                 * because amenity markers are also stored.
+                 */
+
+                const stationMarker =
+                    markers.find(
+                        marker =>
+                            marker.stationIndex ===
+                            index
+                    );
+
+
+                if (stationMarker) {
+
+                    stationMarker.openPopup();
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================================
+           USER LOCATION
+        ========================================== */
 
         function locateUser() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    userLat = pos.coords.latitude;
-                    userLng = pos.coords.longitude;
-                    map.setView([userLat, userLng], 14);
-                    
-                    L.circleMarker([userLat, userLng], {
-                        color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.8, radius: 8
-                    }).addTo(map).bindPopup("You are here").openPopup();
+
+            const status =
+                document.getElementById(
+                    "locationStatus"
+                );
+
+
+            if (
+                !("geolocation" in navigator)
+            ) {
+
+                status.innerHTML = `
+
+                    <i data-lucide="map-pin-off"></i>
+
+                    <span>
+                        Location services are unavailable
+                    </span>
+
+                `;
+
+                lucide.createIcons();
+
+                loadStations();
+
+                return;
+
+            }
+
+
+            status.innerHTML = `
+
+                <i
+                    data-lucide="loader-circle"
+                    class="spin"
+                ></i>
+
+                <span>
+                    Detecting your location...
+                </span>
+
+            `;
+
+            lucide.createIcons();
+
+
+            navigator.geolocation.getCurrentPosition(
+
+                position => {
+
+                    userLat =
+                        position.coords.latitude;
+
+
+                    userLng =
+                        position.coords.longitude;
+
+
+                    map.setView(
+                        [userLat, userLng],
+                        14
+                    );
+
+
+                    /*
+                     * User location marker.
+                     */
+
+                    L.circleMarker(
+                        [userLat, userLng],
+                        {
+                            color: "#2563eb",
+
+                            fillColor: "#2563eb",
+
+                            fillOpacity: 0.85,
+
+                            radius: 8,
+
+                            weight: 3
+                        }
+                    )
+                    .addTo(map)
+                    .bindPopup(
+                        "You are here"
+                    );
+
+
+                    status.innerHTML = `
+
+                        <i data-lucide="navigation"></i>
+
+                        <span>
+                            Showing stations near your location
+                        </span>
+
+                    `;
+
+                    lucide.createIcons();
+
 
                     loadStations();
-                });
-            }
+
+                },
+
+
+                error => {
+
+                    console.warn(
+                        "Geolocation error:",
+                        error
+                    );
+
+
+                    status.innerHTML = `
+
+                        <i data-lucide="info"></i>
+
+                        <span>
+                            Using default map location
+                        </span>
+
+                    `;
+
+                    lucide.createIcons();
+
+
+                    loadStations();
+
+                },
+
+                {
+                    enableHighAccuracy: true,
+
+                    timeout: 10000,
+
+                    maximumAge: 300000
+                }
+
+            );
+
         }
 
-        document.addEventListener('DOMContentLoaded', locateUser);
+
+        /* =========================================
+           INITIAL LOAD
+        ========================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+
+                locateUser();
+
+            }
+        );
+
     </script>
+
 </body>
+
 </html>

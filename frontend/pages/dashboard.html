@@ -1,410 +1,5644 @@
 <!-- frontend/pages/dashboard.html -->
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Dashboard | EV Charge Hub</title>
-    <link rel="stylesheet" href="../css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/premium-ui.css"
+    >
+
     <script src="https://unpkg.com/lucide@latest"></script>
+
+
     <style>
-        /* Force scroll enablement across the whole document */
-        html, body {
-            height: auto !important;
-            min-height: 100vh !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            background-color: var(--background, #f8fafc);
+
+        /* =========================================================
+           PREMIUM DASHBOARD
+        ========================================================= */
+
+        :root {
+
+            --dash-bg: #f6f8f7;
+
+            --dash-card: #ffffff;
+
+            --dash-text: #101828;
+
+            --dash-muted: #667085;
+
+            --dash-light: #98a2b3;
+
+            --dash-border: #e5e9e7;
+
+            --dash-green: #22c55e;
+
+            --dash-green-dark: #15803d;
+
+            --dash-green-soft: #ecfdf3;
+
+            --dash-blue: #3b82f6;
+
+            --dash-blue-soft: #eff6ff;
+
+            --dash-orange: #f59e0b;
+
+            --dash-orange-soft: #fffbeb;
+
+            --dash-red: #ef4444;
+
+            --dash-red-soft: #fef2f2;
+
+            --dash-shadow:
+                0 12px 40px rgba(16,24,40,.055);
+
+            --dash-shadow-small:
+                0 4px 18px rgba(16,24,40,.045);
+
         }
 
-        .dashboard-layout {
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+
+            min-height: 100%;
+
+            margin: 0;
+
+            overflow-x: hidden;
+
+        }
+
+
+        body {
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #f9fbfa 0%,
+                    #f4f7f5 100%
+                );
+
+            color: var(--dash-text);
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .premium-navbar {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            height: 74px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background:
+                rgba(255,255,255,.88);
+
+            backdrop-filter:
+                blur(18px);
+
+            border-bottom:
+                1px solid rgba(16,24,40,.07);
+
+        }
+
+
+        .premium-logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: var(--dash-text);
+
+            font-size: 15px;
+
+            font-weight: 850;
+
+            letter-spacing: -.025em;
+
+        }
+
+
+        .logo-icon {
+
+            width: 37px;
+
+            height: 37px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: var(--dash-green);
+
+            color: #052e16;
+
+            border-radius: 11px;
+
+        }
+
+
+        .logo-icon svg {
+
+            width: 18px;
+
+            height: 18px;
+
+        }
+
+
+        .premium-nav {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+        }
+
+
+        .premium-nav a {
+
+            padding: 9px 13px;
+
+            border-radius: 9px;
+
+            color: var(--dash-muted);
+
+            font-size: 10px;
+
+            font-weight: 650;
+
+            transition: .2s ease;
+
+        }
+
+
+        .premium-nav a:hover {
+
+            color: var(--dash-text);
+
+            background: #f2f5f3;
+
+        }
+
+
+        .premium-nav a.active {
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+        }
+
+
+        .logout-button {
+
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: 8px;
+
+            padding: 0 12px;
+
+            background: white;
+
+            color: #667085;
+
+            border: 1px solid #dfe4e1;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            transition: .2s ease;
+
+        }
+
+
+        .logout-button:hover {
+
+            color: var(--dash-red);
+
+            background: var(--dash-red-soft);
+
+            border-color: #fecaca;
+
+        }
+
+
+        .logout-button svg {
+
+            width: 13px;
+
+            height: 13px;
+
+        }
+
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .dashboard-container {
+
+            width: min(1160px, 92%);
+
+            margin: 0 auto;
+
+            padding: 40px 0 75px;
+
+        }
+
+
+        /* =========================================================
+           BREADCRUMB
+        ========================================================= */
+
+        .breadcrumb {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 17px;
+
+            color: var(--dash-light);
+
+            font-size: 9px;
+
+            font-weight: 650;
+
+        }
+
+
+        .breadcrumb svg {
+
+            width: 11px;
+
+            height: 11px;
+
+        }
+
+
+        /* =========================================================
+           WELCOME HERO
+        ========================================================= */
+
+        .welcome-section {
+
+            position: relative;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 25px;
+
+            min-height: 185px;
+
+            margin-bottom: 20px;
+
+            padding: 30px 32px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #101814 0%,
+                    #17231c 60%,
+                    #1c3023 100%
+                );
+
+            border-radius: 21px;
+
+            box-shadow:
+                0 18px 45px
+                rgba(16,24,40,.13);
+
+        }
+
+
+        .welcome-section::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 280px;
+
+            height: 280px;
+
+            right: -100px;
+
+            top: -130px;
+
+            background:
+                rgba(34,197,94,.16);
+
+            border-radius: 50%;
+
+            filter: blur(2px);
+
+        }
+
+
+        .welcome-section::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+
+            height: 150px;
+
+            right: 150px;
+
+            bottom: -100px;
+
+            background:
+                rgba(34,197,94,.08);
+
+            border-radius: 50%;
+
+        }
+
+
+        .welcome-content {
+
+            position: relative;
+
+            z-index: 2;
+
+        }
+
+
+        .eyebrow {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            margin-bottom: 12px;
+
+            color: #86efac;
+
+            font-size: 8px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .11em;
+
+        }
+
+
+        .eyebrow-dot {
+
+            width: 5px;
+
+            height: 5px;
+
+            background: var(--dash-green);
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(34,197,94,.12);
+
+        }
+
+
+        .welcome-content h1 {
+
+            margin: 0;
+
+            color: white;
+
+            font-family:
+                Manrope,
+                Inter,
+                sans-serif;
+
+            font-size:
+                clamp(25px, 4vw, 36px);
+
+            line-height: 1.08;
+
+            font-weight: 850;
+
+            letter-spacing: -.05em;
+
+        }
+
+
+        .welcome-content h1 span {
+
+            color: #4ade80;
+
+        }
+
+
+        .welcome-content p {
+
+            max-width: 510px;
+
+            margin: 9px 0 0;
+
+            color: #a7b4ac;
+
+            font-size: 10px;
+
+            line-height: 1.6;
+
+        }
+
+
+        .hero-action {
+
+            position: relative;
+
+            z-index: 2;
+
+            flex-shrink: 0;
+
+        }
+
+
+        .primary-action {
+
+            height: 43px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            padding: 0 16px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4ade80,
+                    #22c55e
+                );
+
+            color: #052e16;
+
+            font-size: 9px;
+
+            font-weight: 850;
+
+            box-shadow:
+                0 8px 22px
+                rgba(34,197,94,.22);
+
+            transition: .2s ease;
+
+        }
+
+
+        .primary-action:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 12px 27px
+                rgba(34,197,94,.28);
+
+        }
+
+
+        .primary-action svg {
+
+            width: 14px;
+
+            height: 14px;
+
+        }
+
+
+        /* =========================================================
+           QUICK STATS
+        ========================================================= */
+
+        .stats-grid {
+
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto 3rem auto;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 13px;
+
+            margin-bottom: 22px;
+
         }
 
-        @media (max-width: 900px) {
-            .dashboard-layout {
-                grid-template-columns: 1fr;
-            }
+
+        .stat-card {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 17px;
+
+            background:
+                rgba(255,255,255,.88);
+
+            border:
+                1px solid var(--dash-border);
+
+            border-radius: 14px;
+
+            box-shadow:
+                var(--dash-shadow-small);
+
         }
+
+
+        .stat-icon {
+
+            width: 39px;
+
+            height: 39px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 11px;
+
+        }
+
+
+        .stat-icon.green {
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+        }
+
+
+        .stat-icon.blue {
+
+            color: #2563eb;
+
+            background: var(--dash-blue-soft);
+
+        }
+
+
+        .stat-icon.orange {
+
+            color: #d97706;
+
+            background: var(--dash-orange-soft);
+
+        }
+
+
+        .stat-icon svg {
+
+            width: 17px;
+
+            height: 17px;
+
+        }
+
+
+        .stat-number {
+
+            margin: 0;
+
+            font-family:
+                Manrope,
+                Inter,
+                sans-serif;
+
+            font-size: 18px;
+
+            font-weight: 850;
+
+            letter-spacing: -.035em;
+
+        }
+
+
+        .stat-label {
+
+            margin-top: 2px;
+
+            color: var(--dash-light);
+
+            font-size: 8px;
+
+            font-weight: 650;
+
+        }
+
+
+        /* =========================================================
+           MAIN GRID
+        ========================================================= */
+
+        .dashboard-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.65fr)
+                minmax(300px, .85fr);
+
+            gap: 18px;
+
+            align-items: start;
+
+        }
+
+
+        .left-column,
+        .right-column {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 18px;
+
+        }
+
+
+        /* =========================================================
+           COMMON CARD
+        ========================================================= */
+
+        .dashboard-card {
+
+            background:
+                rgba(255,255,255,.94);
+
+            border:
+                1px solid var(--dash-border);
+
+            border-radius: 17px;
+
+            box-shadow:
+                var(--dash-shadow-small);
+
+        }
+
+
+        .card-padding {
+
+            padding: 21px;
+
+        }
+
+
+        .card-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-bottom: 17px;
+
+        }
+
+
+        .card-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+        }
+
+
+        .card-title-icon {
+
+            width: 31px;
+
+            height: 31px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+            border-radius: 9px;
+
+        }
+
+
+        .card-title-icon svg {
+
+            width: 14px;
+
+            height: 14px;
+
+        }
+
+
+        .card-header h2 {
+
+            margin: 0;
+
+            color: var(--dash-text);
+
+            font-family:
+                Manrope,
+                Inter,
+                sans-serif;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            letter-spacing: -.02em;
+
+        }
+
+
+        .card-header p {
+
+            margin: 3px 0 0;
+
+            color: var(--dash-light);
+
+            font-size: 8px;
+
+        }
+
+
+        .view-all {
+
+            color: var(--dash-green-dark);
+
+            font-size: 8px;
+
+            font-weight: 750;
+
+        }
+
+
+        .view-all:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        /* =========================================================
+           QUICK ACTIONS
+        ========================================================= */
+
+        .quick-actions {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 9px;
+
+        }
+
+
+        .quick-action {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 105px;
+
+            padding: 14px 8px;
+
+            color: var(--dash-text);
+
+            background:
+                #fafcfb;
+
+            border:
+                1px solid #e9eeeb;
+
+            border-radius: 12px;
+
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                border .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+        .quick-action:hover {
+
+            transform:
+                translateY(-3px);
+
+            background: white;
+
+            border-color:
+                #bde9cb;
+
+            box-shadow:
+                0 8px 20px
+                rgba(16,24,40,.055);
+
+        }
+
+
+        .quick-action-icon {
+
+            width: 36px;
+
+            height: 36px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+            border-radius: 10px;
+
+        }
+
+
+        .quick-action:nth-child(2)
+        .quick-action-icon {
+
+            color: #2563eb;
+
+            background: var(--dash-blue-soft);
+
+        }
+
+
+        .quick-action:nth-child(3)
+        .quick-action-icon {
+
+            color: #d97706;
+
+            background: var(--dash-orange-soft);
+
+        }
+
+
+        .quick-action-icon svg {
+
+            width: 16px;
+
+            height: 16px;
+
+        }
+
+
+        .quick-action strong {
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+        }
+
+
+        .quick-action span {
+
+            margin-top: 4px;
+
+            color: var(--dash-light);
+
+            font-size: 7px;
+
+        }
+
+
+        /* =========================================================
+           RECENT BOOKINGS
+        ========================================================= */
+
+        .recent-booking {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 13px;
+
+            margin-bottom: 8px;
+
+            background:
+                #fafcfb;
+
+            border:
+                1px solid #edf0ee;
+
+            border-radius: 11px;
+
+            transition: .2s ease;
+
+        }
+
+
+        .recent-booking:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .recent-booking:hover {
+
+            background: white;
+
+            border-color:
+                #dce8df;
+
+            transform:
+                translateX(2px);
+
+        }
+
+
+        .recent-booking-icon {
+
+            width: 35px;
+
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+            border-radius: 9px;
+
+        }
+
+
+        .recent-booking-icon svg {
+
+            width: 15px;
+
+            height: 15px;
+
+        }
+
+
+        .recent-booking-info {
+
+            min-width: 0;
+
+            flex: 1;
+
+        }
+
+
+        .recent-booking-name {
+
+            overflow: hidden;
+
+            color: var(--dash-text);
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+        }
+
+
+        .recent-booking-time {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: 5px;
+
+            color: var(--dash-light);
+
+            font-size: 7px;
+
+        }
+
+
+        .recent-booking-time svg {
+
+            width: 10px;
+
+            height: 10px;
+
+        }
+
+
+        .recent-booking-right {
+
+            text-align: right;
+
+            flex-shrink: 0;
+
+        }
+
+
+        .recent-booking-price {
+
+            color: var(--dash-text);
+
+            font-family:
+                Manrope,
+                Inter,
+                sans-serif;
+
+            font-size: 11px;
+
+            font-weight: 850;
+
+        }
+
+
+        .booking-status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            margin-top: 4px;
+
+            font-size: 7px;
+
+            font-weight: 750;
+
+        }
+
+
+        .status-dot {
+
+            width: 5px;
+
+            height: 5px;
+
+            border-radius: 50%;
+
+        }
+
+
+        .booking-status.completed {
+
+            color: var(--dash-green-dark);
+
+        }
+
+
+        .booking-status.upcoming {
+
+            color: #2563eb;
+
+        }
+
+
+        .booking-status.cancelled {
+
+            color: var(--dash-red);
+
+        }
+
+
+        .more-bookings {
+
+            margin-top: 13px;
+
+            padding-top: 13px;
+
+            text-align: center;
+
+            border-top:
+                1px solid #edf0ee;
+
+        }
+
+
+        .more-bookings a {
+
+            color: var(--dash-muted);
+
+            font-size: 8px;
+
+            font-weight: 650;
+
+        }
+
+
+        .more-bookings a:hover {
+
+            color: var(--dash-green-dark);
+
+        }
+
+
+        /* =========================================================
+           VEHICLES
+        ========================================================= */
+
+        .add-vehicle {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 5px;
+
+            height: 29px;
+
+            padding: 0 9px;
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+            border: 1px solid #d1fae5;
+
+            border-radius: 8px;
+
+            font-size: 7px;
+
+            font-weight: 800;
+
+        }
+
+
+        .add-vehicle:hover {
+
+            background: #dcfce7;
+
+        }
+
 
         .vehicle-item {
-            background: #f8fafc;
-            border: 1px solid var(--border, #e2e8f0);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
+
             display: flex;
-            justify-content: space-between;
+
             align-items: center;
+
+            gap: 10px;
+
+            padding: 12px;
+
+            margin-bottom: 8px;
+
+            background:
+                #fafcfb;
+
+            border:
+                1px solid #edf0ee;
+
+            border-radius: 11px;
+
         }
+
+
+        .vehicle-item:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .vehicle-icon {
+
+            width: 35px;
+
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            color: #2563eb;
+
+            background: var(--dash-blue-soft);
+
+            border-radius: 9px;
+
+        }
+
+
+        .vehicle-icon svg {
+
+            width: 15px;
+
+            height: 15px;
+
+        }
+
+
+        .vehicle-info {
+
+            min-width: 0;
+
+            flex: 1;
+
+        }
+
+
+        .vehicle-name {
+
+            color: var(--dash-text);
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+        }
+
+
+        .vehicle-registration {
+
+            margin-top: 3px;
+
+            color: var(--dash-light);
+
+            font-family: monospace;
+
+            font-size: 7px;
+
+        }
+
 
         .vehicle-tag {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.12);
-            color: #059669;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 4px;
-        }
 
-        .btn-delete-veh {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 6px;
-            display: flex;
+            display: inline-flex;
+
             align-items: center;
-            transition: background 0.2s;
+
+            margin-top: 5px;
+
+            padding: 3px 6px;
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+            border-radius: 5px;
+
+            font-size: 6px;
+
+            font-weight: 800;
+
         }
 
-        .btn-delete-veh:hover {
-            background: #fee2e2;
+
+        .delete-vehicle {
+
+            width: 29px;
+
+            height: 29px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            color: #98a2b3;
+
+            background: transparent;
+
+            border: none;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            transition: .2s ease;
+
         }
+
+
+        .delete-vehicle:hover {
+
+            color: var(--dash-red);
+
+            background: var(--dash-red-soft);
+
+        }
+
+
+        .delete-vehicle svg {
+
+            width: 13px;
+
+            height: 13px;
+
+        }
+
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================= */
+
+        .empty-state {
+
+            padding: 30px 15px;
+
+            text-align: center;
+
+        }
+
+
+        .empty-icon {
+
+            width: 43px;
+
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin: 0 auto 10px;
+
+            color: var(--dash-green-dark);
+
+            background: var(--dash-green-soft);
+
+            border-radius: 12px;
+
+        }
+
+
+        .empty-icon svg {
+
+            width: 19px;
+
+            height: 19px;
+
+        }
+
+
+        .empty-state p {
+
+            margin: 0 0 11px;
+
+            color: var(--dash-muted);
+
+            font-size: 8px;
+
+        }
+
+
+        .small-button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            height: 31px;
+
+            padding: 0 10px;
+
+            border-radius: 8px;
+
+            color: white;
+
+            background: var(--dash-green);
+
+            font-size: 7px;
+
+            font-weight: 800;
+
+        }
+
+
+        /* =========================================================
+           ACCOUNT STATUS
+        ========================================================= */
+
+        .account-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 21px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #101814,
+                    #18251d
+                );
+
+            border-radius: 17px;
+
+            box-shadow:
+                0 12px 35px
+                rgba(16,24,40,.12);
+
+        }
+
+
+        .account-card::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+
+            height: 150px;
+
+            right: -70px;
+
+            top: -70px;
+
+            background:
+                rgba(34,197,94,.12);
+
+            border-radius: 50%;
+
+        }
+
+
+        .account-header {
+
+            position: relative;
+
+            z-index: 2;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .account-icon {
+
+            width: 33px;
+
+            height: 33px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #86efac;
+
+            background:
+                rgba(34,197,94,.12);
+
+            border-radius: 9px;
+
+        }
+
+
+        .account-icon svg {
+
+            width: 15px;
+
+            height: 15px;
+
+        }
+
+
+        .account-header h2 {
+
+            margin: 0;
+
+            color: white;
+
+            font-family:
+                Manrope,
+                Inter,
+                sans-serif;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+        }
+
+
+        .account-header p {
+
+            margin: 3px 0 0;
+
+            color: #87968d;
+
+            font-size: 7px;
+
+        }
+
+
+        .verification-label {
+
+            position: relative;
+
+            z-index: 2;
+
+            margin-bottom: 8px;
+
+            color: #87968d;
+
+            font-size: 7px;
+
+            font-weight: 650;
+
+        }
+
+
+        .verified-badge {
+
+            position: relative;
+
+            z-index: 2;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 6px 9px;
+
+            color: #86efac;
+
+            background:
+                rgba(34,197,94,.12);
+
+            border:
+                1px solid rgba(34,197,94,.16);
+
+            border-radius: 999px;
+
+            font-size: 7px;
+
+            font-weight: 800;
+
+        }
+
+
+        .verified-badge svg {
+
+            width: 11px;
+
+            height: 11px;
+
+        }
+
+
+        /* =========================================================
+           CHATBOT
+        ========================================================= */
+
+        #ai-chat-widget {
+
+            position: fixed;
+
+            right: 22px;
+
+            bottom: 22px;
+
+            z-index: 1000;
+
+        }
+
+
+        #chat-toggle-btn {
+
+            width: 50px;
+
+            height: 50px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #22c55e,
+                    #15803d
+                );
+
+            color: white;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 27px
+                rgba(16,24,40,.18);
+
+            transition: .2s ease;
+
+        }
+
+
+        #chat-toggle-btn:hover {
+
+            transform:
+                translateY(-3px)
+                scale(1.03);
+
+        }
+
+
+        #chat-toggle-btn svg {
+
+            width: 20px;
+
+            height: 20px;
+
+        }
+
+
+        .chat-box {
+
+            position: absolute;
+
+            right: 0;
+
+            bottom: 62px;
+
+            width: 350px;
+
+            height: 445px;
+
+            display: none;
+
+            flex-direction: column;
+
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                1px solid var(--dash-border);
+
+            border-radius: 17px;
+
+            box-shadow:
+                0 25px 70px
+                rgba(16,24,40,.19);
+
+        }
+
+
+        .chat-box.open {
+
+            display: flex;
+
+            animation:
+                chatUp .2s ease;
+
+        }
+
+
+        @keyframes chatUp {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(10px)
+                    scale(.98);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        .chat-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 15px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #17231c,
+                    #101814
+                );
+
+        }
+
+
+        .chat-header-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+        }
+
+
+        .chat-avatar {
+
+            width: 31px;
+
+            height: 31px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #052e16;
+
+            background: var(--dash-green);
+
+            border-radius: 9px;
+
+        }
+
+
+        .chat-avatar svg {
+
+            width: 14px;
+
+            height: 14px;
+
+        }
+
+
+        .chat-title {
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+        }
+
+
+        .chat-online {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            margin-top: 3px;
+
+            color: #86efac;
+
+            font-size: 6px;
+
+        }
+
+
+        .chat-online-dot {
+
+            width: 4px;
+
+            height: 4px;
+
+            background: #22c55e;
+
+            border-radius: 50%;
+
+        }
+
+
+        #chat-close-btn {
+
+            width: 27px;
+
+            height: 27px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background:
+                rgba(255,255,255,.07);
+
+            color: #d1d5db;
+
+            cursor: pointer;
+
+        }
+
+
+        #chat-close-btn:hover {
+
+            background:
+                rgba(255,255,255,.13);
+
+        }
+
+
+        #chat-close-btn svg {
+
+            width: 13px;
+
+            height: 13px;
+
+        }
+
+
+        #chat-messages {
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 9px;
+
+            overflow-y: auto;
+
+            padding: 15px;
+
+            background: #f8faf9;
+
+        }
+
+
+        .chat-message {
+
+            max-width: 82%;
+
+            padding: 9px 11px;
+
+            border-radius: 10px;
+
+            font-size: 8px;
+
+            line-height: 1.55;
+
+        }
+
+
+        .chat-message.ai {
+
+            align-self: flex-start;
+
+            color: #344054;
+
+            background: white;
+
+            border:
+                1px solid #e9eeeb;
+
+            border-top-left-radius: 4px;
+
+        }
+
+
+        .chat-message.user {
+
+            align-self: flex-end;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #22c55e,
+                    #15803d
+                );
+
+            border-top-right-radius: 4px;
+
+        }
+
+
+        .chat-message.error {
+
+            align-self: flex-start;
+
+            color: #b91c1c;
+
+            background: var(--dash-red-soft);
+
+            border:
+                1px solid #fecaca;
+
+        }
+
+
+        .chat-input-area {
+
+            display: flex;
+
+            gap: 7px;
+
+            padding: 10px;
+
+            background: white;
+
+            border-top:
+                1px solid var(--dash-border);
+
+        }
+
+
+        #user-input {
+
+            flex: 1;
+
+            height: 37px;
+
+            padding: 0 11px;
+
+            border:
+                1px solid #dfe4e1;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            color: var(--dash-text);
+
+            background: #fbfcfb;
+
+            font-size: 8px;
+
+        }
+
+
+        #user-input:focus {
+
+            background: white;
+
+            border-color:
+                var(--dash-green);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(34,197,94,.08);
+
+        }
+
+
+        #send-btn {
+
+            width: 37px;
+
+            height: 37px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background:
+                var(--dash-green);
+
+            color: white;
+
+            cursor: pointer;
+
+        }
+
+
+        #send-btn:hover {
+
+            background:
+                var(--dash-green-dark);
+
+        }
+
+
+        #send-btn svg {
+
+            width: 14px;
+
+            height: 14px;
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media(max-width: 900px) {
+
+            .dashboard-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .right-column {
+
+                display: grid;
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                align-items: start;
+
+            }
+
+
+            .account-card {
+
+                height: 100%;
+
+            }
+
+        }
+
+
+        @media(max-width: 650px) {
+
+            .premium-navbar {
+
+                height: 65px;
+
+                padding: 0 4%;
+
+            }
+
+
+            .premium-nav a {
+
+                display: none;
+
+            }
+
+
+            .premium-nav a.active {
+
+                display: block;
+
+            }
+
+
+            .logout-button {
+
+                margin-left: 3px;
+
+                padding: 0 9px;
+
+            }
+
+
+            .logout-button span {
+
+                display: none;
+
+            }
+
+
+            .dashboard-container {
+
+                width: 92%;
+
+                padding-top: 27px;
+
+            }
+
+
+            .welcome-section {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                padding: 24px;
+
+                min-height: 0;
+
+            }
+
+
+            .hero-action {
+
+                width: 100%;
+
+            }
+
+
+            .primary-action {
+
+                width: 100%;
+
+            }
+
+
+            .stats-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .quick-actions {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .quick-action {
+
+                min-height: 75px;
+
+                flex-direction: row;
+
+                justify-content: flex-start;
+
+                gap: 11px;
+
+                padding: 11px;
+
+            }
+
+
+            .quick-action-icon {
+
+                margin-bottom: 0;
+
+            }
+
+
+            .right-column {
+
+                display: flex;
+
+            }
+
+
+            .recent-booking {
+
+                align-items: flex-start;
+
+            }
+
+
+            #ai-chat-widget {
+
+                right: 15px;
+
+                bottom: 15px;
+
+            }
+
+
+            .chat-box {
+
+                position: fixed;
+
+                left: 4%;
+
+                right: 4%;
+
+                bottom: 75px;
+
+                width: auto;
+
+                height: 70vh;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           LOADING ANIMATION
+        ========================================================= */
+
+        @keyframes spin {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+
+        .dashboard-loading {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            padding: 25px;
+
+            color: #98a2b3;
+
+            font-size: 8px;
+
+        }
+
+
+        .dashboard-loading svg {
+
+            width: 16px;
+
+            height: 16px;
+
+            animation:
+                spin 1s linear infinite;
+
+        }
+
     </style>
+
 </head>
+
+
 <body>
 
-    <!-- Navigation Header -->
-    <header class="navbar" style="border-bottom: 1px solid var(--border, #e2e8f0); background: #ffffff; position: sticky; top: 0; z-index: 100;">
-        <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;">
-            <a href="dashboard.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; text-decoration: none; color: #10b981; font-size: 1.25rem;">
-                <i data-lucide="zap"></i> EV Charge Hub
+
+    <!-- =========================================================
+         NAVIGATION
+    ========================================================= -->
+
+    <header class="premium-navbar">
+
+
+        <a
+            href="dashboard.html"
+            class="premium-logo"
+        >
+
+            <span class="logo-icon">
+
+                <i data-lucide="zap"></i>
+
+            </span>
+
+            EV Charge Hub
+
+        </a>
+
+
+        <nav class="premium-nav">
+
+            <a
+                href="dashboard.html"
+                class="active"
+            >
+                Dashboard
             </a>
-            <nav style="display: flex; align-items: center; gap: 1.5rem;">
-                <a href="dashboard.html" style="text-decoration: none; color: #10b981; font-weight: 600;">Dashboard</a>
-                <a href="search.html" style="text-decoration: none; color: #64748b;">Find Chargers</a>
-                <a href="bookings.html" style="text-decoration: none; color: #64748b;">My Bookings</a>
-                <button id="logoutBtn" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 0.35rem;">
-                    <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> Logout
-                </button>
-            </nav>
-        </div>
+
+            <a href="search.html">
+                Find Chargers
+            </a>
+
+            <a href="bookings.html">
+                My Bookings
+            </a>
+
+
+            <button
+                id="logoutBtn"
+                class="logout-button"
+                type="button"
+            >
+
+                <i data-lucide="log-out"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+        </nav>
+
+
     </header>
 
-    <!-- Main Container -->
-    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;">
-        
-        <!-- Welcome Hero -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <div>
-                <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Welcome back, <span id="userName">User</span>!</h1>
-                <p style="color: var(--text-muted, #64748b); margin: 0;">Here is your EV charging overview.</p>
-            </div>
-            <a href="search.html" class="btn btn-primary" style="display: flex; align-items: center; gap: 0.5rem;">
-                <i data-lucide="map-pin"></i> Book a Slot
-            </a>
+
+
+    <!-- =========================================================
+         MAIN DASHBOARD
+    ========================================================= -->
+
+    <main class="dashboard-container">
+
+
+        <!-- Breadcrumb -->
+
+        <div class="breadcrumb">
+
+            <span>
+                EV Charge Hub
+            </span>
+
+            <i data-lucide="chevron-right"></i>
+
+            <span>
+                Dashboard
+            </span>
+
         </div>
 
-        <!-- Dashboard Grid Layout -->
-        <div class="dashboard-layout">
-            
-            <!-- Left Column -->
-            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                
-                <!-- Quick Actions Card -->
-                <div class="card" style="background: var(--surface, #ffffff); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
-                        <i data-lucide="zap"></i> Quick Actions
-                    </h3>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-                        <a href="search.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
-                            <i data-lucide="search" style="margin-bottom: 0.5rem; color: #10b981;"></i>
-                            <div style="font-weight: 500; font-size: 0.9rem;">Find Station</div>
-                        </a>
-                        <a href="vehicles.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
-                            <i data-lucide="car" style="margin-bottom: 0.5rem; color: #10b981;"></i>
-                            <div style="font-weight: 500; font-size: 0.9rem;">Add Vehicle</div>
-                        </a>
-                        <a href="nearby-explore.html" class="card" style="text-align: center; padding: 1.25rem 0.5rem; text-decoration: none; color: inherit; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; transition: all 0.2s ease;">
-                            <i data-lucide="coffee" style="margin-bottom: 0.5rem; color: #10b981;"></i>
-                            <div style="font-weight: 500; font-size: 0.9rem;">Nearby Places</div>
-                        </a>
-                    </div>
+
+
+        <!-- =====================================================
+             WELCOME HERO
+        ====================================================== -->
+
+        <section class="welcome-section">
+
+
+            <div class="welcome-content">
+
+                <div class="eyebrow">
+
+                    <span class="eyebrow-dot"></span>
+
+                    EV CHARGING DASHBOARD
+
                 </div>
 
-                <!-- Recent Bookings Card -->
-                <div class="card" style="background: var(--surface, #ffffff); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                        <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
-                            <i data-lucide="calendar"></i> Recent Bookings
-                        </h3>
-                        <a href="bookings.html" style="font-size: 0.85rem; color: #10b981; text-decoration: none; font-weight: 500;">View All</a>
-                    </div>
-                    
-                    <!-- Dynamic Container for Recent Bookings -->
-                    <div id="recentBookingsContainer">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                </div>
 
-            </div>
+                <h1>
 
-            <!-- Right Column -->
-            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                
-                <!-- Dynamic My Vehicles Card -->
-                <div class="card" style="background: var(--surface, #ffffff); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border, #e2e8f0); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
-                            <i data-lucide="car"></i> My Vehicles
-                        </h3>
-                        <a href="vehicles.html" class="btn btn-outline btn-sm">+ Add EV</a>
-                    </div>
-                    
-                    <div id="vehiclesContainer">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                </div>
+                    Welcome back,
 
-                <!-- Account Status Card -->
-                <div class="card" style="background: #1e293b; color: #fff; padding: 1.5rem; border-radius: 12px;">
-                    <h3 style="margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; color: #fff;">
-                        <i data-lucide="shield-check"></i> Account Status
-                    </h3>
-                    <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.75rem;">Verification Status</p>
-                    <span style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
-                        <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i> Verified
+                    <span id="userName">
+                        User
                     </span>
+
+                </h1>
+
+
+                <p>
+
+                    Manage your electric vehicle,
+                    discover charging stations and
+                    keep track of your charging sessions
+                    from one place.
+
+                </p>
+
+            </div>
+
+
+            <div class="hero-action">
+
+                <a
+                    href="search.html"
+                    class="primary-action"
+                >
+
+                    <i data-lucide="map-pin"></i>
+
+                    Find a Charging Station
+
+                </a>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             QUICK STATS
+        ====================================================== -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+
+                    <i data-lucide="calendar-check"></i>
+
+                </div>
+
+                <div>
+
+                    <div
+                        class="stat-number"
+                        id="totalBookings"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Total Bookings
+                    </div>
+
                 </div>
 
             </div>
 
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+
+                    <i data-lucide="clock-3"></i>
+
+                </div>
+
+                <div>
+
+                    <div
+                        class="stat-number"
+                        id="upcomingBookings"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Upcoming Sessions
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+
+                    <i data-lucide="car"></i>
+
+                </div>
+
+                <div>
+
+                    <div
+                        class="stat-number"
+                        id="vehicleCount"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Registered Vehicles
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             DASHBOARD GRID
+        ====================================================== -->
+
+        <div class="dashboard-grid">
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================= -->
+
+            <div class="left-column">
+
+
+                <!-- =================================================
+                     QUICK ACTIONS
+                ================================================= -->
+
+                <section
+                    class="dashboard-card card-padding"
+                >
+
+
+                    <div class="card-header">
+
+                        <div class="card-title">
+
+                            <div class="card-title-icon">
+
+                                <i data-lucide="zap"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Quick Actions
+                                </h2>
+
+                                <p>
+                                    Everything you need in one click
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="quick-actions">
+
+
+                        <a
+                            href="search.html"
+                            class="quick-action"
+                        >
+
+                            <div class="quick-action-icon">
+
+                                <i data-lucide="search"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Find Station
+                                </strong>
+
+                                <span>
+                                    Discover nearby chargers
+                                </span>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <a
+                            href="vehicles.html"
+                            class="quick-action"
+                        >
+
+                            <div class="quick-action-icon">
+
+                                <i data-lucide="car"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Manage Vehicle
+                                </strong>
+
+                                <span>
+                                    Add or manage your EV
+                                </span>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <a
+                            href="nearby-explore.html"
+                            class="quick-action"
+                        >
+
+                            <div class="quick-action-icon">
+
+                                <i data-lucide="coffee"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Nearby Places
+                                </strong>
+
+                                <span>
+                                    Explore while you charge
+                                </span>
+
+                            </div>
+
+                        </a>
+
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     RECENT BOOKINGS
+                ================================================= -->
+
+                <section
+                    class="dashboard-card card-padding"
+                >
+
+
+                    <div class="card-header">
+
+                        <div class="card-title">
+
+                            <div class="card-title-icon">
+
+                                <i data-lucide="calendar"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Recent Bookings
+                                </h2>
+
+                                <p>
+                                    Your latest charging sessions
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="bookings.html"
+                            class="view-all"
+                        >
+                            View All →
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        id="recentBookingsContainer"
+                    >
+
+                        <div class="dashboard-loading">
+
+                            <i data-lucide="loader-circle"></i>
+
+                            Loading bookings...
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+            ================================================= -->
+
+            <div class="right-column">
+
+
+                <!-- =================================================
+                     MY VEHICLES
+                ================================================= -->
+
+                <section
+                    class="dashboard-card card-padding"
+                >
+
+
+                    <div class="card-header">
+
+                        <div class="card-title">
+
+                            <div class="card-title-icon">
+
+                                <i data-lucide="car"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    My Vehicles
+                                </h2>
+
+                                <p>
+                                    Your registered EVs
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="vehicles.html"
+                            class="add-vehicle"
+                        >
+
+                            <i
+                                data-lucide="plus"
+                                style="
+                                    width:10px;
+                                    height:10px;
+                                "
+                            ></i>
+
+                            Add EV
+
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        id="vehiclesContainer"
+                    >
+
+                        <div class="dashboard-loading">
+
+                            <i data-lucide="loader-circle"></i>
+
+                            Loading vehicles...
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     ACCOUNT STATUS
+                ================================================= -->
+
+                <section class="account-card">
+
+
+                    <div class="account-header">
+
+                        <div class="account-icon">
+
+                            <i
+                                data-lucide="shield-check"
+                            ></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2>
+                                Account Status
+                            </h2>
+
+                            <p>
+                                Your EV Charge Hub account
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="verification-label">
+
+                        Verification Status
+
+                    </div>
+
+
+                    <div class="verified-badge">
+
+                        <i
+                            data-lucide="check-circle-2"
+                        ></i>
+
+                        Account Verified
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
         </div>
+
+
     </main>
 
-    <!-- Floating AI Chatbot Widget -->
-    <div id="ai-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-family: inherit;">
-        <!-- Chat Toggle Button -->
-        <button id="chat-toggle-btn" style="background: #10b981; color: white; border: none; border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 24px;">
-            💬
+
+
+    <!-- =========================================================
+         AI CHATBOT
+    ========================================================= -->
+
+    <div id="ai-chat-widget">
+
+
+        <!-- Toggle -->
+
+        <button
+            id="chat-toggle-btn"
+            type="button"
+            aria-label="Open AI support"
+        >
+
+            <i data-lucide="message-circle"></i>
+
         </button>
 
-        <!-- Chat Box Container (Initially Hidden) -->
-        <div id="chat-box" style="display: none; position: absolute; bottom: 70px; right: 0; width: 350px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb;">
-            <div style="background: #10b981; color: white; padding: 1rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
-                <span>EV Support Assistant</span>
-                <button id="chat-close-btn" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer;">&times;</button>
-            </div>
-            <div id="chat-messages" style="flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; background: #f9fafb;">
-                <div style="background: #e5e7eb; color: #1f2937; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-start; max-width: 80%; font-size: 14px;">
-                    Hi! How can I help you with your EV charging today?
+
+
+        <!-- Chat -->
+
+        <div
+            id="chat-box"
+            class="chat-box"
+        >
+
+
+            <div class="chat-header">
+
+
+                <div class="chat-header-left">
+
+                    <div class="chat-avatar">
+
+                        <i data-lucide="bot"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="chat-title">
+                            EV Support Assistant
+                        </div>
+
+                        <div class="chat-online">
+
+                            <span class="chat-online-dot"></span>
+
+                            AI assistant online
+
+                        </div>
+
+                    </div>
+
                 </div>
+
+
+                <button
+                    id="chat-close-btn"
+                    type="button"
+                    aria-label="Close chat"
+                >
+
+                    <i data-lucide="x"></i>
+
+                </button>
+
+
             </div>
-            <div style="display: flex; border-top: 1px solid #e5e7eb; padding: 0.75rem; background: white;">
-                <input type="text" id="user-input" placeholder="Type a message..." style="flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; outline: none; font-size: 14px;" />
-                <button id="send-btn" style="margin-left: 0.5rem; background: #10b981; color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 4px; cursor: pointer;">Send</button>
+
+
+            <div id="chat-messages">
+
+
+                <div class="chat-message ai">
+
+                    Hi! 👋
+
+                    I'm your EV Charge Hub
+                    support assistant.
+
+                    How can I help you with
+                    charging today?
+
+                </div>
+
+
             </div>
+
+
+            <div class="chat-input-area">
+
+
+                <input
+                    type="text"
+                    id="user-input"
+                    placeholder="Ask about charging, stations..."
+                    autocomplete="off"
+                >
+
+
+                <button
+                    id="send-btn"
+                    type="button"
+                    aria-label="Send message"
+                >
+
+                    <i data-lucide="send"></i>
+
+                </button>
+
+
+            </div>
+
+
         </div>
+
+
     </div>
 
+
+
+    <!-- =========================================================
+         DASHBOARD JAVASCRIPT
+    ========================================================= -->
+
     <script>
-        // 1. Initialize Icons
-        lucide.createIcons();
 
-        // 2. Load User Profile Name & Token
-        const token = localStorage.getItem('ev_token');
-        const storedUser = localStorage.getItem('ev_user');
-        
-        if (storedUser) {
-            try {
-                const userObj = JSON.parse(storedUser);
-                if (userObj.name) {
-                    document.getElementById('userName').textContent = userObj.name.split(' ')[0];
-                }
-            } catch (e) {}
+        /* =========================================================
+           EV CHARGE HUB DASHBOARD
+           
+           BACKEND:
+           http://localhost:5000/api
+
+           BOOKINGS:
+           GET /bookings/my-bookings
+
+           VEHICLES:
+           GET /vehicles
+
+           AUTH:
+           localStorage.ev_token
+
+           FALLBACK:
+           localStorage.ev_bookings
+           localStorage.ev_vehicles
+
+           AUTO REFRESH:
+           Every 5 seconds
+        ========================================================= */
+
+
+        /* =========================================================
+           CONFIGURATION
+        ========================================================= */
+
+        const DASHBOARD_API =
+            "http://localhost:5000/api";
+
+        const REFRESH_INTERVAL =
+            5000;
+
+
+        /* =========================================================
+           AUTHENTICATION
+        ========================================================= */
+
+        function getDashboardToken() {
+
+            return localStorage.getItem(
+                "ev_token"
+            );
+
         }
 
-        // 3. Load & Render Vehicles Function (Local)
-        function renderVehicles() {
-            const container = document.getElementById('vehiclesContainer');
-            const vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
 
-            if (vehicles.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 1.5rem 1rem; color: #64748b;">
-                        <i data-lucide="car" style="width: 42px; height: 42px; opacity: 0.3; margin-bottom: 0.5rem; display: inline-block;"></i>
-                        <p style="margin: 0.25rem 0 0.75rem 0; font-size: 0.9rem;">No vehicles added yet.</p>
-                        <a href="vehicles.html" class="btn btn-secondary btn-sm">Add EV</a>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = vehicles.map((veh, idx) => `
-                    <div class="vehicle-item">
-                        <div>
-                            <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b;">${veh.make} ${veh.model}</div>
-                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">
-                                ${veh.regNumber}
-                            </div>
-                            <span class="vehicle-tag">${veh.connector || 'CCS2'}</span>
-                        </div>
-                        <button class="btn-delete-veh" onclick="deleteVehicle(${idx})" title="Remove vehicle">
-                            <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
-                        </button>
-                    </div>
-                `).join('');
+        function checkDashboardAuth() {
+
+            const token =
+                getDashboardToken();
+
+            if (!token) {
+
+                window.location.href =
+                    "login.html";
+
+                return false;
+
             }
-            lucide.createIcons();
+
+            return true;
+
         }
 
-        // 4. Load & Render Recent Bookings (Fetches from Backend API with Dynamic Date Check)
-        async function renderRecentBookings() {
-            const container = document.getElementById('recentBookingsContainer');
-            
-            try {
-                const response = await fetch('http://localhost:5000/api/bookings/my-bookings', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const result = await response.json();
 
-                if (!result.success || !result.data || result.data.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 2rem 1rem; color: #64748b;">
-                            <p style="margin-bottom: 1rem;">You have no recent charging sessions.</p>
-                            <a href="search.html" class="btn btn-primary btn-sm">Find a Charger</a>
-                        </div>
-                    `;
-                    return;
+        if (!checkDashboardAuth()) {
+
+            throw new Error(
+                "Authentication required."
+            );
+
+        }
+
+
+        /* =========================================================
+           GLOBAL STATE
+        ========================================================= */
+
+        let dashboardBookings = [];
+
+        let dashboardVehicles = [];
+
+        let dashboardRefreshing = false;
+
+        let dashboardTimer = null;
+
+
+        /* =========================================================
+           LUCIDE
+        ========================================================= */
+
+        function refreshIcons() {
+
+            if (
+                typeof lucide !== "undefined"
+            ) {
+
+                lucide.createIcons();
+
+            }
+
+        }
+
+
+        refreshIcons();
+
+
+        /* =========================================================
+           ESCAPE HTML
+        ========================================================= */
+
+        function escapeHtml(value) {
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+
+                return "";
+
+            }
+
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =========================================================
+           API REQUEST
+        ========================================================= */
+
+        async function dashboardFetch(
+            endpoint,
+            options = {}
+        ) {
+
+            const token =
+                getDashboardToken();
+
+
+            if (!token) {
+
+                throw new Error(
+                    "No authentication token found."
+                );
+
+            }
+
+
+            const response =
+                await fetch(
+                    DASHBOARD_API + endpoint,
+                    {
+                        ...options,
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${token}`,
+
+                            ...(options.headers || {})
+
+                        },
+
+                        cache: "no-store"
+
+                    }
+                );
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                console.error(
+                    "[Dashboard] Authentication failed:",
+                    response.status
+                );
+
+                localStorage.removeItem(
+                    "ev_token"
+                );
+
+                localStorage.removeItem(
+                    "ev_user"
+                );
+
+                window.location.href =
+                    "login.html";
+
+                throw new Error(
+                    "Authentication expired."
+                );
+
+            }
+
+
+            if (!response.ok) {
+
+                let errorText = "";
+
+                try {
+
+                    errorText =
+                        await response.text();
+
                 }
 
-                const bookings = result.data;
-                const recent = bookings.slice(0, 3);
-                const now = new Date();
+                catch (e) {
 
-                container.innerHTML = recent.map(b => {
-                    // Dynamic date/time comparison fallback
-                    const bookingDateStr = b.booking_date ? b.booking_date.split('T')[0] : '2026-09-16';
-                    const bookingTimeStr = b.start_time || '00:00:00';
-                    const bookingDateTime = new Date(`${bookingDateStr}T${bookingTimeStr}`);
+                    errorText = "";
 
-                    let displayStatus = b.status || 'Upcoming';
-                    if (['Pending', 'Confirmed', 'Upcoming'].includes(displayStatus) && bookingDateTime < now) {
-                        displayStatus = 'Completed';
+                }
+
+
+                throw new Error(
+                    `API ${response.status}: ${errorText}`
+                );
+
+            }
+
+
+            return await response.json();
+
+        }
+
+
+        /* =========================================================
+           NORMALIZE DATE
+        ========================================================= */
+
+        function normalizeDate(value) {
+
+            if (!value) {
+
+                return "";
+
+            }
+
+
+            const text =
+                String(value).trim();
+
+
+            let match =
+                text.match(
+                    /^(\d{4})-(\d{1,2})-(\d{1,2})/
+                );
+
+
+            if (match) {
+
+                return (
+                    match[1] +
+                    "-" +
+                    String(match[2])
+                        .padStart(2, "0") +
+                    "-" +
+                    String(match[3])
+                        .padStart(2, "0")
+                );
+
+            }
+
+
+            match =
+                text.match(
+                    /^(\d{1,2})\/(\d{1,2})\/(\d{4})/
+                );
+
+
+            if (match) {
+
+                return (
+                    match[3] +
+                    "-" +
+                    String(match[2])
+                        .padStart(2, "0") +
+                    "-" +
+                    String(match[1])
+                        .padStart(2, "0")
+                );
+
+            }
+
+
+            match =
+                text.match(
+                    /^(\d{1,2})-(\d{1,2})-(\d{4})/
+                );
+
+
+            if (match) {
+
+                return (
+                    match[3] +
+                    "-" +
+                    String(match[2])
+                        .padStart(2, "0") +
+                    "-" +
+                    String(match[1])
+                        .padStart(2, "0")
+                );
+
+            }
+
+
+            return text.split("T")[0];
+
+        }
+
+
+        /* =========================================================
+           NORMALIZE TIME
+        ========================================================= */
+
+        function normalizeTime(value) {
+
+            if (!value) {
+
+                return "";
+
+            }
+
+
+            const text =
+                String(value)
+                    .trim()
+                    .toUpperCase();
+
+
+            let match =
+                text.match(
+                    /^(\d{1,2}):(\d{2}):(\d{2})/
+                );
+
+
+            if (match) {
+
+                return (
+                    String(
+                        Number(match[1])
+                    ).padStart(2, "0") +
+                    ":" +
+                    match[2] +
+                    ":" +
+                    match[3]
+                );
+
+            }
+
+
+            match =
+                text.match(
+                    /^(\d{1,2}):(\d{2})$/
+                );
+
+
+            if (match) {
+
+                return (
+                    String(
+                        Number(match[1])
+                    ).padStart(2, "0") +
+                    ":" +
+                    match[2] +
+                    ":00"
+                );
+
+            }
+
+
+            match =
+                text.match(
+                    /^(\d{1,2}):(\d{2})\s*(AM|PM)$/
+                );
+
+
+            if (match) {
+
+                let hour =
+                    Number(match[1]);
+
+                const minute =
+                    match[2];
+
+                const period =
+                    match[3];
+
+
+                if (
+                    period === "PM" &&
+                    hour !== 12
+                ) {
+
+                    hour += 12;
+
+                }
+
+
+                if (
+                    period === "AM" &&
+                    hour === 12
+                ) {
+
+                    hour = 0;
+
+                }
+
+
+                return (
+                    String(hour)
+                        .padStart(2, "0") +
+                    ":" +
+                    minute +
+                    ":00"
+                );
+
+            }
+
+
+            return text;
+
+        }
+
+
+        /* =========================================================
+           BOOKING END DATE
+        ========================================================= */
+
+        function getBookingEndDateTime(
+            booking
+        ) {
+
+            const date =
+                normalizeDate(
+                    booking.booking_date ||
+                    booking.bookingDate ||
+                    booking.date
+                );
+
+
+            const endTime =
+                normalizeTime(
+                    booking.end_time ||
+                    booking.endTime
+                );
+
+
+            if (
+                !date ||
+                !endTime
+            ) {
+
+                return null;
+
+            }
+
+
+            const dateParts =
+                date.split("-");
+
+            const timeParts =
+                endTime.split(":");
+
+
+            if (
+                dateParts.length !== 3 ||
+                timeParts.length < 2
+            ) {
+
+                return null;
+
+            }
+
+
+            const result =
+                new Date(
+                    Number(dateParts[0]),
+                    Number(dateParts[1]) - 1,
+                    Number(dateParts[2]),
+                    Number(timeParts[0]),
+                    Number(timeParts[1]),
+                    Number(timeParts[2] || 0)
+                );
+
+
+            const startTime =
+                normalizeTime(
+                    booking.start_time ||
+                    booking.startTime
+                );
+
+
+            if (startTime) {
+
+                const startParts =
+                    startTime.split(":");
+
+
+                if (
+                    startParts.length >= 2
+                ) {
+
+                    const startMinutes =
+                        Number(startParts[0]) * 60 +
+                        Number(startParts[1]);
+
+
+                    const endMinutes =
+                        Number(timeParts[0]) * 60 +
+                        Number(timeParts[1]);
+
+
+                    if (
+                        endMinutes <
+                        startMinutes
+                    ) {
+
+                        result.setDate(
+                            result.getDate() + 1
+                        );
+
                     }
 
-                    let statusColor = '#3b82f6';
-                    if (displayStatus.toLowerCase() === 'completed') statusColor = '#10b981';
-                    if (displayStatus.toLowerCase() === 'cancelled') statusColor = '#ef4444';
+                }
+
+            }
+
+
+            return result;
+
+        }
+
+
+        /* =========================================================
+           BOOKING STATUS
+        ========================================================= */
+
+        function getBookingStatus(
+            booking
+        ) {
+
+            const rawStatus =
+                String(
+                    booking.status || ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+            if (
+                rawStatus === "cancelled" ||
+                rawStatus === "canceled"
+            ) {
+
+                return "Cancelled";
+
+            }
+
+
+            if (
+                rawStatus === "completed" ||
+                rawStatus === "complete"
+            ) {
+
+                return "Completed";
+
+            }
+
+
+            const end =
+                getBookingEndDateTime(
+                    booking
+                );
+
+
+            if (
+                end &&
+                end.getTime() <= Date.now()
+            ) {
+
+                return "Completed";
+
+            }
+
+
+            return "Upcoming";
+
+        }
+
+
+        /* =========================================================
+           NORMALIZE BOOKING
+        ========================================================= */
+
+        function normalizeBooking(
+            booking
+        ) {
+
+            return {
+
+                ...booking,
+
+
+                id:
+                    booking.id ??
+                    booking.booking_id ??
+                    booking.bookingId ??
+                    null,
+
+
+                stationName:
+                    booking.station_name ||
+                    booking.stationName ||
+                    booking.station?.name ||
+                    booking.station?.station_name ||
+                    "EV Charging Station",
+
+
+                stationId:
+                    booking.station_id ??
+                    booking.stationId ??
+                    booking.station?.id ??
+                    null,
+
+
+                chargerNumber:
+                    booking.charger_number ||
+                    booking.chargerNumber ||
+                    booking.charger?.charger_number ||
+                    booking.charger?.number ||
+                    "Charger",
+
+
+                vehicle:
+                    booking.vehicle_info ||
+                    booking.vehicle ||
+                    booking.vehicle_number ||
+                    booking.vehicleNumber ||
+                    booking.vehicle?.registration_number ||
+                    booking.vehicle?.regNumber ||
+                    "EV Vehicle",
+
+
+                date:
+                    normalizeDate(
+                        booking.booking_date ||
+                        booking.bookingDate ||
+                        booking.date
+                    ),
+
+
+                startTime:
+                    normalizeTime(
+                        booking.start_time ||
+                        booking.startTime
+                    ),
+
+
+                endTime:
+                    normalizeTime(
+                        booking.end_time ||
+                        booking.endTime
+                    ),
+
+
+                amount:
+                    booking.amount ??
+                    booking.total_amount ??
+                    booking.totalAmount ??
+                    0,
+
+
+                status:
+                    booking.status ||
+                    "Upcoming"
+
+            };
+
+        }
+
+
+        /* =========================================================
+           GET BOOKINGS FROM BACKEND
+        ========================================================= */
+
+        async function fetchBookingsFromBackend() {
+
+            const response =
+                await dashboardFetch(
+                    "/bookings/my-bookings"
+                );
+
+
+            console.log(
+                "[Dashboard] Bookings API response:",
+                response
+            );
+
+
+            let bookings = [];
+
+
+            if (
+                Array.isArray(response)
+            ) {
+
+                bookings =
+                    response;
+
+            }
+
+            else if (
+                response &&
+                Array.isArray(
+                    response.data
+                )
+            ) {
+
+                bookings =
+                    response.data;
+
+            }
+
+            else if (
+                response &&
+                Array.isArray(
+                    response.bookings
+                )
+            ) {
+
+                bookings =
+                    response.bookings;
+
+            }
+
+            else if (
+                response &&
+                response.data &&
+                Array.isArray(
+                    response.data.bookings
+                )
+            ) {
+
+                bookings =
+                    response.data.bookings;
+
+            }
+
+
+            console.log(
+                "[Dashboard] Backend booking count:",
+                bookings.length
+            );
+
+
+            return bookings.map(
+                normalizeBooking
+            );
+
+        }
+
+
+        /* =========================================================
+           LOCAL BOOKING FALLBACK
+        ========================================================= */
+
+        function getLocalBookings() {
+
+            try {
+
+                const stored =
+                    localStorage.getItem(
+                        "ev_bookings"
+                    );
+
+
+                if (!stored) {
+
+                    return [];
+
+                }
+
+
+                const parsed =
+                    JSON.parse(
+                        stored
+                    );
+
+
+                if (
+                    !Array.isArray(parsed)
+                ) {
+
+                    return [];
+
+                }
+
+
+                return parsed.map(
+                    normalizeBooking
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[Dashboard] Local bookings error:",
+                    error
+                );
+
+                return [];
+
+            }
+
+        }
+
+
+        /* =========================================================
+           SORT BOOKINGS
+        ========================================================= */
+
+        function sortBookings(
+            bookings
+        ) {
+
+            return bookings.sort(
+                (a, b) => {
+
+                    const aCreated =
+                        a.created_at ||
+                        a.createdAt ||
+                        a.created ||
+                        "";
+
+                    const bCreated =
+                        b.created_at ||
+                        b.createdAt ||
+                        b.created ||
+                        "";
+
+
+                    if (
+                        aCreated &&
+                        bCreated
+                    ) {
+
+                        const aTime =
+                            new Date(
+                                aCreated
+                            ).getTime();
+
+                        const bTime =
+                            new Date(
+                                bCreated
+                            ).getTime();
+
+
+                        if (
+                            !Number.isNaN(aTime) &&
+                            !Number.isNaN(bTime)
+                        ) {
+
+                            return bTime - aTime;
+
+                        }
+
+                    }
+
+
+                    const aDate =
+                        getBookingEndDateTime(
+                            a
+                        );
+
+                    const bDate =
+                        getBookingEndDateTime(
+                            b
+                        );
+
+
+                    if (
+                        aDate &&
+                        bDate
+                    ) {
+
+                        return (
+                            bDate.getTime() -
+                            aDate.getTime()
+                        );
+
+                    }
+
+
+                    return 0;
+
+                }
+            );
+
+        }
+
+
+        /* =========================================================
+           RENDER BOOKING STATISTICS
+        ========================================================= */
+
+        function renderBookingStatistics() {
+
+            const total =
+                dashboardBookings.length;
+
+
+            const upcoming =
+                dashboardBookings.filter(
+                    booking =>
+                        getBookingStatus(
+                            booking
+                        ) === "Upcoming"
+                ).length;
+
+
+            const totalElement =
+                document.getElementById(
+                    "totalBookings"
+                );
+
+
+            const upcomingElement =
+                document.getElementById(
+                    "upcomingBookings"
+                );
+
+
+            if (totalElement) {
+
+                totalElement.textContent =
+                    total;
+
+            }
+
+
+            if (upcomingElement) {
+
+                upcomingElement.textContent =
+                    upcoming;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           RENDER RECENT BOOKINGS
+        ========================================================= */
+
+        function renderRecentBookings() {
+
+            const container =
+                document.getElementById(
+                    "recentBookingsContainer"
+                );
+
+
+            if (!container) {
+
+                return;
+
+            }
+
+
+            const recentBookings =
+                dashboardBookings.slice(
+                    0,
+                    3
+                );
+
+
+            if (
+                recentBookings.length === 0
+            ) {
+
+                container.innerHTML = `
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+
+                            <i
+                                data-lucide="calendar-x-2"
+                            ></i>
+
+                        </div>
+
+                        <p>
+                            No recent charging sessions.
+                        </p>
+
+                        <a
+                            href="search.html"
+                            class="small-button"
+                        >
+                            Find a Charger
+                        </a>
+
+                    </div>
+
+                `;
+
+
+                refreshIcons();
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                recentBookings
+                    .map(
+                        booking => {
+
+                            const status =
+                                getBookingStatus(
+                                    booking
+                                );
+
+
+                            let statusClass =
+                                "upcoming";
+
+
+                            if (
+                                status ===
+                                "Completed"
+                            ) {
+
+                                statusClass =
+                                    "completed";
+
+                            }
+
+
+                            if (
+                                status ===
+                                "Cancelled"
+                            ) {
+
+                                statusClass =
+                                    "cancelled";
+
+                            }
+
+
+                            const amount =
+                                booking.amount !==
+                                null &&
+                                booking.amount !==
+                                undefined &&
+                                booking.amount !==
+                                ""
+                                    ? (
+                                        String(
+                                            booking.amount
+                                        ).startsWith("₹")
+                                            ? String(
+                                                booking.amount
+                                            )
+                                            : `₹${booking.amount}`
+                                    )
+                                    : "₹0";
+
+
+                            return `
+
+                                <div
+                                    class="recent-booking"
+                                >
+
+                                    <div
+                                        class="recent-booking-icon"
+                                    >
+
+                                        <i
+                                            data-lucide="zap"
+                                        ></i>
+
+                                    </div>
+
+
+                                    <div
+                                        class="recent-booking-info"
+                                    >
+
+                                        <div
+                                            class="recent-booking-name"
+                                            title="${escapeHtml(
+                                                booking.stationName
+                                            )}"
+                                        >
+                                            ${escapeHtml(
+                                                booking.stationName
+                                            )}
+                                        </div>
+
+
+                                        <div
+                                            class="recent-booking-time"
+                                        >
+
+                                            <i
+                                                data-lucide="calendar"
+                                            ></i>
+
+                                            <span>
+                                                ${escapeHtml(
+                                                    booking.date ||
+                                                    "—"
+                                                )}
+                                            </span>
+
+                                            <span>
+                                                •
+                                            </span>
+
+                                            <i
+                                                data-lucide="clock-3"
+                                            ></i>
+
+                                            <span>
+                                                ${escapeHtml(
+                                                    booking.startTime ||
+                                                    "—"
+                                                )}
+                                                -
+                                                ${escapeHtml(
+                                                    booking.endTime ||
+                                                    "—"
+                                                )}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div
+                                        class="recent-booking-right"
+                                    >
+
+                                        <div
+                                            class="recent-booking-price"
+                                        >
+                                            ${escapeHtml(
+                                                amount
+                                            )}
+                                        </div>
+
+
+                                        <div
+                                            class="booking-status ${statusClass}"
+                                        >
+
+                                            <span
+                                                class="status-dot"
+                                                style="
+                                                    background:
+                                                        ${
+                                                            status === "Completed"
+                                                                ? "#22c55e"
+                                                                : status === "Cancelled"
+                                                                    ? "#ef4444"
+                                                                    : "#3b82f6"
+                                                        };
+                                                "
+                                            ></span>
+
+                                            ${status}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+
+            if (
+                dashboardBookings.length > 3
+            ) {
+
+                container.innerHTML += `
+
+                    <div class="more-bookings">
+
+                        <a
+                            href="bookings.html"
+                        >
+                            See all
+                            ${dashboardBookings.length}
+                            bookings →
+                        </a>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            refreshIcons();
+
+        }
+
+
+        /* =========================================================
+           FETCH VEHICLES FROM BACKEND
+        ========================================================= */
+
+        async function fetchVehiclesFromBackend() {
+
+            const response =
+                await dashboardFetch(
+                    "/vehicles"
+                );
+
+
+            console.log(
+                "[Dashboard] Vehicles API response:",
+                response
+            );
+
+
+            let vehicles = [];
+
+
+            if (
+                Array.isArray(response)
+            ) {
+
+                vehicles =
+                    response;
+
+            }
+
+            else if (
+                response &&
+                Array.isArray(
+                    response.data
+                )
+            ) {
+
+                vehicles =
+                    response.data;
+
+            }
+
+            else if (
+                response &&
+                Array.isArray(
+                    response.vehicles
+                )
+            ) {
+
+                vehicles =
+                    response.vehicles;
+
+            }
+
+            else if (
+                response &&
+                response.data &&
+                Array.isArray(
+                    response.data.vehicles
+                )
+            ) {
+
+                vehicles =
+                    response.data.vehicles;
+
+            }
+
+
+            console.log(
+                "[Dashboard] Backend vehicle count:",
+                vehicles.length
+            );
+
+
+            return vehicles;
+
+        }
+
+
+        /* =========================================================
+           LOCAL VEHICLE FALLBACK
+        ========================================================= */
+
+        function getLocalVehicles() {
+
+            const possibleKeys = [
+
+                "ev_vehicles",
+
+                "vehicles",
+
+                "userVehicles"
+
+            ];
+
+
+            for (
+                const key of possibleKeys
+            ) {
+
+                try {
+
+                    const stored =
+                        localStorage.getItem(
+                            key
+                        );
+
+
+                    if (!stored) {
+
+                        continue;
+
+                    }
+
+
+                    const parsed =
+                        JSON.parse(
+                            stored
+                        );
+
+
+                    if (
+                        Array.isArray(parsed) &&
+                        parsed.length > 0
+                    ) {
+
+                        return parsed;
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.warn(
+                        "[Dashboard] Invalid vehicle storage:",
+                        key
+                    );
+
+                }
+
+            }
+
+
+            return [];
+
+        }
+
+
+        /* =========================================================
+           NORMALIZE VEHICLE
+        ========================================================= */
+
+        function normalizeVehicle(
+            vehicle
+        ) {
+
+            return {
+
+                ...vehicle,
+
+
+                id:
+                    vehicle.id ??
+                    vehicle.vehicle_id ??
+                    vehicle.vehicleId ??
+                    null,
+
+
+                make:
+                    vehicle.make ||
+                    vehicle.brand ||
+                    vehicle.manufacturer ||
+                    "",
+
+
+                model:
+                    vehicle.model ||
+                    vehicle.vehicle_model ||
+                    "",
+
+
+                registration:
+                    vehicle.regNumber ||
+                    vehicle.registration_number ||
+                    vehicle.registrationNumber ||
+                    vehicle.number_plate ||
+                    vehicle.license_plate ||
+                    "",
+
+
+                connector:
+                    vehicle.connector ||
+                    vehicle.connector_type ||
+                    vehicle.connectorType ||
+                    vehicle.charging_connector ||
+                    "CCS2"
+
+            };
+
+        }
+
+
+        /* =========================================================
+           RENDER VEHICLES
+        ========================================================= */
+
+        async function renderVehicles() {
+
+    const container =
+        document.getElementById('vehiclesContainer');
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="
+            text-align:center;
+            padding:25px;
+            color:#64748b;
+        ">
+            Loading vehicles...
+        </div>
+    `;
+
+    try {
+
+        const token =
+            localStorage.getItem('ev_token');
+
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const response =
+            await fetch(
+                'http://localhost:5000/api/vehicles',
+                {
+                    method: 'GET',
+
+                    headers: {
+                        'Authorization':
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            'Dashboard vehicles response:',
+            result
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                'Failed to load vehicles.'
+            );
+
+        }
+
+
+        let vehicles =
+            result.data ||
+            result.vehicles ||
+            result;
+
+
+        if (!Array.isArray(vehicles)) {
+            vehicles = [];
+        }
+
+
+        /* =====================================================
+           NO VEHICLES
+        ===================================================== */
+
+        if (vehicles.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    text-align:center;
+                    padding:25px 15px;
+                    color:#64748b;
+                ">
+
+                    <i
+                        data-lucide="car"
+                        style="
+                            width:42px;
+                            height:42px;
+                            opacity:.35;
+                            margin-bottom:10px;
+                        "
+                    ></i>
+
+                    <p style="
+                        margin-bottom:12px;
+                        font-size:14px;
+                    ">
+                        No vehicles added yet.
+                    </p>
+
+                    <a
+                        href="vehicles.html"
+                        style="
+                            display:inline-flex;
+                            align-items:center;
+                            gap:6px;
+                            padding:9px 14px;
+                            border-radius:9px;
+                            background:#ecfdf3;
+                            color:#15803d;
+                            font-weight:700;
+                            font-size:12px;
+                        "
+                    >
+                        + Add EV
+                    </a>
+
+                </div>
+            `;
+
+            lucide.createIcons();
+
+            return;
+        }
+
+
+        /* =====================================================
+           RENDER DATABASE VEHICLES
+        ===================================================== */
+
+        container.innerHTML =
+            vehicles.map(
+                vehicle => {
+
+                    const name =
+                        vehicle.vehicle_name ||
+                        vehicle.make ||
+                        vehicle.brand ||
+                        'Electric Vehicle';
+
+
+                    const model =
+                        vehicle.vehicle_model ||
+                        vehicle.model ||
+                        '';
+
+
+                    const registration =
+                        vehicle.vehicle_number ||
+                        vehicle.regNumber ||
+                        vehicle.registration_number ||
+                        '';
+
+
+                    const connector =
+                        vehicle.connector_type ||
+                        vehicle.connector ||
+                        'CCS2';
+
+
+                    const vehicleId =
+                        vehicle.id ||
+                        vehicle.vehicle_id ||
+                        '';
+
 
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8fafc; border: 1px solid var(--border, #e2e8f0); border-radius: 8px; margin-bottom: 0.75rem;">
-                            <div>
-                                <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b; margin-bottom: 0.25rem;">${b.station_name || 'EV Station'}</div>
-                                <div style="font-size: 0.8rem; color: #64748b; display: flex; align-items: center; gap: 0.35rem;">
-                                    <i data-lucide="calendar" style="width: 12px; height: 12px;"></i> ${bookingDateStr} • ${bookingTimeStr}
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-weight: 700; color: #1e293b; font-size: 1.05rem;">₹${b.amount || '0.00'}</div>
-                                <div style="font-size: 0.75rem; font-weight: 600; color: ${statusColor}; margin-top: 2px;">${displayStatus}</div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                if (bookings.length > 3) {
-                    container.innerHTML += `
-                        <div style="text-align: center; margin-top: 1rem;">
-                            <a href="bookings.html" style="font-size: 0.85rem; color: #64748b; text-decoration: none; font-weight: 500;">See all ${bookings.length} bookings →</a>
-                        </div>
-                    `;
-                }
-            } catch (err) {
-                console.error('Failed to fetch backend bookings:', err);
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 1.5rem; color: #ef4444; font-size: 0.85rem;">
-                        Failed to load bookings from server.
-                    </div>
-                `;
-            }
 
-            lucide.createIcons();
+                        <div
+                            class="vehicle-item"
+                            data-vehicle-id="${escapeHtml(
+                                vehicleId
+                            )}"
+                        >
+
+                            <div>
+
+                                <div style="
+                                    font-weight:700;
+                                    font-size:.95rem;
+                                    color:#17221c;
+                                ">
+                                    ${escapeHtml(name)}
+                                    ${escapeHtml(model)}
+                                </div>
+
+
+                                <div style="
+                                    font-size:.78rem;
+                                    color:#64748b;
+                                    margin-top:3px;
+                                ">
+                                    ${escapeHtml(
+                                        registration
+                                    )}
+                                </div>
+
+
+                                <span
+                                    class="vehicle-tag"
+                                >
+                                    ${escapeHtml(
+                                        connector
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div style="
+                                font-size:11px;
+                                color:#15803d;
+                                font-weight:700;
+                            ">
+                                Added
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            ).join('');
+
+
+        lucide.createIcons();
+
+
+        /*
+         * Update vehicle count
+         */
+
+        const vehicleCount =
+            document.getElementById(
+                'vehicleCount'
+            );
+
+
+        if (vehicleCount) {
+
+            vehicleCount.textContent =
+                vehicles.length;
+
         }
 
-        // 5. Delete Vehicle Helper
-        window.deleteVehicle = function(index) {
-            let vehicles = JSON.parse(localStorage.getItem('ev_vehicles') || '[]');
-            vehicles.splice(index, 1);
-            localStorage.setItem('ev_vehicles', JSON.stringify(vehicles));
-            renderVehicles();
-        };
 
-        // 6. Logout Handler
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('ev_token');
-            localStorage.removeItem('ev_user');
-            window.location.href = 'login.html';
-        });
+        console.log(
+            'Dashboard vehicles:',
+            vehicles
+        );
 
-        // 7. Floating Chatbot Logic
-        const chatToggleBtn = document.getElementById('chat-toggle-btn');
-        const chatBox = document.getElementById('chat-box');
-        const chatCloseBtn = document.getElementById('chat-close-btn');
-        const sendBtn = document.getElementById('send-btn');
-        const userInput = document.getElementById('user-input');
-        const chatMessages = document.getElementById('chat-messages');
 
-        chatToggleBtn.addEventListener('click', () => {
-            chatBox.style.display = chatBox.style.display === 'none' ? 'flex' : 'none';
-        });
+    } catch (error) {
 
-        chatCloseBtn.addEventListener('click', () => {
-            chatBox.style.display = 'none';
-        });
+        console.error(
+            'Dashboard vehicle loading error:',
+            error
+        );
 
-        async function handleSendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
 
-            const userMsg = document.createElement('div');
-            userMsg.style.cssText = "background: #10b981; color: white; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-end; max-width: 80%; font-size: 14px;";
-            userMsg.textContent = message;
-            chatMessages.appendChild(userMsg);
-            
-            userInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        /*
+         * DO NOT silently display old
+         * localStorage vehicles.
+         *
+         * Database is the source of truth.
+         */
+
+        container.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:25px 15px;
+                color:#b91c1c;
+            ">
+
+                <i
+                    data-lucide="triangle-alert"
+                    style="
+                        width:35px;
+                        height:35px;
+                        margin-bottom:8px;
+                    "
+                ></i>
+
+                <p style="
+                    font-size:13px;
+                    font-weight:700;
+                    margin-bottom:5px;
+                ">
+                    Unable to load vehicles
+                </p>
+
+                <p style="
+                    font-size:11px;
+                    color:#64748b;
+                ">
+                    Please make sure the backend server
+                    is running.
+                </p>
+
+            </div>
+
+        `;
+
+        lucide.createIcons();
+
+    }
+
+}
+function escapeHtml(value) {
+
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+}
+
+
+        /* =========================================================
+           LOAD USER
+        ========================================================= */
+
+        function loadDashboardUser() {
+
+            const nameElement =
+                document.getElementById(
+                    "userName"
+                );
+
+
+            if (!nameElement) {
+
+                return;
+
+            }
+
 
             try {
-                const response = await fetch('http://localhost:5000/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
-                const data = await response.json();
 
-                const aiMsg = document.createElement('div');
-                aiMsg.style.cssText = "background: #e5e7eb; color: #1f2937; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-start; max-width: 80%; font-size: 14px;";
-                aiMsg.textContent = data.reply || data.error || "Sorry, something went wrong.";
-                chatMessages.appendChild(aiMsg);
-            } catch (err) {
-                const errorMsg = document.createElement('div');
-                errorMsg.style.cssText = "background: #fee2e2; color: #b91c1c; padding: 0.5rem 0.75rem; border-radius: 6px; align-self: flex-start; max-width: 80%; font-size: 14px;";
-                errorMsg.textContent = "Failed to connect to backend chatbot server.";
-                chatMessages.appendChild(errorMsg);
+                const stored =
+                    localStorage.getItem(
+                        "ev_user"
+                    );
+
+
+                if (!stored) {
+
+                    return;
+
+                }
+
+
+                const user =
+                    JSON.parse(
+                        stored
+                    );
+
+
+                const name =
+                    user.name ||
+                    user.full_name ||
+                    user.username ||
+                    user.email ||
+                    "User";
+
+
+                nameElement.textContent =
+                    String(name)
+                        .trim()
+                        .split(" ")[0];
+
             }
 
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            catch (error) {
+
+                console.error(
+                    "[Dashboard] User loading error:",
+                    error
+                );
+
+            }
+
         }
 
-        sendBtn.addEventListener('click', handleSendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSendMessage();
-        });
 
-        // 8. Initialize on Load
-        document.addEventListener('DOMContentLoaded', () => {
-            renderVehicles();
-            renderRecentBookings();
-        });
+        /* =========================================================
+           REFRESH BOOKINGS
+        ========================================================= */
+
+        async function refreshBookings() {
+
+            try {
+
+                const backendBookings =
+                    await fetchBookingsFromBackend();
+
+
+                /*
+                   Backend is ALWAYS authoritative.
+
+                   If backend returns zero bookings,
+                   dashboard shows zero.
+
+                   We do not merge local fake bookings
+                   with backend bookings.
+                */
+
+                dashboardBookings =
+                    sortBookings(
+                        backendBookings
+                    );
+
+
+                renderBookingStatistics();
+
+                renderRecentBookings();
+
+
+                console.log(
+                    "[Dashboard] Bookings updated:",
+                    dashboardBookings.length
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[Dashboard] Booking API failed:",
+                    error
+                );
+
+
+                /*
+                   Only use localStorage when backend
+                   itself is unavailable.
+                */
+
+                const localBookings =
+                    getLocalBookings();
+
+
+                dashboardBookings =
+                    sortBookings(
+                        localBookings
+                    );
+
+
+                renderBookingStatistics();
+
+                renderRecentBookings();
+
+
+                console.warn(
+                    "[Dashboard] Using local booking fallback:",
+                    dashboardBookings.length
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           REFRESH VEHICLES
+        ========================================================= */
+
+        async function refreshVehicles() {
+
+            try {
+
+                /*
+                   FIRST:
+                   Try actual backend vehicle records.
+                */
+
+                const backendVehicles =
+                    await fetchVehiclesFromBackend();
+
+
+                dashboardVehicles =
+                    backendVehicles.map(
+                        normalizeVehicle
+                    );
+
+
+                /*
+                   If backend returns an empty
+                   array, check localStorage.
+
+                   This helps existing users whose
+                   older vehicles were stored locally.
+                */
+
+                if (
+                    dashboardVehicles.length === 0
+                ) {
+
+                    const localVehicles =
+                        getLocalVehicles();
+
+
+                    if (
+                        localVehicles.length > 0
+                    ) {
+
+                        dashboardVehicles =
+                            localVehicles.map(
+                                normalizeVehicle
+                            );
+
+                    }
+
+                }
+
+
+                renderVehicles();
+
+
+                console.log(
+                    "[Dashboard] Vehicles updated:",
+                    dashboardVehicles.length
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[Dashboard] Vehicle API failed:",
+                    error
+                );
+
+
+                /*
+                   Backend unavailable:
+                   use localStorage.
+                */
+
+                dashboardVehicles =
+                    getLocalVehicles().map(
+                        normalizeVehicle
+                    );
+
+
+                renderVehicles();
+
+
+                console.warn(
+                    "[Dashboard] Using local vehicle fallback:",
+                    dashboardVehicles.length
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           COMPLETE DASHBOARD REFRESH
+        ========================================================= */
+
+        async function refreshDashboard() {
+
+            if (
+                dashboardRefreshing
+            ) {
+
+                return;
+
+            }
+
+
+            dashboardRefreshing =
+                true;
+
+
+            try {
+
+                /*
+                   Run both requests together.
+                */
+
+                await Promise.all([
+                    refreshBookings(),
+                    refreshVehicles()
+                ]);
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[Dashboard] Refresh error:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                dashboardRefreshing =
+                    false;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           REAL-TIME REFRESH LOOP
+        ========================================================= */
+
+        function startRealtimeDashboard() {
+
+            if (dashboardTimer) {
+
+                clearTimeout(
+                    dashboardTimer
+                );
+
+            }
+
+
+            async function loop() {
+
+                await refreshDashboard();
+
+
+                dashboardTimer =
+                    setTimeout(
+                        loop,
+                        REFRESH_INTERVAL
+                    );
+
+            }
+
+
+            loop();
+
+        }
+
+
+        /* =========================================================
+           REFRESH WHEN TAB RETURNS
+        ========================================================= */
+
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+
+                    refreshDashboard();
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           STORAGE CHANGE
+        ========================================================= */
+
+        window.addEventListener(
+            "storage",
+            event => {
+
+                if (
+                    event.key ===
+                        "ev_bookings" ||
+                    event.key ===
+                        "ev_vehicles" ||
+                    event.key ===
+                        "ev_token"
+                ) {
+
+                    refreshDashboard();
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           LOGOUT
+        ========================================================= */
+
+        function logoutDashboard() {
+
+            localStorage.removeItem(
+                "ev_token"
+            );
+
+            localStorage.removeItem(
+                "ev_user"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        const logoutButton =
+            document.getElementById(
+                "logoutBtn"
+            );
+
+
+        if (logoutButton) {
+
+            logoutButton.addEventListener(
+                "click",
+                logoutDashboard
+            );
+
+        }
+
+
+        /* =========================================================
+           AI CHAT
+        ========================================================= */
+
+        const chatToggle =
+            document.getElementById(
+                "chat-toggle-btn"
+            );
+
+        const chatClose =
+            document.getElementById(
+                "chat-close-btn"
+            );
+
+        const chatBox =
+            document.getElementById(
+                "chat-box"
+            );
+
+        const sendButton =
+            document.getElementById(
+                "send-btn"
+            );
+
+        const userInput =
+            document.getElementById(
+                "user-input"
+            );
+
+        const chatMessages =
+            document.getElementById(
+                "chat-messages"
+            );
+
+
+        if (chatToggle) {
+
+            chatToggle.addEventListener(
+                "click",
+                () => {
+
+                    chatBox.classList.toggle(
+                        "open"
+                    );
+
+                    refreshIcons();
+
+                }
+            );
+
+        }
+
+
+        if (chatClose) {
+
+            chatClose.addEventListener(
+                "click",
+                () => {
+
+                    chatBox.classList.remove(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+
+
+        function addChatMessage(
+            message,
+            type
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                `chat-message ${type}`;
+
+
+            div.textContent =
+                message;
+
+
+            chatMessages.appendChild(
+                div
+            );
+
+
+            chatMessages.scrollTop =
+                chatMessages.scrollHeight;
+
+        }
+
+
+        async function sendChatMessage() {
+
+            const message =
+                userInput.value.trim();
+
+
+            if (!message) {
+
+                return;
+
+            }
+
+
+            addChatMessage(
+                message,
+                "user"
+            );
+
+
+            userInput.value = "";
+
+
+            try {
+
+                const response =
+                    await dashboardFetch(
+                        "/chat",
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+                                    message:
+                                        message
+                                })
+                        }
+                    );
+
+
+                console.log(
+                    "[Dashboard] Chat response:",
+                    response
+                );
+
+
+                const reply =
+                    response.reply ||
+                    response.response ||
+                    response.message ||
+                    response.answer ||
+                    "Sorry, I could not generate a response.";
+
+
+                addChatMessage(
+                    reply,
+                    "ai"
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[Dashboard] Chat error:",
+                    error
+                );
+
+
+                addChatMessage(
+                    "Sorry, I am unable to connect to the EV support service right now.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        if (sendButton) {
+
+            sendButton.addEventListener(
+                "click",
+                sendChatMessage
+            );
+
+        }
+
+
+        if (userInput) {
+
+            userInput.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key ===
+                        "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        sendChatMessage();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =========================================================
+           INITIALIZATION
+        ========================================================= */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async () => {
+
+                console.log(
+                    "===================================="
+                );
+
+                console.log(
+                    "EV CHARGE HUB DASHBOARD"
+                );
+
+                console.log(
+                    "===================================="
+                );
+
+                console.log(
+                    "[Dashboard] API:",
+                    DASHBOARD_API
+                );
+
+                console.log(
+                    "[Dashboard] Token exists:",
+                    Boolean(
+                        getDashboardToken()
+                    )
+                );
+
+
+                loadDashboardUser();
+
+
+                /*
+                   Initial render.
+                */
+
+                renderBookingStatistics();
+
+                renderRecentBookings();
+
+                renderVehicles();
+
+
+                /*
+                   Start real-time data loading.
+                */
+
+                startRealtimeDashboard();
+
+
+                refreshIcons();
+
+            }
+        );
+
     </script>
+
+
 </body>
+
 </html>
